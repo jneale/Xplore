@@ -1,0 +1,1147 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Xplore</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesnt work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- CodeMirror -->
+    <link rel="stylesheet" href="/codemirror.css" />
+
+    <!-- snd_xplore -->
+    <link href="/efd550a80f2a020094f3c09ce1050ecf.cssdbx" rel="stylesheet"></link>
+  </head>
+  <body>
+
+    <div id="window_loader" class="page_loader active">
+      <div class="loading">
+        <i class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></i>
+      </div>
+    </div>
+
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="navbar-header">
+        <a href="#" class="navbar-brand">Xplore</a></div>
+      <div id="navbar">
+        <ul class="nav navbar-nav">
+          <li>
+            <p class="navbar-control">
+              <select id="target" class="form-control">
+                <option value="server">Server</option>
+                <option value="client">Client</option>
+              </select>
+            </p>
+          </li>
+          <li>
+            <p class="navbar-control">
+              <select id="scope" class="form-control">
+                <option>Loading</option>
+              </select>
+            </p>
+          </li>
+          <li>
+            <button id="xplore_btn" class="btn btn-danger navbar-control" title="Ctrl + Enter">Run</button>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div id="wrapper">
+
+      <div id="side_controls">
+        <ul>
+          <li><a href="javascript:void(0);" title="New" onclick="window.opener ? window.opener.open(window.location.href, '_blank') : window.open(window.location.href, '_blank');">
+            <i class="glyphicon glyphicon-new-window"></i></a>
+          </li>
+          <li><a href="javascript:void(0)" title="Toggle Editor" id="editor_toggle" class="active">
+            <i class="glyphicon glyphicon-console"></i></a>
+          </li>
+          <!--li><a href="javascript:void(0);" title="Settings" data-pane="settings_pane">
+            <i class="glyphicon glyphicon-cog"></i></a>
+          </li-->
+          <li><a href="javascript:void(0);" title="Quick Start" data-pane="help_pane">
+            <i class="glyphicon glyphicon-info-sign"></i></a>
+          </li>
+        </ul>
+      </div>
+
+      <div id="settings_pane" class="side_pane" style="display: none;">
+        <h3>Settings</h3>
+
+        <h4>Output</h4>
+        <div class="well well-sm">
+
+        </div>
+
+      </div>
+
+      <div id="help_pane" class="side_pane" style="display: none;">
+
+        <h3>Quick Start</h3>
+
+        <div class="alert alert-danger">
+          This utility runs code in your environment. Make sure you know what you
+          are doing as it is entirely possible for you to screw up your instance.
+        </div>
+
+        <h4>Getting started</h4>
+        <div class="well well-sm">
+          <ul>
+            <li><p>Write JavaScript and run it!</p></li>
+            <li><p>Use the choice list to choose where you want to run your code.</p></li>
+            <li><p>Launching Xplore from within ServiceNow will give you access
+              to the various frames ServiceNow uses.</p></li>
+          </ul>
+        </div>
+
+        <h4>Logging</h4>
+        <div class="well well-sm">
+          <p>Xplore supports capturing server messages using the following
+            native ServiceNow logging functions:</p>
+          <ul>
+            <li>gs.log()</li>
+            <li>gs.print()</li>
+            <li>gs.info()</li>
+            <li>gs.warn()</li>
+            <li>gs.error()</li>
+            <li>gs.addInfoMessage()</li>
+            <li>gs.addErrorMessage()</li>
+          </ul>
+          <p>Some server exceptions result in the transaction being aborted by
+            ServiceNow which means you will have limited (if any) output.
+            Xplore helps with this by automatically retrieving
+            the session log statements that were generated up to the time of the error
+           (using the functions shown above) and showing them in the output pane.
+          </p>
+          <br />
+          <p>Client side logs can be captured as well:</p>
+          <ul>
+            <li>jslog()</li>
+          </ul>
+        </div>
+
+        <h4>Scope</h4>
+        <div class="well well-sm">
+          <p>You can even use Xplore to test your scripts in a given scope!</p>
+        </div>
+
+        <h4>Quick Wiki</h4>
+        <div class="well well-sm">
+          <p>Xplore is based on a global Script Include that you can
+            run anywhere in ServiceNow.</p>
+          <ul>
+            <li><strong>snd_xplore(obj)</strong><br />
+              <p>Uses the default reporter to print everything using gs.print()</p>
+            </li>
+            <li><strong>snd_xplore.lookAt(obj)</strong><br />
+              <p>Get a object containing the properties 'type' and
+                'value' of your object.</p>
+            </li>
+            <li><strong>snd_xplore(obj, my_reporter)</strong><br />
+              <p>You can also write your own reporter to handle the output of snd_xplore.
+                Check out the snd_xplore Script Include for the built in print_reporter
+                which works in both global and scoped apps.</p>
+              <p>This page uses a custom print reporter to generate JSON and package
+                it all back to the client over AJAX.</p>
+            </li>
+            <li><strong>snd_xplore.test(obj)</strong><br />
+              <p>Sometimes when you are 'Xplore-ing' an object, you
+                will come across properties that throw exceptions when you try to
+                read their value. You can bypass this property by updating the
+                Xplore Red List on the fly, or add the property to the
+                'redlist' array in the snd_xplore Script Include.
+              </p>
+              <p>The long term plan is to have a community built (possibly data-driven)
+                approach to this list.</p>
+            </li>
+            <li><strong>snd_xplore.blacklist('illegalProp')</strong><br />
+              <p>Blacklisted properties are those that throw illegal access exceptions.
+                ServiceNow don't even want you trying to access these, let alone
+                see their value. Xplore has a built in template to filter the majority
+                of these, but sometimes they will slip through. Bypass these properties
+                on the fly, or add the property to the 'blacklist' array
+                in the snd_xplore Script Include.</p>
+              <p>The long term plan is to have a community built (possibly data-driven)
+                approach to this list.</p>
+            </li>
+          </ul>
+        </div>
+
+        <h4>About</h4>
+        <div class="well well-sm">
+          <ul>
+            <li>
+              <p>The UI client uses:</p>
+              <ul>
+                <li><a href="http://getbootstrap.com/" target="_blank">Bootstrap</a></li>
+                <li><a href="https://jquery.com/" target="_blank">jQuery</a></li>
+                <li><a href="https://codemirror.net/" target="_blank">CodeMirror</a></li>
+              </ul>
+            </li>
+            <li><p>I accept no responsibility or liability for you doing something
+                disastrous to your instance using this tool or the snd_xplore
+                functions.</p>
+            </li>
+            <li>Created by <a href="https://twitter.com/James_Neale" target="_blank">@James_Neale</a></li>
+            <li><a href="https://goo.gl/MGtIdG" target="_blank">Xplore on ServiceNow Share</a></li>
+            <li><a href="http://sndeveloper.com/contact" target="_blank">Get in touch</a></li>
+            <li>Version: ${script_version}</li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div id="workbench">
+
+        <div id="editor">
+          <textarea class="form-control" id="snd_xplore" rows="10"></textarea>
+          <div class="ui-resizable-handle ui-resizable-e"></div>
+        </div>
+
+        <div id="output">
+
+          <div id="output_loader" class="page_loader">
+            <div class="loading">
+              <i class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></i>
+            </div>
+          </div>
+
+          <div id="output_content">
+
+            <ul class="nav nav-tabs" role="tablist" id="output_tabs">
+              <li role="presentation" class="active">
+                <a href="#script_output" aria-controls="script_output" id="script_output_tab" role="tab" data-toggle="tab">Output</a>
+              </li>
+              <li role="presentation">
+                <a href="#user_data_pane" aria-controls="user_data_pane" role="tab" data-toggle="tab">
+                  User Data
+                </a>
+              </li>
+              <li role="presentation">
+                <a href="#regex_pane" aria-controls="regex_pane" role="tab" data-toggle="tab">Regex</a>
+              </li>
+              <li role="presentation">
+                <a href="#table_hierarchy_pane" aria-controls="table_hierarchy_pane" role="tab" data-toggle="tab">Table Hierarchy</a>
+              </li>
+              <li role="presentation">
+                <a href="#system_log_pane" aria-controls="system_log_pane" id="system_log_tab" role="tab" data-toggle="tab">Logs</a>
+              </li>
+            </ul>
+
+            <div class="tab-content" id="output_tabs_pane">
+
+              <div id="script_output" role="tabpanel" class="tab-pane fade active in">
+                <ul id="breadcrumb" class="breadcrumb hidden">
+                  <li class="permanent"><a id="clearBreadcrumb" href="javascript:void(0);">Result</a></li>
+                </ul>
+
+                <div id="message_container" class="hidden">
+                  <table class="table table-condensed" id="message_table"></table>
+                </div>
+
+                <div id="log_container" class="hidden">
+                  <h4>System Logs</h4>
+                  <table class="table table-condensed" id="log_table"></table>
+                </div>
+
+                <div id="result_container">
+                  <table class="table table-condensed" id="description_table">
+                    <tr>
+                      <td>
+                        <div class="wrap row">
+                          <div class="col-xs-12">
+                            <div class="alert alert-danger">
+                              <strong>Warning:</strong> This utility runs code in your environment. Make sure you know what you
+                              are doing as it is entirely possible for you to screw up your instance.
+                            </div>
+                            <div class="panel panel-default">
+                              <div class="panel-body">
+                                <p>Hi!</p>
+                                <p>Thanks for downloading Xplore.</p>
+                                <p>Xplore is a free, independently developed utility for ServiceNow that has
+                                  been built 'for developers, by developers'.</p>
+                                <p>We hope you find this as useful as we do, and if you haven't done so already,
+                                  we'd really appreciate your feedback on the
+                                  <a href="https://goo.gl/MGtIdG" target="_blank">Xplore ServiceNow Share page</a>.
+                                </p>
+                                <p>If you'd like to make a feature request or have found something that doesn't quite
+                                  work properly, or just want to say hi, then please <a href="http://sndeveloper.com/contact" target="_blank">get in touch</a> at our website.</p>
+                                <p>Thanks!</p>
+                                <p>James and Tim<br /> <a href="http://sndeveloper.com" target="_blank">SND</a></p>
+                              </div>
+                            </div>
+
+                            <h4>Script Editor</h4>
+                            <p>Use the script editor on the left to write and run scripts in ServiceNow,
+                              much like a background script, but supercharged. The last object in the
+                              script will be shown here in a detailed output tab.
+                              Not sure what to do? Try one of these demos:
+                              <ul id="xplore_demo">
+                                <li><a href="#demo" data-demo="GlideRecord">GlideRecord</a></li>
+                                <li><a href="#demo" data-demo="Array">Array</a></li>
+                                <li><a href="#demo" data-demo="GlideUser">GlideUser</a></li>
+                                <li><a href="#demo" data-demo="Logging">Logging and Messages</a></li>
+                                <li><a href="#demo" data-demo="scope">Current scope</a></li>
+                              </ul>
+                            </p>
+                            <p>Tip: Use the keyboard shortcut <kbd>Ctrl + Enter</kbd> to run.</p>
+                            <br />
+                            <h4>
+                              <sup><span class="label label-danger label-as-badge">New</span></sup>
+                              Regex</h4>
+                            <p>You can now test out regular expressions natively in ServiceNow!</p>
+                            <p>If you've done any work with RegExp then you will know that sometimes regular
+                              expressions don't work the same way in ServiceNow as they do in browsers or other
+                              languages.</p>
+                            <p>Simply type in your expression and a test string, give it a second,
+                              and it will automatically test your expression for you and show you the results
+                               - including group outputs.</p>
+                            <br />
+                            <h4>
+                              <sup><span class="label label-danger label-as-badge">New</span></sup>
+                              Table Hierarchy</h4>
+                            <p>The table hierarchy tool allows you to view the hiearchy of a table in an
+                              interactive view.</p>
+                            <p>Type in the name of a table you are interested in and give it a second to
+                              automatically load the details for you.</p>
+                            <p>You can also navigate through the heirarchy (very useful for things like
+                              cmdb_ci) and use handy links to open the list or form view of any table.</p>
+                            <br />
+                            <h4>
+                              <sup><span class="label label-danger label-as-badge">New</span></sup>
+                              Logs</h4>
+                            <p>The system log is now embedded into Xplore for easy access.</p>
+                            <p>Clicking the 'Logs' tab will automatically refresh the logs for you.</p>
+                            <br />
+                          </div>
+                          <div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <pre style="font-size:10px; width: 600px; background: transparent; border: none; margin: auto; text-align: left;">
+     SSSSSSSSSSSSSSSSSSSSS  NNNNNNNNNN                 NNNNNN  DDDDDDDDDDDDDDDDDDD
+  SSS::::::::::::::::::::S  N:::::::::NN               N::::N  D::::::::::::::::::DD
+SSSSSSSSSSSSSSSSSSSSSSSSSS  NNNNNNNN::::NN             N::::N  D::::DDDDDDDDDDDD::::DD
+                                    NN::::NN           N::::N  D::::D           DD::::D
+SSSSSS                      NNNNNN    N:::::N          N::::N  D::::D             DD:::D
+S:::::SSSSSSSSSSSSSS        N::::N     NN::::NN        N::::N  D::::D               D:::D
+ SS:::::::::::::::::SSS     N::::N       N:::::N       N::::N  D::::D               D:::D
+   SSSSSSSSSSSSSS::::::SS   N::::N        NN::::NN     N::::N  D::::D               D:::D
+                 SSS:::::S  N::::N          N:::::N    N::::N  D::::D               D:::D
+                    S::::S  N::::N           NN::::NN  N::::N  DDDDDD             DD:::D
+                 SSS:::::S  N::::N             N:::::N N::::N                   DD::::D
+SSSSSSSSSSSSSSSSS::::::SS   N::::N              NN::::NN::::N  DDDDDDDDDDDDDDDDD::::DD
+S:::::::::::::::::::SSS     N::::N                N:::::::::N  D::::::::::::::::::DD
+SSSSSSSSSSSSSSSSSSSS        NNNNNN                 NNNNNNNNNN  DDDDDDDDDDDDDDDDDDD
+</pre>
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+
+                  <div id="type_control"></div>
+                  <table class="table table-condensed" id="results_table"></table>
+                </div>
+              </div>
+
+              <div id="user_data_pane" role="tabpanel" class="tab-pane fade">
+
+                <div class="wrap row">
+                  <div class="col-xs-12">
+                    <h4>User Data</h4>
+                    <p>Easily add large strings to the variable <code>user_data</code>.</p>
+                    <textarea id="user_data_input" class="form-control"></textarea>
+                  </div>
+                </div>
+
+              </div>
+
+              <div id="regex_pane" role="tabpanel" class="tab-pane fade">
+
+                <div class="wrap row">
+                  <div class="col-xs-12">
+                    <div id="regex_loading" class="pull-right" style="display:none;">
+                      <i class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></i>
+                    </div>
+                    <h4>Regular Expression</h4>
+                    <div>
+                      <div class="slash">/</div>
+                      <div class="regex-options">
+                        <div class="slash">/</div>
+                        <input type="text" value="g" id="regex_options" name="regex_options" class="form-control" tabindex="2" />
+                      </div>
+                      <div class="regex-expression">
+                        <input type="text" placeholder="expression" id="regex" name="regex" class="form-control" tabindex="1" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-6 col-xs-12">
+                    <h4>Test String</h4>
+                    <div class="panel panel-default">
+                      <textarea id="regex_input" style="width: 100%" rows="10" tabindex="3"></textarea>
+                    </div>
+                  </div>
+                  <div class="col-sm-6 col-xs-12">
+                    <h4>Test Output</h4>
+                    <div id="regex_intro_panel" class="panel panel-default">
+                      <div class="panel-body">
+                        <p>Use this editor to test regular expressions as you write them, both in the client
+                          and as they would run in ServiceNow.</p>
+                        <p>The expression will be automatically evaluated on whichever target you have selected (client or server*) and the result shown here.</p>
+                        <p><small>*Global scope is always used when evaluating on the server.</small></p>
+                      </div>
+                    </div>
+                    <div id="regex_match_panel" class="panel panel-success" style="display: none">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">Match</h3>
+                      </div>
+                      <div class="panel-body" id="regex_match"></div>
+                    </div>
+                    <div id="regex_group_panel" class="panel panel-success" style="display: none">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">Match groups</h3>
+                      </div>
+                      <div class="panel-body" id="regex_group"></div>
+                    </div>
+                    <div id="regex_error_panel" class="alert alert-danger" style="display: none">
+                      <strong id="regex_error"></strong>
+                    </div>
+                  </div>
+                </div>
+                <div id="regex_help">
+                  <div class="col-xs-12">
+                    <h4>Words and Ranges</h4>
+                    <table class="table table-striped">
+                      <tr><td style="width: 9em;"><code>play</code></td><td>Match the word 'play'</td></tr>
+                      <tr><td><code>1337</code></td><td>Match the number '1337'</td></tr>
+                      <tr><td><code>[TF2]</code></td><td>A single character of T, F or 2</td></tr>
+                      <tr><td><code>[^xyz]</code></td><td>Any single character except x, y or z</td></tr>
+                      <tr><td><code>[a-z]</code></td><td>Any single character in the lowercase range a-z</td></tr>
+                      <tr><td><code>[a-zA-Z]</code></td><td>Any single character in ranges a-z or A-Z</td></tr>
+                      <tr><td><code>[a-zA-Z0-9]</code></td><td>Any alphanumeric character</td></tr>
+                    </table>
+                    <h4>Classes</h4>
+                    <table class="table table-striped">
+                      <tr><td style="width: 9em;"><code>.</code></td><td>Any single character</td></tr>
+                      <tr><td><code>\d</code></td><td>A single digit</td></tr>
+                      <tr><td><code>\D</code></td><td>A single non-digit</td></tr>
+                      <tr><td><code>\s</code></td><td>Any whitespace character</td></tr>
+                      <tr><td><code>\S</code></td><td>Any non-whitespace character</td></tr>
+                      <tr><td><code>\w</code></td><td>Any word character (alphanumeric or underscore)</td></tr>
+                      <tr><td><code>\W</code></td><td>Any non-word character</td></tr>
+                    </table>
+                    <h4>Quantifiers</h4>
+                    <table class="table table-striped">
+                      <tr><td style="width: 9em;"><code>d?</code></td><td>Zero or one of d</td></tr>
+                      <tr><td><code>o*</code></td><td>Zero or more of o</td></tr>
+                      <tr><td><code>o+</code></td><td>One or more of o</td></tr>
+                      <tr><td><code>m{4}</code></td><td>Exactly 4 of m</td></tr>
+                      <tr><td><code>H{2,}</code></td><td>2 or more of H</td></tr>
+                      <tr><td><code>L{1,3}</code></td><td>Between 1 and 3 of L</td></tr>
+                    </table>
+                    <h4>Anchors</h4>
+                    <table class="table table-striped">
+                      <tr><td style="width: 9em;"><code>^</code></td><td>Line start (works with multiline)</td></tr>
+                      <tr><td><code>$</code></td><td>Line end (works with multiline)</td></tr>
+                      <tr><td><code>\A</code></td><td>String start (ignore multiline)</td></tr>
+                      <tr><td><code>\Z</code></td><td>String end (ignore multiline)</td></tr>
+                      <tr><td><code>\b</code></td><td>A word boundary</td></tr>
+                      <tr><td><code>\B</code></td><td>A non-word boundary</td></tr>
+                    </table>
+                    <h4>Alternation and Groups</h4>
+                    <table class="table table-striped">
+                      <tr><td style="width: 9em;"><code>dead|alive</code></td><td>Match 'dead' or 'alive'</td></tr>
+                      <tr><td><code>(flag)</code></td><td>Capture a group containing 'flag'.</td></tr>
+                      <tr><td><code>(?!flag)</code></td><td>Non-capturing group.</td></tr>
+                      <tr><td><code>\2</code></td><td>Reference the second captured group.</td></tr>
+                      <tr><td><code>123(?=4)</code></td><td>Positive lookahead. Ensure 123 is followed by 4.</td></tr>
+                      <tr><td><code>123(?!5)</code></td><td>Negative lookahead. Ensure 123 is not followed by 5.</td></tr>
+                    </table>
+                    <h4>Options</h4>
+                    <table class="table table-striped">
+                      <tr><td style="width: 9em;"><code>g</code></td><td>Global matching. Lookup all matches instead of just the first.</td></tr>
+                      <tr><td><code>m</code></td><td>Multiline. $ and ^ will match on newlines.</td></tr>
+                      <tr><td><code>i</code></td><td>Case insensitive matching.</td></tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <div id="system_log_pane" role="tabpanel" class="tab-pane fade">
+                <iframe id="system_log_frame" style="border: 0; width: 100%"></iframe>
+              </div>
+
+              <div id="table_hierarchy_pane" role="tabpanel" class="tab-pane fade">
+                <div class="wrap row">
+                  <div class="col-xs-12">
+                    <div id="table_hierarchy_loading" class="pull-right" style="display:none;">
+                      <i class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></i>
+                    </div>
+                    <h4>Table Hierarchy</h4>
+                    <div class="panel-body">
+                      <p>Type in a table name to see all the tables in its hierarchy.</p>
+                      <p>Hit <kbd>Enter</kbd> to run.</p>
+
+                      <table class="table table-condensed">
+                        <tr><td><code>incident</code></td><td>Show the incident table</td></tr>
+                        <tr><td><code>u_*</code></td><td>Find all tables with names beginning with 'u_'</td></tr>
+                        <tr><td><code>*data*</code></td><td>Find all tables with names containing 'data'</td></tr>
+                        <tr><td><code>**</code></td><td>Show all tables</td></tr>
+                      </table>
+
+                      <form class="form" action="" method="post" id="table_hierarchy_form">
+                        <div class="input-group">
+                          <input type="text" class="form-control" id="table_hierarchy_table" name="table_hierarchy_table" placeholder="table" />
+                          <span class="input-group-btn">
+                           <button type="submit" class="btn btn-default">Show</button>
+                          </span>
+                        </div>
+                        <div class="checkbox">
+                          <label>
+                            <input type="checkbox" id="table_hierarchy_table_do_label" /> Search table labels
+                          </label>
+                        </div>
+                      </form>
+
+                    </div>
+                  </div>
+                  <div id="table_hierarchy_result_container" class="col-xs-12" style="display: none">
+                    <h4>Hierarchy</h4>
+                    <div id="table_hierarchy_result"></div>
+                  </div>
+                </div>
+              </div>
+
+            </div><!--/.tab-content-->
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- jQuery (necessary for Bootstraps JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+
+    <!-- Bootstrap -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+    <!-- Xplore -->
+    <script src="/snd_xplore.jsdbx"></script>
+    <script src="/snd_xplore_reporter.jsdbx"></script>
+
+    <!-- CodeMirror - native scripts in ServiceNow -->
+    <script src="/codemirror.js"></script>
+    <script src="/scripts/javascript.js"></script>
+
+    <script>
+
+      // Delay a function, overriding any previous calls for the same id
+      var delay = (function () {
+        var timers = {};
+        return function (id, callback, ms) {
+          clearTimeout(timers[id]);
+          timers[id] = setTimeout(callback, ms);
+        };
+      })();
+
+      /*************************************
+                    XPLORE
+      **************************************/
+      var snd_xplore_util = {
+        loading: function () {
+          var btn = $('#xplore_btn');
+          btn.html('Loading... <i class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></i>');
+          btn.prop('disabled', true);
+          $('#output_loader').addClass('active');
+        },
+        loadingComplete: function () {
+          var btn = $('#xplore_btn');
+          btn.html('Run');
+          btn.prop('disabled', false);
+          $('#output_loader').removeClass('active');
+          // make sure we are on the output tab
+          $('#script_output_tab').tab('show');
+          // scroll to the top of the output div
+          $('#output_tabs_pane').animate({ scrollTop: 0 }, "fast");
+        },
+        execute: function () {
+          // summary:
+          //   Gather the data from the client and run Xplore
+
+          var code = '';
+          if (typeof snd_xplore_editor === 'object') {
+            code = snd_xplore_editor.getValue();
+          } else {
+            code = document.getElementById('snd_xplore').value;
+          }
+
+          var params = {
+            code: code,
+            user_data: document.getElementById('user_data_input').value,
+            runAt: document.getElementById('target').value,
+            breadcrumb: snd_xplore_reporter.getBreadcrumb(),
+            reporter: snd_xplore_reporter
+          };
+
+          snd_xplore(params);
+        },
+        executeNew: function () {
+          snd_xplore_reporter.clearBreadcrumb();
+          this.execute();
+        },
+        demo: function (code) {
+          $('#target').val('server');
+          $('#scope').val('global');
+          snd_xplore_editor.setValue(code);
+          snd_xplore_editor.focus();
+        }
+      };
+
+      $('#xplore_demo').on('click', 'a', function (e) {
+        e.preventDefault();
+        $this = $(this);
+        var code;
+        switch ($this.attr('data-demo')) {
+          case 'GlideRecord':
+            code = 'var gr = new GlideRecord(\'incident\');\ngr.setLimit(1);\ngr.query();\ngr.next();\ngr';
+            break;
+          case 'Array':
+            code = "var a = [];\na.push(['a', 'b', 'c']);\na.push(['x', 'y', 'z']);\na";
+            break;
+          case 'GlideUser':
+            code = "gs.getUser();";
+            break;
+          case 'Logging':
+            code = "gs.debug('Do you like to debug?');\ngs.addInfoMessage('You are using Xplore');";
+            break;
+          case 'scope':
+            code = "this";
+            break;
+        }
+        if (code) {
+          snd_xplore_util.demo(code);
+        }
+      });
+
+      /*************************************
+                    REGEX
+      **************************************/
+      var snd_xplore_regex_util = (function () {
+        $intro_panel   = $('#regex_intro_panel');
+        $match_panel   = $('#regex_match_panel');
+        $group_panel   = $('#regex_group_panel');
+        $error_panel   = $('#regex_error_panel');
+        $result        = $('#regex_match');
+        $result_groups = $('#regex_group');
+        function showIntro() {
+          $match_panel.hide();
+          $group_panel.hide();
+          $error_panel.hide();
+          $intro_panel.fadeIn();
+        }
+        function showError(text) {
+          $('#regex_error').empty().append(text);
+          $intro_panel.hide();
+          $match_panel.hide();
+          $group_panel.hide();
+          $error_panel.fadeIn();
+        }
+        function showResult(matches, groups) {
+          $intro_panel.hide();
+          $error_panel.hide();
+          $result.empty().append(matches);
+          $match_panel.fadeIn();
+          if (groups) {
+            $result_groups.empty().append(groups);
+            $group_panel.fadeIn();
+          } else {
+            $group_panel.hide();
+          }
+        }
+
+        snd_xplore.regex.addEvent('start', function () {
+          $('#regex_loading').fadeIn();
+        });
+
+        var escapeHtml = (function () {
+          var map = {
+            '${LT}': '&lt;',
+            '>': '&gt;',
+            '${AMP}': '&amp;'
+          };
+          var replace = function (c) {
+            return map[c];
+          };
+          return function (text) {
+            return text.replace(/${LT}|>|${AMP}/g, replace);
+          };
+        })();
+
+        snd_xplore.regex.addEvent('done', function(result) {
+          var matchHtml, groupHtml;
+          if (result) {
+            if (result.error) {
+              showError(result.error);
+            } else if (result.matches){
+              matchHtml = '';
+              $.each(result.matches, function (i, item) {
+                item.text = escapeHtml(item.text);
+                if (item.type == 'match') {
+                  matchHtml += '<span class="bg-success text-success">' + item.text + '</span>';
+                } else {
+                  matchHtml += item.text;
+                }
+              });
+              groupHtml = '';
+              if (result.groups) {
+                if (result.groups.join('').length) {
+                  $.each(result.groups, function (i, item) {
+                    groupHtml += '<h5 class="text-danger">Match ' + (i + 1) + '</h5>';
+                    groupHtml += '<ol>';
+                    $.each(item, function (i, group) {
+                      groupHtml += '<li>' + escapeHtml(group) + '</li>';
+                    });
+                    groupHtml += '</ol>';
+                  });
+                }
+              }
+              showResult(matchHtml, groupHtml);
+            } else {
+              showError('No result was given.');
+            }
+          } else {
+            showIntro();
+          }
+          $('#regex_loading').hide();
+        });
+
+        // setup the handler to run the regex when the user edits something
+        var run = (function () {
+          var cache = '';
+          return function () {
+            var expression = $('#regex').val();
+            var input = $('#regex_input').val();
+            var options = $('#regex_options').val();
+
+            if (!expression || !input) {
+              showIntro();
+              return;
+            }
+
+            if (cache === input + expression + options) {
+              return;
+            }
+            cache = input + expression + options;
+
+            snd_xplore.regex({
+              expression: expression,
+              input:      input,
+              options:    options,
+              target:     $('#target').val()
+            });
+          };
+        })();
+
+        return {
+          run: run
+        };
+      })();
+
+      /*************************************
+                    TABLES
+      **************************************/
+      var snd_xplore_table_util = (function () {
+
+        var api = {
+          tables: {},
+          current: ''
+        };
+
+        function loadTables() {
+          $.ajax({
+            type: 'GET',
+            url: '/snd_xplore.do?action=getTables',
+            dataType: 'json'
+          }).
+          done(function (result) {
+            api.tables = result;
+          }).
+          fail(function () {
+            snd_log('Error: loadTables failed.');
+          });
+        }
+        api.loadTables = loadTables;
+
+        function getTableHierarchy(table, search_labels) {
+          loading(true);
+          api.current = table;
+          $.ajax({
+            type: 'GET',
+            url: '/snd_xplore.do?action=getTableHierarchy' +
+                  '${AMP}table=' + table +
+                  '${AMP}search_labels=' + (search_labels ? '1' : '0'),
+            dataType: 'json'
+          }).
+          done(function (result) {
+            var $target = $('#table_hierarchy_result').empty();
+
+            if ('success' in result ${AMP}${AMP} result.success === false) {
+              $target.append('<div class="alert alert-danger"><strong>' + result.message + '</strong></div>');
+              loading(false);
+              return;
+            }
+
+            function generateHtml(dbo) {
+              var html = '<li>';
+              if (api.current == dbo.name) {
+                html += '<span class="bg-success text-success">' + dbo.label + '</span>';
+              } else {
+                html += dbo.label;
+              }
+              html += ' [<a href="#show" data-show="' + dbo.name + '">' +
+                  dbo.name + '</a>]';
+              html += ' <a href="' + dbo.name + '_list.do" target="_blank"><i class="glyphicon glyphicon-list-alt" /></a>';
+              html += ' <a href="' + dbo.name + '.do" target="_blank"><i class="glyphicon glyphicon-open-file" /></a>';
+              if (dbo.children.length) {
+                html += '<ul>';
+                $.each(dbo.children, function (i, childDbo) {
+                  html += generateHtml(childDbo);
+                });
+                html += '</ul>';
+              }
+              html += '</li>';
+              return html;
+            }
+            if (result.length) {
+              $.each(result, function (i, dbo) {
+                $target.append('<ul>' + generateHtml(dbo) + '</ul>');
+              });
+            } else {
+              $target.append('<div class="alert alert-danger"><strong>No table information found.</strong></div>');
+            }
+            loading(false);
+          }).
+          fail(function () {
+            loading(false);
+            snd_log('Error: getTableHierarchy failed.');
+          });
+        }
+
+        function loading(b) {
+          if (b) {
+            $('#table_hierarchy_loading').show();
+            $('#table_hierarchy_result_container').fadeOut();
+          } else {
+            $('#table_hierarchy_result_container').fadeIn();
+            $('#table_hierarchy_loading').hide();
+          }
+        }
+        api.getTableHierarchy = getTableHierarchy;
+
+        return api;
+
+      })();
+
+      /*************************************
+                    INIT
+      **************************************/
+
+      $(function () {
+
+        // update the selector for the frames
+        (function () {
+          if (window.opener) {
+            var frames = window.opener.frames;
+            var target = $('#target');
+            target.append('<option value="opener">Opener</option>');
+            for (var i = 0; frames.length > i; i++) {
+              if (!frames[i].name) continue;
+              target.append('<option value="frame_' + i + '">Opener: ' + frames[i].name + '</option>');
+            }
+          }
+        })();
+
+        // Populate the scope selector
+        $(function () {
+          var $scope = $('#scope');
+          $scope.empty();
+          $scope.append($('<option class="text-italic text-muted">Loading</option>'));
+
+          $.ajax({
+            type: 'GET',
+            url: '/snd_xplore.do?action=getScopes',
+            dataType: 'json'
+          }).
+          done(function (result) {
+              $scope.empty();
+              $.each(result, function (i, item) {
+                $scope.append($('<option value="' + item.scope + '">' + item.name + '</option>'));
+              });
+          }).
+          fail(function () {
+            snd_log('Error: populateScopes failed.');
+          });
+        });
+
+        window.snd_xplore_editor = CodeMirror.fromTextArea(document.getElementById("snd_xplore"), {
+          lineNumbers: true,
+          lineWrapping: true,
+          tabSize: 2,
+          indentUnit: 2,
+          smartIndent: true,
+          matchBrackets: true,
+          mode: 'javascript'
+        });
+
+        var sxr = snd_xplore_reporter;
+        sxr.initialize();
+        sxr.addEvent('start', snd_xplore_util.loading);
+        sxr.addEvent('done', snd_xplore_util.loadingComplete);
+        sxr.addEvent('click.interactive-result', snd_xplore_util.execute);
+        sxr.addEvent('click.breadcrumb', snd_xplore_util.execute);
+
+
+        // handle the run button clicking
+        $('#xplore_btn').click(function () {
+          snd_xplore_util.executeNew();
+        });
+
+        // regex input trigger
+        $('#regex,#regex_options,#regex_input').on('keyup', function () {
+          delay('testRegex', snd_xplore_regex_util.run, 700);
+        });
+
+        // table input trigger
+        $('#table_hierarchy_form').on('submit', function (e) {
+          e.preventDefault();
+          var table = $('#table_hierarchy_table').val();
+          var search_labels = $('#table_hierarchy_table_do_label').is(':checked');
+          //if (!table) return;
+          //delay('tableHierarchy', function () {
+            snd_xplore_table_util.getTableHierarchy(table, search_labels);
+          //}, 700);
+        });
+
+        // table hierarchy link trigger
+        $('#table_hierarchy_result').on('click', 'a', function (e) {
+          var $this = $(this);
+          var table;
+          table = $this.attr('data-show');
+          if (table) {
+            e.preventDefault();
+            $('#table_hierarchy_table').val(table);
+            snd_xplore_table_util.getTableHierarchy(table);
+          }
+        });
+
+        // setup the side pane controls
+        $('#side_controls li').on('click', 'a', function () {
+          var $target = $(this);
+          if (!$target.attr('data-pane')) return;
+
+          $('#side_controls li a').each(function () {
+            var $this = $(this);
+            var pane = $this.attr('data-pane');
+            if (!pane) return;
+            var $pane = $('#' + pane);
+
+            if (this === $target.get(0)) {
+              var workbenchLeft = $('#side_controls').outerWidth();
+              if (!$pane.is(':visible')) {
+                workbenchLeft += $pane.outerWidth();
+                $('#workbench').animate({left: workbenchLeft}, 400, function () {
+                  $pane.fadeIn(400);
+                });
+              } else {
+                $pane.fadeOut(400, function () {
+                  $('#workbench').animate({left: workbenchLeft}, 400, function () {
+                    $('#workbench').css('left', '');
+                  });
+                });
+              }
+              $this.toggleClass('active');
+            } else {
+              $this.removeClass('active');
+              $pane.hide();
+            }
+          });
+        });
+
+        // setup the editor toggle
+        $('#editor_toggle').on('click', (function () {
+          var output_left = 300;
+          return function () {
+            var $this = $(this);
+            var $editor = $('#editor');
+            var $output = $('#output');
+            if ($editor.is(":hidden")) {
+              $output.animate({left: $editor.outerWidth()}, 400, function () {
+                $editor.fadeIn(400);
+                $this.addClass('active');
+              });
+            } else {
+              $editor.fadeOut(400, function () {
+                $output.animate({left: 0}, 400, function () {
+                  output_left = $output.css('left');
+                  $this.removeClass('active');
+                });
+              });
+            }
+          };
+        })());
+
+        // Execute the script again when the breadcrumb is reset
+        $('#clearBreadcrumb').on('click', function () {
+          snd_xplore_util.executeNew();
+        });
+
+        // execute when Ctrl + Enter is used
+        $('#editor').keydown(function (event) {
+          if (event.ctrlKey) {
+            if (event.keyCode == 10 || event.keyCode == 13) {
+              event.preventDefault();
+              snd_xplore_util.executeNew();
+            }
+          }
+        });
+
+        var resizeUtil = {
+          calcEditorRatio: function (store) {
+            var ratio = $('#editor').width() / $('#workbench').width();
+            if (store) {
+              resizeUtil.editorRatio = ratio;
+            }
+            return ratio;
+          },
+          editorRatio: 0,
+
+          calcWorkbenchWidth: function (store) {
+            var width = $('#workbench').width();
+            if (store) {
+              resizeUtil.workbenchWidth = width;
+            }
+            return width;
+          },
+          workbenchWidth: 0
+        };
+        resizeUtil.calcEditorRatio(true);
+        resizeUtil.calcWorkbenchWidth(true);
+
+        // make the code mirror editor resizable
+        $('#editor').resizable({
+          containment: 'parent',
+          handles: {'e': '.ui-resizable-e'},
+          minWidth: 100,
+          resize: function (e, ui) {
+             $('#output').css('left', ui.size.width + 'px');
+             resizeUtil.calcEditorRatio(true);
+          }
+        });
+
+        // set the width of the editor and output so they are pixels instead of percents
+        // this is so the editor looks right when the side-pane is shown/hidden
+        (function () {
+          var $output = $('#output');
+          var $editor = $('#editor');
+          var editorWidth = $editor.outerWidth();
+          $output.css('left', editorWidth);
+          $editor.css('width', editorWidth);
+        })();
+
+        // Setup the onChange handler for hiding scope select
+        // when the target is not the client.
+        $('#target').on('change', function () {
+          if (this.value == 'server') {
+            $('#scope').fadeIn();
+          } else {
+            $('#scope').fadeOut();
+          }
+        });
+
+        // make tabs clickable
+        $('#output_tabs a').click(function (e) {
+          e.preventDefault();
+          $(this).tab('show');
+        });
+
+        // make system log iframe load on tab click
+        $('#system_log_tab').one('click', function () {
+          $('#system_log_frame').attr('src', '/syslog_list.do?sysparm_query=sys_created_onONToday%40javascript%3Ags.daysAgoStart(0)%40javascript%3Ags.daysAgoEnd(0)');
+
+          // now make it reload every time the tab is clicked
+          $('#system_log_tab').click('click', function () {
+            var $frame = $('#system_log_frame');
+            $frame.attr('src', $frame.attr('src'));
+          });
+
+        });
+
+        $output_tabs_pane = $('#output_tabs_pane');
+
+        // facilitate system log frame resizing
+        function resizeLogPane() {
+          var $output_content = $('#output_content');
+          var $output_tabs = $('#output_tabs');
+          var $el = $('#system_log_frame');
+          $el.css('height', $output_content.height() - $output_tabs.height() - 10);
+        }
+        resizeLogPane();
+
+        // update the output pane so the tabs can stack and be seen
+        function resizeOutputContent() {
+          $output_tabs_pane.css('top', $('#output_tabs').outerHeight() + 'px');
+        }
+        resizeOutputContent();
+
+        function resizeUserData() {
+          var $user_data_pane = $('#user_data_pane');
+          var user_data_input = $('#user_data_input').get(0);
+          var remaining_space;
+
+          user_data_input.style.height = '';
+          remaining_space = $output_tabs_pane.height() - $user_data_pane.height();
+
+          if (remaining_space > 10) {
+            user_data_input.style.height = (remaining_space - 10) + 'px';
+          }
+        }
+        resizeUserData();
+
+        // resize the view when the window resizes
+        $(window).resize(function () {
+          // need to see if we are changing the window size or just the editor width
+          // we do this by checking if the workbench width has changed
+          if (resizeUtil.workbenchWidth != resizeUtil.calcWorkbenchWidth(true)) {
+            var newWidth = $('#workbench').width() * resizeUtil.editorRatio;
+            var $editor = $('#editor');
+            $editor.css('width', newWidth);
+            if ($editor.is(':visible')) {
+              $('#output').css('left', newWidth);
+            }
+          }
+
+          resizeLogPane();
+          resizeOutputContent();
+          resizeUserData();
+        });
+
+        snd_xplore_editor.focus();
+        $('#window_loader').removeClass('active');
+      });
+
+    </script>
+  </body>
+</html>

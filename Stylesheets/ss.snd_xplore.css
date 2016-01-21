@@ -1,0 +1,395 @@
+/*-----------------------------------
+        CODEMIRROR OVERRIDES
+-----------------------------------*/
+.CodeMirror {
+    line-height: 1.1em;
+    border: 1px solid #ccc;
+    box-sizing: content-box;
+}
+
+.CodeMirror-gutter {
+    min-width: 3em;
+}
+
+.cm_active_line {
+    background: #e8f2fe !important;
+    width: 100%
+}
+
+.cm_error {
+    background: transparent url(/images/icons/error_12x12.jpgx) no-repeat scroll top left;
+}
+
+.cm_warning {
+    background: transparent url(/images/icons/warning_12x12.gifx) no-repeat scroll top left;
+}
+
+.codemirror .cm_error {
+    background: transparent url(/images/icons/error_12x12.jpgx) no-repeat scroll top left;
+}
+
+.codemirror .cm_warning {
+    background: transparent url(/images/icons/warning_12x12.gifx) no-repeat scroll top left;
+}
+
+.CodeMirror div {
+    line-height: 1.2em;
+    font-family: Menlo, Consolas, monospace;
+    font-size: 12px;
+}
+
+.outputmsg_error_fullscreen {
+    position: fixed;
+    bottom: 0px;
+    z-index: 1000;
+}
+
+.cm_unfold {
+    background: transparent url(/images/icons/filter_hide_12x12.gifx) no-repeat scroll top left;
+}
+
+.cm_fold {
+    background: transparent url(/images/icons/filter_reveal_12x12.gifx) no-repeat scroll top left;
+}
+
+.CodeMirror-gutter {
+    cursor: pointer;
+    min-width: 4.0em;
+}
+
+.CodeMirror-gutter-text pre {
+    padding-left: 20px;
+    text-align: right;
+}
+
+.CodeMirror-selected {
+    background: #d9d9d9;
+}
+.CodeMirror-focused .CodeMirror-selected {
+    background: #d7d4f0;
+}
+
+.CodeMirror pre {
+    background-color: transparent;
+}
+
+/*-----------------------------------
+              XPLORE
+-----------------------------------*/
+
+body {
+  font-size: 12px;
+}
+pre {
+  font-size: 11px;
+}
+
+#wrapper {
+  overflow: hidden;
+  position: absolute;
+  top: 206px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  #wrapper {
+    top: 50px;
+  }
+}
+
+.navbar-nav {
+  margin: 0;
+}
+
+.label-as-badge {
+  border-radius: 1em;
+}
+sup .label-as-badge {
+  padding-bottom: 0.2em;
+}
+
+#side_controls {
+  position: absolute;
+  width: 40px;
+  background: #ecedef;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  border-right: 1px solid #e6e6e6;
+}
+
+#side_controls ul {
+  width: 100%;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#side_controls > ul > li {
+  text-align: center;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+#side_controls > ul > li > a {
+  font-weight: bold;
+  color: #333;
+  text-decoration: none;
+  display: block;
+  position: relative;
+  padding: 15px 0;
+  -webkit-transition: all .3s ease;
+  -moz-transition: all .3s ease;
+  transition: all .3s ease;
+}
+
+#side_controls ul > li > a.active {
+  background: #f9f9f9;
+}
+
+.side_pane {
+  height: 100%;
+  padding: 20px 10px 10px 10px;
+  z-index: 10;
+  position: absolute;
+  left: 40px;
+  top: 0;
+  width: 25%;
+  overflow: auto;
+  background: #f9f9f9;
+  border-right: 1px solid #ccc;
+}
+
+.side_pane ul {
+  list-style-type: square;
+  margin-left: 0;
+  padding-left: 20px;
+}
+
+#workbench {
+  position: absolute;
+  top: 0;
+  left: 40px;
+  right: 0;
+  bottom: 0;
+}
+
+#editor {
+  position: absolute;
+  right: 60%;
+  width: 40%;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  min-width: 100px;
+  border-right: 1px solid #ccc;
+  z-index: 5;
+  background: #fff;
+}
+
+#editor .CodeMirror,
+#editor .CodeMirror-scroll  {
+  height: 100%;
+}
+
+.ui-resizable-handle {
+  position: absolute;
+  font-size: 0.1px;
+  display: block;
+}
+
+.ui-resizable-e {
+  width: 7px;
+  right: -5px;
+  top: 0;
+  height: 100%;
+  cursor: col-resize;
+}
+
+#output {
+  position: absolute;
+  left: 40%;
+  bottom: 0;
+  top: 0;
+  right: 0;
+  background: #fff;
+  overflow: hidden;
+}
+
+#output_content {
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+#output_tabs {
+  background-color: #f5f5f5;
+}
+
+#output_tabs_pane {
+  position: absolute;
+  top: 40px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: auto;
+}
+
+#script_output_tab {
+  padding-top: 10px;
+}
+
+.tab-pane {
+  padding: 0 15px;
+  font-family: monaco, courier;
+}
+
+.tab-pane h4 {
+  text-align: left;
+  text-transform: uppercase;
+  border-bottom: 1px solid #ccc;
+}
+.tab-pane .wrap {
+  background-color: #f8f8f8;
+  border: #c4c4c4 1px solid;
+  padding: 15px 0;
+  margin: 15px 0;
+}
+
+#system_log_pane {
+  padding: 0;
+}
+
+#regex_pane .slash {
+  float: left;
+  font-size: large;
+  font-weight: bold;
+  display: block;
+  width: 20px;
+  text-align: center;
+  padding: 5px 0;
+  color: #9a9a9a;
+}
+#regex_expression input {
+  float: left;
+  padding: 4px;
+}
+#regex_pane .regex-options {
+  float: right;
+  width: 70px;
+}
+#regex_options {
+  width: 50px;
+  float: left;
+}
+#regex_pane .regex-expression {
+  padding: 0 70px 0 20px;
+}
+#regex {
+  width: 100%;
+}
+#regex_pane textarea {
+  border: 0;
+  padding: 4px;
+  background: transparent;
+}
+#regex_match, #regex_group {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+#regex_match .bg-success {
+  padding: 2px;
+  color: #066;
+  background-color: #cef;
+}
+
+.page_loader {
+  background-color: rgba(255, 255, 255, 0.9);
+  bottom: 0;
+  display: none;
+  left: 0;
+  position: absolute;
+  right: 0;
+  text-align: center;
+  top: 0;
+  z-index: 50;
+}
+
+.page_loader .loading {
+  bottom: 0;
+  color: #1a1d1d;
+  left: 0;
+  margin: -4rem auto 0;
+  position: absolute;
+  right: 0;
+  text-align: center;
+  top: 50%;
+}
+
+.page_loader .loading i {
+  font-size: 5rem;
+  line-height: 5rem;
+  text-shadow:rgba(255, 255, 255, 0.75) 0 0 0 0.5em;
+}
+
+.page_loader.active {
+  display: block;
+}
+
+#output .breadcrumb {
+  margin-bottom: 0;
+}
+
+#type_control {
+  margin: 4px 0 4px 8px
+}
+
+.nav .navbar-control {
+	margin-left: 5px;
+	margin-top: 8px;
+	margin-bottom: 8px;
+}
+
+.table pre {
+	margin: 0;
+}
+
+.log {
+  background-color: #f3f3f3;
+}
+
+.checkbox-inline.no_indent,
+.checkbox-inline.no_indent+.checkbox-inline.no_indent {
+  margin-left: 0;
+  margin-right: 10px;
+}
+.checkbox-inline.no_indent:last-child {
+  margin-right: 0;
+}
+
+.glyphicon-refresh-animate {
+    -animation: spin .7s infinite linear;
+    -webkit-animation: spin2 .7s infinite linear;
+}
+
+@-webkit-keyframes spin2 {
+    from { -webkit-transform: rotate(0deg);}
+    to { -webkit-transform: rotate(360deg);}
+}
+
+@keyframes spin {
+    from { transform: scale(1) rotate(0deg);}
+    to { transform: scale(1) rotate(360deg);}
+}
+
+/* fix IE select */
+select::-ms-expand {
+  display: none;
+}
