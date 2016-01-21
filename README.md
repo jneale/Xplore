@@ -17,4 +17,4 @@ Also have a look at my other Shares:
 
 ## License
 
-MIT, see [LICENSE.md](http://github.com/sn-developer/xplore/blob/master/LICENCE.md) for details.
+MIT, see [LICENSE.md](https://github.com/sn-developer/xplore/blob/master/LICENSE.md) for details.
