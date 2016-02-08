@@ -1,5 +1,5 @@
 A suite of tools for every ServiceNow developer.
-Created by James Neale <james@sndeveloper.com>
+Originally created by James Neale <james@sndeveloper.com>
 
 ## Xplore Install notes:
 - Some records have been removed with the updates. ServiceNow can
@@ -11,7 +11,7 @@ Created by James Neale <james@sndeveloper.com>
 
 ## Xplore Change Log
 
-## Version 3.3 (G3.0.3)
+## Version 3.3 (G3.0.1)
 - Feature: Add User Data pane for working with large text strings e.g. XML
 - Feature: Improve table hierarchy search with expression support, label support
   and a search button (just hit <ENTER> instead of waiting).

@@ -10,7 +10,7 @@ Xplore is the best developer toolkit around for ServiceNow, used by ServiceNow p
 - Built in log viewer
 - Fuji & Geneva compatible
 
-Also have a look at my other Shares:
+Also have a look at some other Shares:
 - Developer Patch for Geneva - this gives the update set/application pickers dynamic width adjustment amongst other things
 - Geneva Theme: Magnum - a clean theme for Geneva UI16
 
