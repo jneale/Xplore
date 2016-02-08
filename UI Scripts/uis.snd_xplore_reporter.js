@@ -26,7 +26,8 @@ var snd_xplore_reporter = (function () {
         prop += ' <a href="javascript:void(0)" class="interactive"><span class="hidden">' + item.name + '</span>()</a>';
       }
       if (!item.string) item.string = "";
-      if (item.string.length < 100 && (item.type.toLowerCase() != 'function' || !item.string.length)) {
+      if (item.string.length < 100 && (item.type.toLowerCase() != 'function' || !item.string.length ||
+          item.string.substr(0,8) != 'function')) {
         table.append('<tr class="data-row">' +
           '<td class="col-md-3 prop">' + prop + '</td>' +
           '<td class="col-md-3 type">' + item.type + '</td>' +

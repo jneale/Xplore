@@ -84,6 +84,11 @@ pre {
   font-size: 11px;
 }
 
+h5 {
+  font-weight: bold;
+  margin-top: 18px;
+}
+
 #wrapper {
   overflow: hidden;
   position: absolute;
@@ -246,9 +251,16 @@ sup .label-as-badge {
   padding-top: 10px;
 }
 
+.monospace {
+  font-family: monaco, courier;
+}
+
+.list-example {
+  max-width: 400px;
+}
+
 .tab-pane {
   padding: 0 15px;
-  font-family: monaco, courier;
 }
 
 .tab-pane h4 {

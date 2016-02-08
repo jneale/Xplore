@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null">
+<div class="row" style="margin-top: 12px; font-size: 14px;">
+
+  <div class="col-xs-12">
+
+    <div class="alert alert-danger">
+      <strong>Warning:</strong> This utility runs code in your
+      environment. Make sure you know what you are doing as it is
+      entirely possible for you to screw up your instance.
+    </div>
+
+    <!-- Twitter Widget Script -->
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+    <div class="panel panel-default">
+      <div class="panel-heading" role="tab">
+        <h4 class="panel-title">
+          <a href="#info_welcome" role="button" data-toggle="collapse">ELLO ELLO</a>
+        </h4>
+      </div>
+      <div id="info_welcome" class="panel-collapse collapse in" role="tabpanel">
+        <div class="panel-body">
+          <p>Hey! Thanks for downloading Xplore.</p>
+          <p>Xplore is a free, independently developed utility for ServiceNow that
+            has been built 'for developers, by developers'. We really appreciate
+            all the community input we get!</p>
+
+          <p><strong>Ways you can help!</strong>
+            <ul class="list-group list-example">
+              <li class="list-group-item">
+                <a href="https://share.servicenow.com/app.do#/detailV2/c42105f2e1581a007c390227ffa71e61/reviews"
+                  target="_blank">
+                  <span class="glyphicon glyphicon-thumbs-up"></span>
+                  Write a review</a>
+              </li>
+              <li class="list-group-item">
+                <a href="https://github.com/sn-developer/Xplore" target="_blank">
+                <span class="glyphicon glyphicon-wrench"></span>
+                Contribute on GitHub</a>
+              </li>
+              <li class="list-group-item">
+                <a href="mailto:info@sndeveloper.com?subject=Xplore Feedback">
+                  <span class="glyphicon glyphicon-envelope"></span>
+                  Say hello!</a>
+              </li>
+            </ul>
+          </p>
+
+          <p>Thanks!</p>
+          <p><a href="https://twitter.com/James_Neale" target="_blank">James</a>
+          and
+          <a href="https://twitter.com/simthort" target="_blank">Tim</a>
+          </p>
+
+          <a href="https://twitter.com/intent/tweet?button_hashtag=Xplore${AMP}text=My%20job%20as%20a%20%23servicenowdev%20just%20got%20a%20lot%20easier!%20%40sn_developer" class="twitter-hashtag-button" data-related="sn_developer" data-url="https://goo.gl/fAyYTA">Tweet #Xplore</a>
+
+          <a href="https://twitter.com/sn_developer" class="twitter-follow-button"
+          data-show-count="false">Follow @sn_developer</a>
+
+          <script src="//platform.linkedin.com/in.js" type="text/javascript"> lang: en_US</script>
+          <script type="IN/FollowCompany" data-id="10227998"></script>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-group" id="info_accordion" role="tablist">
+
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab">
+          <h4 class="panel-title">
+            <a href="#info_script_editor" role="button" data-toggle="collapse"
+              data-parent="#info_accordion">SCRIPT EDITOR</a>
+          </h4>
+        </div>
+        <div id="info_script_editor" class="panel-collapse collapse in" role="tabpanel">
+          <div class="panel-body">
+            <p>Use the script editor on the left to write and run scripts
+              in ServiceNow, much like a background script, but
+              supercharged. The last object in the script will be shown
+              here in a detailed output tab.</p>
+           <p>Use the choice list to choose where you want to run your
+              code, either server or client.</p>
+            <p>Launching Xplore from within ServiceNow will give you
+              access to the various framesServiceNow uses.</p>
+            <p>
+              Not sure what to do? Try one of these demos:
+              <div class="list-group xplore_demo list-example">
+                <a data-demo="GlideRecord" href="#demo"
+                  class="list-group-item list-group-item-info">Demo: GlideRecord</a>
+                <a data-demo="Array" href="#demo"
+                  class="list-group-item list-group-item-info">Demo: Array</a>
+                <a data-demo="GlideUser" href="#demo"
+                  class="list-group-item list-group-item-info">Demo: GlideUser</a>
+                <a data-demo="Logging" href="#demo"
+                  class="list-group-item list-group-item-info">Demo: Logging and Messages</a>
+                <a data-demo="scope" href="#demo"
+                  class="list-group-item list-group-item-info">Demo: Current scope</a>
+              </div>
+            </p>
+            <p class="alert alert-warning">Tip: Use the keyboard shortcut
+              <kbd>Ctrl + Enter</kbd> to run.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab">
+          <h4 class="panel-title">
+            <a href="#info_user_data" role="button" data-toggle="collapse"
+              data-parent="#info_accordion">USER DATA</a>
+          </h4>
+        </div>
+        <div id="info_user_data" class="panel-collapse collapse" role="tabpanel">
+          <div class="panel-body">
+            <p>Paste in large chunks of text like XML and work with
+              them in your script.</p>
+            <div class="list-group xplore_demo list-example">
+              <a data-demo="user_data" href="#demo"
+                class="list-group-item list-group-item-info">Demo: Format XML</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab">
+          <h4 class="panel-title">
+            <a href="#info_regex" role="button" data-toggle="collapse"
+              data-parent="#info_accordion">REGEX</a>
+          </h4>
+        </div>
+        <div id="info_regex" class="panel-collapse collapse" role="tabpanel">
+          <div class="panel-body">
+            <p>You can test out regular expressions natively in ServiceNow!</p>
+            <p>If you've done any work with regular expressions then you will know
+              that sometimes regular expressions don't work the same way
+              in ServiceNow as they do in browsers or other languages.</p>
+            <p>Simply type in your expression and a test string, give
+              it a second, and it will automatically test your expression
+              for you and show you the results - including the match groupings.</p>
+            <p class="alert alert-warning">Tip: Change to 'Client' to test an
+              expression in your browser.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab">
+          <h4 class="panel-title">
+            <a href="#info_table_hierarchy" role="button" data-toggle="collapse"
+              data-parent="#info_accordion">TABLE HIERARCHY</a>
+          </h4>
+        </div>
+        <div id="info_table_hierarchy" class="panel-collapse collapse"
+          role="tabpanel">
+          <div class="panel-body">
+            <p>The table hierarchy tool allows you to view the hiearchy
+              of a table in an interactive view.</p>
+            <p>Type in the name or label of a table you are interested
+              in and hit <kbd>Enter</kbd></p>
+            <p>Navigate through the hierarchy (very useful for things
+              like cmdb_ci) and use handy links to open the list or
+              form view of any table.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab">
+          <h4 class="panel-title">
+            <a href="#info_logs" role="button" data-toggle="collapse"
+              data-parent="#info_accordion">SYSTEM LOGS</a>
+          </h4>
+        </div>
+        <div id="info_logs" class="panel-collapse collapse" role="tabpanel">
+          <div class="panel-body">
+            <p>The system log is now embedded into Xplore for easy access.</p>
+            <p class="alert alert-warning">Tip: Double-clicking the 'Logs' tab
+            will automatically return the reset the log window.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab">
+          <h4 class="panel-title">
+            <a href="#info_tips" role="button" data-toggle="collapse"
+              data-parent="#info_accordion">TIPS</a>
+          </h4>
+        </div>
+        <div id="info_tips" class="panel-collapse collapse" role="tabpanel">
+          <div class="panel-body">
+            <h4>Logging</h4>
+            <p>Xplore supports capturing server messages using the
+              following native ServiceNow logging functions:</p>
+            <ul class="list-example">
+              <li><code>gs.log("Hello world")</code></li>
+              <li><code>gs.print("Hello world")</code></li>
+              <li><code>gs.info("Hello world")</code></li>
+              <li><code>gs.warn("Hello world")</code></li>
+              <li><code>gs.error("Hello world")</code></li>
+              <li><code>gs.addInfoMessage("Hello world")</code></li>
+              <li><code>gs.addErrorMessage("Hello world")</code></li>
+            </ul>
+            <p>Some server exceptions result in the transaction being aborted by
+              ServiceNow which means you will have limited (if any) output.
+              Xplore helps with this by automatically retrieving
+              the session log statements that were generated up to the time of the error
+             (using the functions shown above) and showing them in the output pane.
+            </p>
+
+            <p>Client side logs can be captured as well:</p>
+            <ul class="list-example">
+              <li><code>jslog("Hello world")</code></li>
+            </ul>
+
+            <h4>Script Include</h4>
+            <p>Xplore is based on a global Script Include that you can
+              run anywhere in ServiceNow.</p>
+
+            <h5>snd_xplore(obj)</h5>
+            <p class="col-xs-12">Uses the default reporter to print everything using gs.print()</p>
+
+            <h5>snd_xplore.lookAt(obj)</h5>
+            <p class="col-xs-12">Get a object containing the properties 'type' and
+              'value' of your object.</p>
+
+            <h5>snd_xplore(obj, my_reporter)</h5>
+            <p class="col-xs-12">You can also write your own reporter to handle the output of snd_xplore.
+              Check out the snd_xplore Script Include for the built in print_reporter
+              which works in both global and scoped apps. This page uses a custom
+              print reporter to generate JSON and package it all back to the client
+              over AJAX.</p>
+
+            <h5>snd_xplore.test(obj)</h5>
+            <p class="col-xs-12">Sometimes when you are 'Xplore-ing' an object, you
+              will come across properties that throw exceptions when you try to
+              read their value. You can bypass this property by updating the
+              Xplore Red List on the fly, or add the property to the
+              'redlist' array in the snd_xplore Script Include.</p>
+
+            <h5>snd_xplore.blacklist('illegalProp')</h5>
+            <p class="col-xs-12">Blacklisted properties are those that throw illegal access exceptions.
+              ServiceNow don't even want you trying to access these, let alone
+              see their value. Xplore has a built in template to filter the majority
+              of these, but sometimes they will slip through. Bypass these properties
+              on the fly, or add the property to the 'blacklist' array
+              in the snd_xplore Script Include.</p>
+
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /info_accordion -->
+  </div>
+</div>
+
+<div class="row">
+  <pre style="font-size:10px; width: 600px; background: transparent; border: none; margin: auto; text-align: left;">
+     SSSSSSSSSSSSSSSSSSSSS  NNNNNNNNNN                 NNNNNN  DDDDDDDDDDDDDDDDDDD
+  SSS::::::::::::::::::::S  N:::::::::NN               N::::N  D::::::::::::::::::DD
+SSSSSSSSSSSSSSSSSSSSSSSSSS  NNNNNNNN::::NN             N::::N  D::::DDDDDDDDDDDD::::DD
+                                    NN::::NN           N::::N  D::::D           DD::::D
+SSSSSS                      NNNNNN    N:::::N          N::::N  D::::D             DD:::D
+S:::::SSSSSSSSSSSSSS        N::::N     NN::::NN        N::::N  D::::D               D:::D
+ SS:::::::::::::::::SSS     N::::N       N:::::N       N::::N  D::::D               D:::D
+   SSSSSSSSSSSSSS::::::SS   N::::N        NN::::NN     N::::N  D::::D               D:::D
+                 SSS:::::S  N::::N          N:::::N    N::::N  D::::D               D:::D
+                    S::::S  N::::N           NN::::NN  N::::N  DDDDDD             DD:::D
+                 SSS:::::S  N::::N             N:::::N N::::N                   DD::::D
+SSSSSSSSSSSSSSSSS::::::SS   N::::N              NN::::NN::::N  DDDDDDDDDDDDDDDDD::::DD
+S:::::::::::::::::::SSS     N::::N                N:::::::::N  D::::::::::::::::::DD
+SSSSSSSSSSSSSSSSSSSS        NNNNNN                 NNNNNNNNNN  DDDDDDDDDDDDDDDDDDD
+  </pre>
+</div>
+
+<div class="row">
+  <div class="col-xs-12">
+    <p>
+      Version: ${snd_xplore.version}. The UI client uses
+      <a href="http://getbootstrap.com/" target="_blank">Bootstrap</a>,
+      <a href="https://jquery.com/" target="_blank">JQuery</a>,
+      and <a href="https://codemirror.net/" target="_blank">CodeMirror</a>.
+    </p>
+  </div>
+</div>
+</j:jelly>

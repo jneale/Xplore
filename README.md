@@ -14,7 +14,6 @@ Also have a look at my other Shares:
 - Developer Patch for Geneva - this gives the update set/application pickers dynamic width adjustment amongst other things
 - Geneva Theme: Magnum - a clean theme for Geneva UI16
 
-
 ## License
 
 MIT, see [LICENSE.md](http://github.com/sn-developer/xplore/blob/master/LICENCE.md) for details.

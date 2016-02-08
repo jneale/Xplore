@@ -73,12 +73,14 @@ var snd_xplore = (function () {
         result.type = getType(eResult);
         result.string = '' + eResult;
 
-        for (var x in eResult) {
-          result.report.push({
-            name: x,
-            type: getType(eResult[x]),
-            string: '' + eResult[x]
-          });
+        if (params.show_props) {
+          for (var x in eResult) {
+            result.report.push({
+              name: x,
+              type: getType(eResult[x]),
+              string: params.show_strings ? '' + eResult[x] : '[user ignored]'
+            });
+          }
         }
 
       } catch (e) {
@@ -148,7 +150,9 @@ var snd_xplore = (function () {
           code: params.code,
           user_data: params.user_data,
           breadcrumb: params.breadcrumb,
-          scope: $('#scope').val()
+          scope: $('#scope').val(),
+          show_props: params.show_props,
+          show_strings: params.show_strings
         })
       },
       dataType: "json"

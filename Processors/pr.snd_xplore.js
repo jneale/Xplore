@@ -4,11 +4,12 @@
   will be sent to the browser. You can then use the ActionProcessor
   class to have this processor be used as a simple API.
 
-  Created by james@sndeveloper.com 2015
+  Created by james@sndeveloper.com 2015-2016
 */
 var ui_main = 'snd_xplore_main'; // put your UI Macro name here
 
 /* Boilerplate */
+var json = new JSON();
 var template = getParam('template');
 var action = getParam('action');
 var data = getParam('data');
@@ -20,14 +21,7 @@ if (!checkRoles()) {
 } else if (action) {
   ActionProcessor().process(action, data);
 } else {
-  HtmlProcessor().
-  inject({
-    script_version: snd_xplore.version,
-    // workarounds for UI Macro XML validation
-    AMP: '&',
-    LT: '<'
-  }).
-  sendHtml(ui_main);
+  HtmlProcessor().sendHtml(ui_main);
 }
 /* !Boilerplate */
 
@@ -111,7 +105,7 @@ function ActionProcessor() {
           error: ('' + e).split(':').pop()
         };
       }
-      while (m = regex.exec(input)) {
+      while ((m = regex.exec(input))) {
         matches.push({
           index: m.index,
           length: m[0].length
@@ -170,7 +164,7 @@ function ActionProcessor() {
       switch (String(action)) {
         /*
           Write your switch code here for requests
-          See parseJson for using POST data
+          See parseJsonData for using POST data
         */
         case 'logs':
           reporter.getOutputMessages();
@@ -178,12 +172,12 @@ function ActionProcessor() {
           response = responseFactory(true, reporter.getResponse());
           break;
         case 'regex':
-          data = parseJson(data);
+          data = parseJsonData(data);
           response = responseFactory(true, evalRegex(data.input, data.expression, data.options));
           break;
         case 'run':
           var runner = new XploreRunner();
-          data = parseJson(data);
+          data = parseJsonData(data);
           if (!data) {
             gs.addErrorMessage('Invalid HTTP data object.');
             reporter.getOutputMessages();
@@ -213,7 +207,7 @@ function ActionProcessor() {
       response = responseFactory(false, e.toString());
     }
     if (!response) response = responseFactory(false, {message: 'Nothing returned.'});
-    g_processor.writeOutput('application/json', new JSON().encode(response));
+    g_processor.writeOutput('application/json', json.encode(response));
   }
 
   /**
@@ -267,15 +261,12 @@ function ActionProcessor() {
       otherwise returns the given parameter
 
   **/
-  var parseJson = (function () {
-    var json = new JSON();
-    return function (data) {
-      if (data && data.data) {
-        return json.decode(data.data);
-      }
-      return json.decode(data);
-    };
-  })();
+  function parseJsonData(data) {
+    if (data && data.data) {
+      return json.decode(data.data);
+    }
+    return json.decode(data);
+  }
 
   /**
     summary:
@@ -308,8 +299,6 @@ function ActionProcessor() {
   You shouldn't need to edit below this.
 */
 function HtmlProcessor() {
-
-  this.userVarObj = null;
 
   /**
     summary:
@@ -354,10 +343,36 @@ function HtmlProcessor() {
     gr.setLimit(1);
     gr.query();
     if (gr.next()) {
-      return setScriptVersions(replaceVars(gr.xml + '', this.userVarObj));
+      var xml = runJellyScript(gr.xml);
+      return setScriptVersions(xml);
     }
     g_processor.writeOutput('text/plain', 'Missing required UI Macro: ' + name);
     return false;
+  }
+
+  /**
+    summary:
+      Run a Jelly script.
+    description:
+      Takes an XML Jelly script and runs it with
+      variables.
+    jelly: String
+      A jelly script to run.
+    vars: Object (Optional)
+      An object of name-value pairs to use in the
+      Jelly script. The jelly script will need to
+      prefix the names with 'jvar_'.
+    returns: String
+      The processed Jelly script.
+  **/
+  function runJellyScript(jelly, vars) {
+    var runner = new GlideJellyRunner();
+    if (typeof vars === 'object') {
+      for (var name in vars) {
+        runner.setVariable('jvar_' + name, vars[name]);
+      }
+    }
+    return runner.run(jelly);
   }
 
   /**
@@ -438,25 +453,9 @@ function HtmlProcessor() {
     return html;
   }
 
-  /**
-    summary:
-      Inject some variables into the script generation
-
-    varObj: Object
-      A key-value pair object with keys to replace in any output using
-      the format '${foo}' to give 'bar'.
-
-    returns: HtmlProcessor
-  **/
-  function inject(varObj) {
-    userVarObj = varObj;
-    return this;
-  }
-
   return {
     sendHtml: sendHtml,
-    sendTemplate: sendTemplate,
-    inject: inject
+    sendTemplate: sendTemplate
   };
 }
 
@@ -638,7 +637,7 @@ function XploreRunner() {
     if (result !== null && options.breadcrumb) {
       result = dotwalk(result, options.breadcrumb);
     }
-    snd_xplore(result, reporter);
+    snd_xplore(result, reporter, options);
   }
 
   /**
@@ -679,7 +678,7 @@ function XploreRunner() {
     }
     scopedScript += '} catch (e) { result = e; }\n';
 
-    scopedScript += 'var options = {scope: "' + options.scope + '"};\n';
+    scopedScript += 'var options = ' + json.encode(options) + ';\n';
     scopedScript += 'global.snd_xplore(result, reporter, options);\n';
 
     try {
@@ -765,7 +764,7 @@ function XploreTableHierarchy(table, options) {
   var MAX_DEPTH = 25;
 
   var SEARCH_LABEL =  options ? !!options.search_label : false;
-gs.print(SEARCH_LABEL);
+
   /**
     summary:
       Get the hierarchy of a given table or all the tables.
@@ -792,9 +791,9 @@ gs.print(SEARCH_LABEL);
     data.names = getSortedKeys(info);
 
     // loop until we have no more tables to check
-    each(Array(MAX_DEPTH), function () {
+    eachArr(Array(MAX_DEPTH), function () {
       var nextNames = []; // process these names on the next iteration
-      each(data.names, function (i, name) {
+      eachArr(data.names, function (i, name) {
         var dbo = info[name];
         /*dbo.toString = function () {
           return this.super_class + '.' + this.name;
@@ -832,46 +831,48 @@ gs.print(SEARCH_LABEL);
       value is an object containing a copy of the sys_db_object data.
   **/
   function getTableInfo(table, searchLabel) {
-    var required, matcher;
+    var required, matchTable, matcher;
 
-    matcher = (function (t) {
-      var e = t.substr(0,1) === '*';
-      var s = t.substr(-1) === '*';
-      if (e) t = t.substr(1);
-      if (s) t = t.substr(0, t.length - 1);
-      if (!s || !e) {
-        if (s) t = '^' + t; // starts with
-        else if (e) t = t + '$'; // ends with
+    matchTable = (function (t) {
+      var c = t.substr(0,1);
+      if (c === '*') {
+        t = t.substr(1); // contains
+      } else if (c === '=') {
+        t = '^' + t.substr(1) + '$'; // equals
+      } else {
+        t = '^' + t; // starts with
       }
-      return new RegExp(t);
+      return t;
     })(table);
+    matcher = new RegExp(matchTable, 'i');
 
-    // if it's a standard table or looking for all tables
-    if (table == '**' || table == 'ALL') table = '';
+    // Is the user looking for all tables?
+    if (table == '*' || table == 'ALL') table = '';
 
+    // Looking for all tables or a specific one
+    if (!table || table.substr(0,1) === '=') {
 
-    if (!table || table.match(/^[a-z0-9_]+$/)) {
+      // remove the prefixed equal sign
+      if (table) table = table.substr(1);
 
-      if (table && !searchLabel) {
-        isValidTable(table);
-      }
-
-      required = getDbObject(table);
       if (searchLabel) {
-        each(getDbObjectByLabel(table), function (name, obj) {
-          if (!required[name] && obj.label.match(matcher)) {
-            required[name] = obj;
-          }
-        });
+
+        // Get the table object from its label
+        required = getDbObjectByLabel(table);
+      } else {
+
+        // Get the table object from its name, or ALL table objects if table = ''
+        required = getDbObject(table);
       }
 
     } else {
 
       // match on table is required, so get all tables and match
       required = {};
-      eacho(getDbObject(), function (name) {
-        if (name.match(matcher)) {
-          eacho(getDbObject(name), function (name, obj) {
+      eachObj(getDbObject(), function (name, obj) {
+        var match = searchLabel ? obj.label.match(matcher) : name.match(matcher);
+        if (match) {
+          eachObj(getDbObject(name), function (name, obj) {
             required[name] = required[name] || obj;
           });
         }
@@ -882,15 +883,23 @@ gs.print(SEARCH_LABEL);
     return required;
   }
 
+  /**
+    summary:
+      Get an object of objects containing sys_db_object info
+    param: label [String]
+    returns: Object
+  **/
   var getDbObjectByLabel = function (label) {
     var result = {};
     var gr = new GlideRecord('sys_db_object');
-    gr.addQuery('label', 'CONTAINS', label);
+    gr.addQuery('label', '=', label);
+    gr.setLimit(1);
     gr.query();
-    while (gr.next()) {
-      result[gr.getValue('name')] = info(gr);
+    if (gr.next()) {
+      return getDbObject(gr.name);
+    } else {
+      throw 'Invalid table label: ' + label;
     }
-    return result;
   };
 
   /**
@@ -908,6 +917,9 @@ gs.print(SEARCH_LABEL);
         gr.addQuery('name', 'IN', dbo.getHierarchy(table).toArray().join(','));
       }
       gr.query();
+      if (!gr.hasNext()) {
+        throw 'Invalid table name: ' + table;
+      }
       while (gr.next()) {
         result[gr.getValue('name')] = info(gr);
       }
@@ -935,7 +947,7 @@ gs.print(SEARCH_LABEL);
       and current array item.
       Returning false will cancel the iteration.
   **/
-  function each(arr, fn) {
+  function eachArr(arr, fn) {
     var len = arr.length;
     for (var i = 0; i < len; i++) {
       if (fn(i, arr[i]) === false) {
@@ -952,26 +964,12 @@ gs.print(SEARCH_LABEL);
       Callback function being given two parameters: key and current object property.
       Returning false will cancel the iteration.
   **/
-  function eacho(o, fn) {
+  function eachObj(o, fn) {
     for (var k in o) {
       if (fn(k, o[k]) === false) {
         break;
       }
     }
-  }
-
-  /**
-    summary:
-      Helper function: check if a table is valid.
-    table: String
-    returns: Boolean
-  **/
-  function isValidTable(table) {
-    var gr = new GlideRecord(table);
-    if (!gr.isValid()) {
-      throw 'Invalid table name: ' + table;
-    }
-    return true;
   }
 
   /**

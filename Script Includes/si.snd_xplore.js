@@ -57,21 +57,21 @@ var snd_xplore = (function () {
     /**
       summary:
         Called when the main object is evaluated.
-      obj: Object
+      param: obj [Object]
         A result object
     **/
     begin: function (obj) {
-      gs[this.func]('Xplore: [' + obj.type + '] : ' + obj.value);
+      gs[this.func]('Xplore: [' + obj.type + '] : ' + obj.string);
     },
 
     /**
       summary:
         Called each time a property of the object is evaluated.
-      obj: Object
+      param: obj [Object]
         A result object provided by snd_xplore
     **/
     result: function (obj) {
-      gs[this.func]('[' + obj.type + '] ' + obj.name + ' = ' + obj.value);
+      gs[this.func]('[' + obj.type + '] ' + obj.name + ' = ' + obj.string);
     },
 
     /**
@@ -92,29 +92,47 @@ var snd_xplore = (function () {
       in ServiceNow. Simply call snd_xplore(my_obj) in a background script
       and watch all the objects get printed out on screen.
 
-    obj: Mixed
+    param: obj [Any]
       The object you want to explore!
-    reporter: Object optional
+    param: reporter [Object] Optional
       A custom reporter object so you can customise where the output gets sent.
+    param: options [Object] Optional
+      Customise what happens using this options object.
+      -show_props: [Boolean]
+        Set false to disable attempting to parse through the objects' properties.
+        Defaults to true.
+      see: lookAt
   **/
   function xplore(obj, reporter, options) {
+
+    function ensureProps(obj, mixer) {
+      for (var x in mixer) {
+        if (typeof obj[x] === 'undefined') {
+          obj[x] = mixer[x];
+        }
+      }
+    }
 
     compileLists();
 
     // get the default reporter if no reporter has been provided
     if (!reporter) reporter = print_reporter;
 
-    // mix the reporter object to ensure we have the right functions to call
-    (function (obj, mixer) {
-      for (var x in mixer) {
-        if (typeof obj[x] === 'undefined') {
-          obj[x] = mixer[x];
-        }
-      }
-    })(reporter, {
+    // ensureProps the reporter object to ensure we have the right functions to call
+    ensureProps(reporter, {
       begin: function () {},
       result: function () {},
       complete: function () {}
+    });
+
+    // ensureProps the options object to setup defaults
+    options = options || {};
+    ensureProps(options, {
+      name: '',
+      type: '',
+      value: '',
+      show_props: true,
+      show_strings: true
     });
 
     // start!
@@ -125,8 +143,7 @@ var snd_xplore = (function () {
     // We may want to evaluate the properties against the blacklist for a Java class
     var isJavaObject = target.type.indexOf('Java') > -1;
 
-    if (obj !== null && obj !== undefined) {
-
+    if (options.show_props && obj !== null && obj !== undefined) {
       for (var x in obj) {
 
         // if we are evaluating a Java class then we need to check the Blacklist
@@ -152,7 +169,11 @@ var snd_xplore = (function () {
             options: options
           };
 
-          var o = GlideEvaluator.evaluateString('global.snd_xplore.lookAt(global.snd_xplore._temp.obj, global.snd_xplore._temp.x, global.snd_xplore._temp.options)');
+          var o = GlideEvaluator.evaluateString('global.snd_xplore.lookAt(' +
+              'global.snd_xplore._temp.obj, ' +
+              'global.snd_xplore._temp.x, ' +
+              'global.snd_xplore._temp.options)');
+
           if (o) {
             if (o.string == o.value) o.value = '';
             reporter.result(o);
@@ -165,6 +186,7 @@ var snd_xplore = (function () {
             value: '[Property access error: ' + e  + ']'
           });
         }
+
       }
     }
 
@@ -181,22 +203,25 @@ var snd_xplore = (function () {
       Takes any object and an optional name of that object and returns
       a simple result object containing the details of what was found.
 
-    obj: Object
+    param: obj [Object]
       Any object that needs to be looked at.
-    name: String optional
+    param: name [String] Optional
       The name of the object to populate the result with.
 
     returns: Object
       An object containing the following properties:
-        name: String
+        -name [String]
           The name of the object if it was provided, otherwise an empty string.
-        type: String
+        -type [String]
           The class name of the object.
-        value: String
+        -value [String]
           The value of the object, if possible. Some objects cannot be evaluated
           due to protection within the ServiceNow Rhino environment.
           Some objects are red listed which means evaluating toString on the object
           fails and generates some kind of warning.
+        -show_strings: Boolean
+          Set false to disable attempting to locate the string value.
+          Defaults to true.
   **/
   function lookAt(obj, name, options) {
     var result = {
@@ -242,28 +267,34 @@ var snd_xplore = (function () {
       return result;
     }
 
-    // handle native JavaScript objects which we know have a toString
-    if (obj instanceof Function ||
-        obj instanceof Object ||
-        obj instanceof Array ||
-        obj instanceof Number ||
-        obj instanceof Boolean ||
-        obj instanceof String ||
-        obj instanceof RegExp) {
-      result.string = obj.toString();
-      return result;
-    }
+    if (options.show_strings || options.show_strings === undefined) {
 
-    // handle Java objects which break when trying to toString
-    if (result.type === 'Function' || result.type === 'Object') {
-      return result;
-    }
+      // handle native JavaScript objects which we know have a toString
+      if (obj instanceof Function ||
+          obj instanceof Object ||
+          obj instanceof Array ||
+          obj instanceof Number ||
+          obj instanceof Boolean ||
+          obj instanceof String ||
+          obj instanceof RegExp) {
+        result.string = obj.toString();
+        return result;
+      }
 
-    // catch all
-    try {
-      result.string = String(obj);
-    } catch (e) {
-      result.string = ''; //'[Property type ' + result.type + ' should be red-listed]';
+      // handle Java objects which break when trying to toString
+      if (result.type === 'Function' || result.type === 'Object') {
+        return result;
+      }
+
+      // catch all
+      try {
+        result.string = String(obj);
+      } catch (e) {
+        result.string = ''; //'[Property type ' + result.type + ' should be red-listed]';
+      }
+
+    } else {
+      result.string = '[user ignored]';
     }
 
     return result;
@@ -282,7 +313,7 @@ var snd_xplore = (function () {
   /**
     summary:
       Manually push a property to the redlist to prevent calling toString on it
-    name: String
+    param: name [String]
   **/
   xplore.redlist = function (name) {
     redlist.push('' + name);
@@ -291,7 +322,7 @@ var snd_xplore = (function () {
   /**
     summary:
       Manually push a property name to the blacklist to completely ignore it
-    name: String
+    param: name [String]
   **/
   xplore.blacklist = function (name) {
     blacklist.push('' + name);
@@ -326,8 +357,8 @@ var snd_xplore = (function () {
   **/
   xplore.test = function (obj) {
     compileLists();
-    var obj_arr = []
-      for (var x in obj) {
+    var obj_arr = [];
+    for (var x in obj) {
       obj_arr.push(x);
     }
     obj_arr.sort();
@@ -344,7 +375,7 @@ var snd_xplore = (function () {
       }
     }
     gs.addInfoMessage('Xplore test completed successfully.');
-  }
+  };
 
   // #public: String
   // version number of this script [Letter and Patch number].[hotfix].[internal version]
