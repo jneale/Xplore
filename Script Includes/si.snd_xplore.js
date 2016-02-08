@@ -379,7 +379,7 @@ var snd_xplore = (function () {
 
   // #public: String
   // version number of this script [Letter and Patch number].[hotfix].[internal version]
-  xplore.version = "G1.0.2";
+  xplore.version = "G3.0.1";
 
   return xplore;
 })();
