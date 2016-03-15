@@ -19,12 +19,16 @@ var snd_xplore_util = {
     var btn = $('#xplore_btn');
     btn.html('Loading... <i class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></i>');
     btn.prop('disabled', true);
+
+    $('#cancel_btn').show();
     $('#output_loader').addClass('active');
   },
   loadingComplete: function () {
     var btn = $('#xplore_btn');
     btn.html('Run');
     btn.prop('disabled', false);
+
+    $('#cancel_btn').hide();
     $('#output_loader').removeClass('active');
     // make sure we are on the output tab
     $('#script_output_tab').tab('show');
@@ -49,7 +53,8 @@ var snd_xplore_util = {
       breadcrumb: snd_xplore_reporter.getBreadcrumb(),
       reporter: snd_xplore_reporter,
       show_props: $('#show_props').is(':checked'),
-      show_strings: $('#show_strings').is(':checked')
+      show_strings: $('#show_strings').is(':checked'),
+      html_messages: $('#show_html_messages').is(':checked')
     };
 
     snd_xplore(params);
@@ -104,7 +109,13 @@ var snd_xplore_util = {
         });
       }
     };
-  })()
+  })(),
+  cancel: function () {
+    // add status=true to get the current status
+    $.ajax('/cancel_my_transaction.do?sysparm_output=xml', {
+      dataType: 'xml'
+    });
+  }
 };
 
 $('.xplore_demo').on('click', 'a', function (e) {
@@ -419,6 +430,29 @@ $(function () {
   // handle the run button clicking
   $('#xplore_btn').click(function () {
     snd_xplore_util.executeNew();
+  });
+
+  // handle the cancel button clicking
+  $('#cancel_btn').click(function () {
+    snd_xplore_util.cancel();
+  });
+
+  // Setup property toggles
+  $('#show_props,#show_strings').bootstrapToggle({
+    on: 'Show',
+    off: 'Hide',
+    size: 'mini',
+    onstyle: 'success',
+    offstyle: 'danger',
+    width: 75
+  });
+  $('#show_html_messages').bootstrapToggle({
+    on: 'HTML',
+    off: 'Text',
+    onstyle: 'default',
+    offstyle: 'default',
+    size: 'mini',
+    width: 75
   });
 
   // regex input trigger

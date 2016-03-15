@@ -11,6 +11,9 @@
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
 
+    <!-- Bootstrap Toggle -->
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.0/css/bootstrap-toggle.min.css" rel="stylesheet" />
+
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesnt work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -22,7 +25,7 @@
     <link rel="stylesheet" href="/codemirror.css" />
 
     <!-- snd_xplore -->
-    <link href="/efd550a80f2a020094f3c09ce1050ecf.cssdbx" rel="stylesheet"></link>
+    <link href="/efd550a80f2a020094f3c09ce1050ecf.cssdbx" rel="stylesheet" />
   </head>
   <body>
 
@@ -53,8 +56,12 @@
             </p>
           </li>
           <li>
-            <button id="xplore_btn" class="btn btn-danger navbar-control"
+            <button id="xplore_btn" class="btn btn-success navbar-control"
               title="Ctrl + Enter">Run</button>
+          </li>
+          <li>
+            <button id="cancel_btn" class="btn btn-danger navbar-control"
+              title="Cancel Transaction" style="display:none">Cancel</button>
           </li>
         </ul>
       </div>
@@ -82,10 +89,16 @@
       <div id="settings_pane" class="side_pane" style="display: none;">
         <h3>Script Runner Settings</h3>
         <div class="checkbox">
-          <label><input type="checkbox" id="show_props" checked="checked" />Show object properties</label>
+            <input type="checkbox" id="show_props" checked="checked" />
+            Show object properties
         </div>
         <div class="checkbox">
-          <label><input type="checkbox" id="show_strings" checked="checked" />Show property string values</label>
+          <input type="checkbox" id="show_strings" checked="checked" />
+          Show property string values
+        </div>
+        <div class="checkbox">
+          <input type="checkbox" id="show_html_messages" checked="checked" />
+          Show output messages as HTML or plain text
         </div>
       </div>
 
@@ -149,7 +162,9 @@
 
               <div id="script_output" role="tabpanel" class="tab-pane fade monospace">
                 <ul id="breadcrumb" class="breadcrumb hidden">
-                  <li class="permanent"><a id="clearBreadcrumb" href="javascript:void(0);">Result</a></li>
+                  <li class="permanent">
+                    <a id="clearBreadcrumb" href="javascript:void(0);">Result</a>
+                  </li>
                 </ul>
 
                 <div id="message_container" class="hidden">
@@ -175,7 +190,8 @@
                   <div class="col-xs-12">
                     <h4 class="monospace">User Data</h4>
                     <p>Easily add large strings to the variable <code>user_data</code>.</p>
-                    <textarea id="user_data_input" class="form-control"></textarea>
+                    <textarea id="user_data_input" class="form-control monospace">
+                    </textarea>
                   </div>
                 </div>
 
@@ -193,27 +209,32 @@
                       <div class="slash">/</div>
                       <div class="regex-options">
                         <div class="slash">/</div>
-                        <input type="text" value="g" id="regex_options" name="regex_options" class="form-control" tabindex="2" />
+                        <input type="text" value="g" id="regex_options" name="regex_options"
+                            class="form-control" tabindex="2" />
                       </div>
                       <div class="regex-expression">
-                        <input type="text" placeholder="expression" id="regex" name="regex" class="form-control" tabindex="1" />
+                        <input type="text" placeholder="expression" id="regex" name="regex"
+                            class="form-control" tabindex="1" />
                       </div>
                     </div>
                   </div>
                   <div class="col-sm-6 col-xs-12">
                     <h4>Test String</h4>
                     <div class="panel panel-default">
-                      <textarea id="regex_input" style="width: 100%" rows="10" tabindex="3"></textarea>
+                      <textarea id="regex_input" style="width: 100%" rows="10"
+                          tabindex="3"></textarea>
                     </div>
                   </div>
                   <div class="col-sm-6 col-xs-12">
                     <h4>Test Output</h4>
                     <div id="regex_intro_panel" class="panel panel-default">
                       <div class="panel-body">
-                        <p>Use this editor to test regular expressions as you write them, both in the client
-                          and as they would run in ServiceNow.</p>
-                        <p>The expression will be automatically evaluated on whichever target you have selected (client or server*) and the result shown here.</p>
-                        <p><small>*Global scope is always used when evaluating on the server.</small></p>
+                        <p>Use this editor to test regular expressions as you write them,
+                          both in the client and as they would run in ServiceNow.</p>
+                        <p>The expression will be automatically evaluated on whichever
+                          target you have selected (client or server*) and the result shown here.</p>
+                        <p><small>*Global scope is always used when evaluating on the
+                          server.</small></p>
                       </div>
                     </div>
                     <div id="regex_match_panel" class="panel panel-success" style="display: none">
@@ -352,6 +373,9 @@
     <!-- Bootstrap -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
+    <!-- Bootstrap Toggle -->
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.0/js/bootstrap-toggle.min.js"></script>
+
     <!-- Xplore -->
     <script src="/snd_xplore.jsdbx"></script>
     <script src="/snd_xplore_reporter.jsdbx"></script>
@@ -359,6 +383,9 @@
     <!-- CodeMirror - native scripts in ServiceNow -->
     <script src="/codemirror.js"></script>
     <script src="/scripts/javascript.js"></script>
+
+    <!-- Google Code Prettify -->
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 
     <script src="/snd_xplore_ui.jsdbx"></script>
   </body>

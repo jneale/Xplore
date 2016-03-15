@@ -1,17 +1,23 @@
 var snd_xplore_reporter = (function () {
 
-  var showMoreButton = '<button class="btn btn-xs btn-warning show-more" data-show-more="false">Show</button>';
+  var showMoreButton = '<button class="btn btn-xs btn-warning show-more" ' +
+      'data-show-more="false">Show</button>';
 
   function setDescription(table, result) {
     var type = result.type ? result.type : '[UNKNOWN]';
     table.empty().
-    append('<tr><th class="col-md-1">Type</th><td class="col-md-11">' + type + '</td></tr>');
+    append('<tr><th class="col-md-1">Type</th><td class="col-md-11">' + type +
+        '</td></tr>');
     if (!result.string) result.string = "";
     if (result.string.length < 100) {
-      table.append('<tr><th class="col-md-1">String</th><td class="col-md-11">' + showAsString(lineBreaks(escapeHtml(result.string))) + '</td></tr>');
+      table.append('<tr><th class="col-md-1">String</th><td class="col-md-11">' +
+          showAsString(lineBreaks(escapeHtml(result.string))) + '</td></tr>');
     } else {
-      table.append('<tr><th class="col-md-1">String</th><td class="col-md-11">' + showMoreButton + '</td></tr>');
-      table.append('<tr class="data-more hidden"><td colspan="2"><pre>' + escapeHtml(result.string) + '</pre></td></tr>');
+      table.append('<tr><th class="col-md-1">String</th><td class="col-md-11">' +
+          showMoreButton + '</td></tr>');
+      table.append('<tr class="data-more hidden"><td colspan="2">' +
+          '<pre class="prettyPrint lang-js linenums">' + escapeHtml(result.string) +
+          '</pre></td></tr>');
     }
   }
 
@@ -23,10 +29,12 @@ var snd_xplore_reporter = (function () {
     $.each(result, function (i, item) {
       var prop = '<a href="javascript:void(0)" class="interactive">' + item.name + '</a>';
       if (item.type.toLowerCase() === 'function') {
-        prop += ' <a href="javascript:void(0)" class="interactive"><span class="hidden">' + item.name + '</span>()</a>';
+        prop += ' <a href="javascript:void(0)" class="interactive"><span class="hidden">' +
+            item.name + '</span>()</a>';
       }
       if (!item.string) item.string = "";
-      if (item.string.length < 100 && (item.type.toLowerCase() != 'function' || !item.string.length ||
+      if (item.string.length < 100 && (item.type.toLowerCase() != 'function' ||
+          !item.string.length ||
           item.string.substr(0,8) != 'function')) {
         table.append('<tr class="data-row">' +
           '<td class="col-md-3 prop">' + prop + '</td>' +
@@ -46,17 +54,17 @@ var snd_xplore_reporter = (function () {
     });
   }
 
-  function displayResults(result) {
+  function displayResults(result, options) {
 
-    displayOutputMessages(result.messages);
+    displayOutputMessages(result.messages, options.html_messages);
 
     displayLogs(result.logs);
 
     setDescription($('#description_table'), result);
 
     var resultTable = $('#results_table');
-    resultTable.empty()
-        .append('<tr id="no_props" class="hidden"><td colspan="3">No properties to display.</td></tr>');
+    resultTable.empty().append('<tr id="no_props" class="hidden"><td colspan="3">' +
+        'No properties to display.</td></tr>');
 
     result.report.sort(function (a, b) {
       var ai = parseInt(a.name, 10);
@@ -79,25 +87,32 @@ var snd_xplore_reporter = (function () {
     $('#result_container').toggleClass('hidden', !(result.type || result.report.length));
   }
 
-  function displayOutputMessages(messages) {
-    var target = $('#message_table');
-    var classMap = {
-      'info': 'info',
-      'error': 'danger',
-      'access': 'warning',
-      'log': 'log',
-      '-1': 'log',
-      '0': 'info',
-      '1': 'warning',
-      '2': 'danger'
-    };
+  function displayOutputMessages(messages, asHtml) {
+    var target = $('#message_table'),
+        classMap = {
+          'info': 'info',
+          'error': 'danger',
+          'access': 'warning',
+          'log': 'log',
+          '-1': 'log',
+          '0': 'info',
+          '1': 'warning',
+          '2': 'danger'
+        },
+        temp;
+
     target.empty();
     if (!messages) {
       return;
     }
     for (var i = 0, m; i < messages.length; i++) {
       m = messages[i];
-      target.append('<tr><td class="' + classMap[m.t] + '">' + m.v.toString().replace('\n', '<br />') + '</td></tr>');
+      temp = m.v.toString();
+      if (!asHtml) {
+        temp = escapeHtml(temp);
+      }
+      target.append('<tr><td class="' + classMap[m.t] + '">' +
+          temp.replace('\n', '<br>') + '</td></tr>');
     }
     $('#message_container').toggleClass('hidden', !i);
   }
@@ -158,7 +173,8 @@ var snd_xplore_reporter = (function () {
 
     if (show_all) {
       target.append('<label class="checkbox-inline no_indent">' +
-        '<input type="checkbox" id="show_all" value="all" checked="checked" />All</label>');
+        '<input type="checkbox" id="show_all" value="all" checked="checked" />' +
+        'All</label>');
     }
 
     $.each(show_types, function (type) {
@@ -298,8 +314,8 @@ var snd_xplore_reporter = (function () {
         // make the last breadcrumb active
         if (breadcrumbs.length) {
           $breadcrumb.children().remove(':last');
-          $breadcrumb.append('<li><a href="javascript:void(0)" id="breadcrumb_' + pos + '">' +
-              breadcrumbs[pos] + '</a></li>');
+          $breadcrumb.append('<li><a href="javascript:void(0)" id="breadcrumb_' +
+              pos + '">' + breadcrumbs[pos] + '</a></li>');
         }
 
         // add the new last breadcrumb
@@ -329,7 +345,8 @@ var snd_xplore_reporter = (function () {
             .remove();
 
           // update the breadcrumb array
-          breadcrumbs = breadcrumbs.slice(0, $breadcrumb.children(':not(.permanent)').size() + 1);
+          breadcrumbs = breadcrumbs.
+              slice(0, $breadcrumb.children(':not(.permanent)').size() + 1);
 
           // re-add this node as a non-anchored breadcrumb
           if (breadcrumbs.length) {
@@ -356,13 +373,14 @@ var snd_xplore_reporter = (function () {
     };
 
     this.start = function (params) {
+      this.options = params;
       this.fireEvent('start', null, [params]);
     };
 
     this.done = function (result) {
       var target = $('#results');
       target.empty();
-      displayResults(result);
+      displayResults(result, this.options);
       this.fireEvent('done', null, [result]);
     };
 
