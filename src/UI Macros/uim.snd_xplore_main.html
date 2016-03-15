@@ -114,6 +114,7 @@
           <div id="output_loader" class="page_loader">
             <div class="loading">
               <i class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></i>
+              <div id="countup"></div>
             </div>
           </div>
 
@@ -167,8 +168,17 @@
                   </li>
                 </ul>
 
-                <div id="message_container" class="hidden">
-                  <table class="table table-condensed" id="message_table"></table>
+                <div id="message_container">
+                  <table class="table table-condensed" id="message_table">
+                    <tr>
+                      <td>
+                        <div class="alert alert-success"
+                            style="width: 70%; margin: 40px auto;">
+                          Output will be displayed here when you run a script.
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
                 </div>
 
                 <div id="log_container" class="hidden">

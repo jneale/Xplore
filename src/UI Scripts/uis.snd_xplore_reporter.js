@@ -16,7 +16,7 @@ var snd_xplore_reporter = (function () {
       table.append('<tr><th class="col-md-1">String</th><td class="col-md-11">' +
           showMoreButton + '</td></tr>');
       table.append('<tr class="data-more hidden"><td colspan="2">' +
-          '<pre class="prettyPrint lang-js linenums">' + escapeHtml(result.string) +
+          '<pre class="prettyprint linenums">' + escapeHtml(result.string) +
           '</pre></td></tr>');
     }
   }
@@ -48,7 +48,7 @@ var snd_xplore_reporter = (function () {
           '<td class="col-md-6">' + showMoreButton + '</td>' +
         '</tr>');
         table.append('<tr class="data-more hidden">' +
-          '<td colspan="3" class="str"><pre>' + escapeHtml(item.string) + '</pre></td>' +
+          '<td colspan="3" class="str"><pre class="prettyprint linenums">' + escapeHtml(item.string) + '</pre></td>' +
         '</tr>');
       }
     });

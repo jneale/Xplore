@@ -11,22 +11,40 @@ var delay = (function () {
   };
 })();
 
+// get the minutes, seconds and decisecond since a given time, e.g. 01:32.1
+function getMinutesSince(startTime) {
+  var t = new Date().getTime() - startTime;
+  var ds = Math.floor((t/100) % 10);
+  var seconds = Math.floor((t/1000) % 60);
+  var minutes = Math.floor((t/1000/60) % 60);
+  if (minutes < 10) minutes = '0' + minutes;
+  if (seconds < 10) seconds = '0' + seconds;
+  return minutes + ':' + seconds + '.' + ds;
+}
+
 /*************************************
               XPLORE
 **************************************/
 var snd_xplore_util = {
+  countup_interval: null,
   loading: function () {
-    var btn = $('#xplore_btn');
-    btn.html('Loading... <i class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></i>');
-    btn.prop('disabled', true);
+    $('#xplore_btn')
+        .prop('disabled', true)
+        .html('Loading... <i class="glyphicon glyphicon-refresh ' +
+              'glyphicon-refresh-animate"></i>');
 
-    $('#cancel_btn').show();
+    $('#cancel_btn').prop('disabled', false).text('Cancel').show();
     $('#output_loader').addClass('active');
+
+    var start = new Date().getTime();
+    snd_xplore_util.countup_interval = setInterval(function () {
+      $('#countup').text(getMinutesSince(start));
+    }, 100);
   },
   loadingComplete: function () {
-    var btn = $('#xplore_btn');
-    btn.html('Run');
-    btn.prop('disabled', false);
+    $('#xplore_btn')
+        .html('Run')
+        .prop('disabled', false);
 
     $('#cancel_btn').hide();
     $('#output_loader').removeClass('active');
@@ -34,6 +52,11 @@ var snd_xplore_util = {
     $('#script_output_tab').tab('show');
     // scroll to the top of the output div
     $('#output_tabs_pane').animate({ scrollTop: 0 }, "fast");
+
+    clearInterval(snd_xplore_util.countup_interval);
+
+    // Google Code-Prettify
+    window.PR.prettyPrint();
   },
   execute: function () {
     // summary:
@@ -115,6 +138,7 @@ var snd_xplore_util = {
     $.ajax('/cancel_my_transaction.do?sysparm_output=xml', {
       dataType: 'xml'
     });
+    $('#cancel_btn').prop('disabled', true).text('Cancelling...');
   }
 };
 

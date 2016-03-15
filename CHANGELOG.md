@@ -1,24 +1,23 @@
-A suite of tools for every ServiceNow developer.
-Originally created by James Neale <james@sndeveloper.com>
+# Xplore: Developer Toolkit
+A toolkit for every ServiceNow developer.
+Created by @James_Neale <james@sndeveloper.com>
 
-## Xplore Install notes:
-- Some records have been removed with the updates. ServiceNow can
-  misleadingly claim that there is a preview error because of a newer
-  version already existing, when in fact there is no current record
-  (new or old) installed. Please just ignore these. You can easily
-  see with the comparison tool that the instruction is to DELETE and
-  the current comparison version is identical.
+### Version 3.5 (G3.0.3)
+- Feature: Prettify code in output pane.
+- Feature: Timer to show how long the transaction has been running.
+- Feature: Default output pane message.
+- Change: Show logs and output messages when a transaction is cancelled.
+- Fix: Typos
 
-## Xplore Change Log
 
-## Version 3.4 (G3.0.2) IN PROGRESS
+### Version 3.4 (G3.0.2)
 - Feature: Add cancel button to cancel long running transactions.
 - Feature: Setting to allow output messages to escape HTML.
 - Feature: Xplore will run while impersonating.
 - Interface modifications.
 
 
-## Version 3.3 (G3.0.1)
+### Version 3.3 (G3.0.1)
 - Feature: Add User Data pane for working with large text strings e.g. XML
 - Feature: Improve table hierarchy search with expression support, label support
   and a search button (just hit <ENTER> instead of waiting).
@@ -32,10 +31,10 @@ Originally created by James Neale <james@sndeveloper.com>
 - Removed: Original informational side bar.
 
 
-## Version 3.2 (G1.0.2)
+### Version 3.2 (G1.0.2)
 - Fix: Mac Ctrl + Enter keyboard command
 
-## Version 3.1 (G1.0.1)
+### Version 3.1 (G1.0.1)
 - Feature: Editor gets immediate focus on load.
 - Feature: Use Ctrl + Enter to run.
 - Feature: Improved string value display.
@@ -47,7 +46,7 @@ Originally created by James Neale <james@sndeveloper.com>
 - Improved welcome content.
 
 
-## Version 3.0 (F7.3.3)
+### Version 3.0 (F7.3.3)
 
 - Feature: Support for running scripts in application scopes.
 - Feature: Support for tabs.
@@ -63,18 +62,18 @@ Originally created by James Neale <james@sndeveloper.com>
   just reactivate the old version if required.
 
 
-## Version 2.1
+### Version 2.1
 
 - Fix: Script runner improvements
 - Feature: Addition of application module
 - Fix: JSON issues for versions before Fuji patch 7
 
-## Version 2.0
+### Version 2.0
 
 - Feature: Convert to global application
 
 
-## Version 1.1
+### Version 1.1
 
 - Script runner
 - Help panel

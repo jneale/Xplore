@@ -27,10 +27,19 @@ if (!checkRoles()) {
 
 /**
   summary:
-    Ensure that we have the necessary roles to run
+    Ensure that we have the necessary roles to run.
 **/
 function checkRoles() {
-  return gs.hasRole('admin');
+  if (gs.getSession().impersonatingUserName) {
+    var gr = new GlideRecord('sys_user_has_role');
+    gr.addQuery('user.user_name', gs.getImpersonatingUserName());
+    gr.addQuery('role.name', 'admin');
+    gr.setLimit(1);
+    gr.query();
+    return gr.hasNext();
+  } else {
+    return gs.hasRole('admin');
+  }
 }
 
 function ActionProcessor() {
