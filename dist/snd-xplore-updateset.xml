@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<unload unload_date="2016-03-15 12:09:51">
+<unload unload_date="2016-03-15 12:15:16">
 <sys_remote_update_set action="INSERT_OR_UPDATE">
 <application display_value="Global">global</application>
 <application_name>Global</application_name>
@@ -8,7 +8,7 @@
 <collisions/>
 <commit_date/>
 <deleted/>
-<description>Xplore: Developer Toolkit
+<description># Xplore: Developer Toolkit
 A toolkit for every ServiceNow developer.
 Created by @James_Neale &lt;james@sndeveloper.com&gt;
 
@@ -43,19 +43,41 @@ Created by @James_Neale &lt;james@sndeveloper.com&gt;
 <name>Xplore - 3.5</name>
 <origin_sys_id/>
 <release_date/>
-<remote_sys_id>a031dfa70fc2d20094f3c09ce1050e9e</remote_sys_id>
+<remote_sys_id>eae41f2b0fc2d20094f3c09ce1050e63</remote_sys_id>
 <state>loaded</state>
 <summary/>
 <sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:09:50</sys_created_on>
-<sys_id>84c39f670fc2d20094f3c09ce1050e28</sys_id>
+<sys_created_on>2016-03-15 12:15:15</sys_created_on>
+<sys_id>9bf4d3670fc2d20094f3c09ce1050edc</sys_id>
 <sys_mod_count>0</sys_mod_count>
 <sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:09:50</sys_updated_on>
+<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
 <update_set display_value=""/>
 <update_source display_value=""/>
 <updated/>
 </sys_remote_update_set>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</application>
+<category>customer</category>
+<comments/>
+<name>sys_properties_7ab919cb0fee420094f3c09ce1050e41</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties"><sys_properties action="INSERT_OR_UPDATE"><choices/><description>Log server side scripts that are run using /snd_xplore.do much the same that background scripts do.</description><ignore_cache>false</ignore_cache><is_private>false</is_private><name>snd_xplore.log_request</name><read_roles/><suffix/><sys_class_name>sys_properties</sys_class_name><sys_created_by>james@snd</sys_created_by><sys_created_on>2015-09-21 14:21:13</sys_created_on><sys_customer_update>true</sys_customer_update><sys_id>7ab919cb0fee420094f3c09ce1050e41</sys_id><sys_mod_count>4</sys_mod_count><sys_name>snd_xplore.log_request</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_replace_on_upgrade>false</sys_replace_on_upgrade><sys_scope display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</sys_scope><sys_update_name>sys_properties_7ab919cb0fee420094f3c09ce1050e41</sys_update_name><sys_updated_by>james@snd</sys_updated_by><sys_updated_on>2015-10-01 19:06:44</sys_updated_on><type>boolean</type><value>true</value><write_roles/></sys_properties><sys_translated_text action="delete_multiple" query="documentkey=7ab919cb0fee420094f3c09ce1050e41"/></record_update>]]></payload>
+<remote_update_set display_value="Xplore - 3.5">9bf4d3670fc2d20094f3c09ce1050edc</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>james@sndeveloper.com</sys_created_by>
+<sys_created_on>2016-03-15 12:15:15</sys_created_on>
+<sys_id>13f4d3670fc2d20094f3c09ce1050edd</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>james@sndeveloper.com</sys_updated_by>
+<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
+<table/>
+<target_name>snd_xplore.log_request</target_name>
+<type>System Property</type>
+<update_domain>global</update_domain>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
 <sys_update_xml action="INSERT_OR_UPDATE">
 <action>INSERT_OR_UPDATE</action>
 <application display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</application>
@@ -465,14 +487,14 @@ Created by @James_Neale &lt;james@sndeveloper.com&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 &lt;/j:jelly&gt;]]&gt;&lt;/xml&gt;&lt;/sys_ui_macro&gt;&lt;/record_update&gt;</payload>
-<remote_update_set display_value="Xplore - 3.5">84c39f670fc2d20094f3c09ce1050e28</remote_update_set>
+<remote_update_set display_value="Xplore - 3.5">9bf4d3670fc2d20094f3c09ce1050edc</remote_update_set>
 <replace_on_upgrade>false</replace_on_upgrade>
 <sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:09:50</sys_created_on>
-<sys_id>00c39f670fc2d20094f3c09ce1050e29</sys_id>
+<sys_created_on>2016-03-15 12:15:15</sys_created_on>
+<sys_id>17f4d3670fc2d20094f3c09ce1050edd</sys_id>
 <sys_mod_count>0</sys_mod_count>
 <sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:09:50</sys_updated_on>
+<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
 <table/>
 <target_name>snd_xplore_main</target_name>
 <type>Macro</type>
@@ -550,14 +572,14 @@ Tested in Fuji and Geneva.</description><global>true</global><name>snd_xplore_gl
   }&#13;
 }&#13;
 snd_xplore_glasses();</script><script_name/><sys_class_name>sys_ui_script</sys_class_name><sys_created_by>james@snd</sys_created_by><sys_created_on>2015-12-16 13:13:07</sys_created_on><sys_customer_update>true</sys_customer_update><sys_id>e9a20c7e0f54564094f3c09ce1050eb4</sys_id><sys_mod_count>9</sys_mod_count><sys_name>snd_xplore_glasses</sys_name><sys_package display_value="Xplore" source="0f6ab99a0f36060094f3c09ce1050ee8">0f6ab99a0f36060094f3c09ce1050ee8</sys_package><sys_policy/><sys_replace_on_upgrade>false</sys_replace_on_upgrade><sys_scope display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</sys_scope><sys_update_name>sys_ui_script_e9a20c7e0f54564094f3c09ce1050eb4</sys_update_name><sys_updated_by>james@sndeveloper.com</sys_updated_by><sys_updated_on>2016-02-07 20:46:53</sys_updated_on><use_scoped_format>false</use_scoped_format></sys_ui_script></record_update>]]></payload>
-<remote_update_set display_value="Xplore - 3.5">84c39f670fc2d20094f3c09ce1050e28</remote_update_set>
+<remote_update_set display_value="Xplore - 3.5">9bf4d3670fc2d20094f3c09ce1050edc</remote_update_set>
 <replace_on_upgrade>false</replace_on_upgrade>
 <sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:09:51</sys_created_on>
-<sys_id>04c39f670fc2d20094f3c09ce1050e29</sys_id>
+<sys_created_on>2016-03-15 12:15:15</sys_created_on>
+<sys_id>1bf4d3670fc2d20094f3c09ce1050edd</sys_id>
 <sys_mod_count>0</sys_mod_count>
 <sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:09:51</sys_updated_on>
+<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
 <table/>
 <target_name>snd_xplore_glasses</target_name>
 <type>UI Script</type>
@@ -571,15 +593,15 @@ snd_xplore_glasses();</script><script_name/><sys_class_name>sys_ui_script</sys_c
 <category>customer</category>
 <comments/>
 <name>sys_app_0f6ab99a0f36060094f3c09ce1050ee8</name>
-<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_app"><sys_app action="INSERT_OR_UPDATE"><active>true</active><licensable>true</licensable><logo/><menu display_value="Xplore">4eb000280f2a020094f3c09ce1050e23</menu><name>Xplore</name><scope>global</scope><short_description>A suite of tools for every ServiceNow developer. Created by @James_Neale &lt;james@sndeveloper.com&gt;</short_description><source>0f6ab99a0f36060094f3c09ce1050ee8</source><store_correlation_id/><store_url/><sys_class_name>sys_app</sys_class_name><sys_code/><sys_created_by>james@snd</sys_created_by><sys_created_on>2015-10-01 19:03:06</sys_created_on><sys_id>0f6ab99a0f36060094f3c09ce1050ee8</sys_id><sys_mod_count>14</sys_mod_count><sys_updated_by>james@sndeveloper.com</sys_updated_by><sys_updated_on>2016-03-15 11:58:32</sys_updated_on><template/><user_role display_value="admin" name="admin">2831a114c611228501d4ea6c309d626d</user_role><vendor/><vendor_prefix/><version>3.5</version></sys_app></record_update>]]></payload>
-<remote_update_set display_value="Xplore - 3.5">84c39f670fc2d20094f3c09ce1050e28</remote_update_set>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_app"><sys_app action="INSERT_OR_UPDATE"><active>true</active><licensable>true</licensable><logo/><menu display_value="Xplore">4eb000280f2a020094f3c09ce1050e23</menu><name>Xplore</name><scope>global</scope><short_description># Xplore: Developer Toolkit A toolkit for every ServiceNow developer. Created by @James_Neale &lt;james@sndeveloper.com&gt;</short_description><source>0f6ab99a0f36060094f3c09ce1050ee8</source><store_correlation_id/><store_url/><sys_class_name>sys_app</sys_class_name><sys_code/><sys_created_by>james@snd</sys_created_by><sys_created_on>2015-10-01 19:03:06</sys_created_on><sys_id>0f6ab99a0f36060094f3c09ce1050ee8</sys_id><sys_mod_count>15</sys_mod_count><sys_updated_by>james@sndeveloper.com</sys_updated_by><sys_updated_on>2016-03-15 12:14:45</sys_updated_on><template/><user_role display_value="admin" name="admin">2831a114c611228501d4ea6c309d626d</user_role><vendor/><vendor_prefix/><version>3.5</version></sys_app></record_update>]]></payload>
+<remote_update_set display_value="Xplore - 3.5">9bf4d3670fc2d20094f3c09ce1050edc</remote_update_set>
 <replace_on_upgrade>false</replace_on_upgrade>
 <sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:09:50</sys_created_on>
-<sys_id>08c39f670fc2d20094f3c09ce1050e28</sys_id>
+<sys_created_on>2016-03-15 12:15:15</sys_created_on>
+<sys_id>1ff4d3670fc2d20094f3c09ce1050edc</sys_id>
 <sys_mod_count>0</sys_mod_count>
 <sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:09:50</sys_updated_on>
+<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
 <table/>
 <target_name>Xplore</target_name>
 <type>Custom Application</type>
@@ -592,19 +614,406 @@ snd_xplore_glasses();</script><script_name/><sys_class_name>sys_ui_script</sys_c
 <application display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</application>
 <category>customer</category>
 <comments/>
-<name>sys_properties_7ab919cb0fee420094f3c09ce1050e41</name>
-<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties"><sys_properties action="INSERT_OR_UPDATE"><choices/><description>Log server side scripts that are run using /snd_xplore.do much the same that background scripts do.</description><ignore_cache>false</ignore_cache><is_private>false</is_private><name>snd_xplore.log_request</name><read_roles/><suffix/><sys_class_name>sys_properties</sys_class_name><sys_created_by>james@snd</sys_created_by><sys_created_on>2015-09-21 14:21:13</sys_created_on><sys_customer_update>true</sys_customer_update><sys_id>7ab919cb0fee420094f3c09ce1050e41</sys_id><sys_mod_count>4</sys_mod_count><sys_name>snd_xplore.log_request</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_replace_on_upgrade>false</sys_replace_on_upgrade><sys_scope display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</sys_scope><sys_update_name>sys_properties_7ab919cb0fee420094f3c09ce1050e41</sys_update_name><sys_updated_by>james@snd</sys_updated_by><sys_updated_on>2015-10-01 19:06:44</sys_updated_on><type>boolean</type><value>true</value><write_roles/></sys_properties><sys_translated_text action="delete_multiple" query="documentkey=7ab919cb0fee420094f3c09ce1050e41"/></record_update>]]></payload>
-<remote_update_set display_value="Xplore - 3.5">84c39f670fc2d20094f3c09ce1050e28</remote_update_set>
+<name>sys_script_include_04cf1a2f0fd2020094f3c09ce1050eba</name>
+<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sys_script_include"&gt;&lt;sys_script_include action="INSERT_OR_UPDATE"&gt;&lt;access&gt;public&lt;/access&gt;&lt;active&gt;true&lt;/active&gt;&lt;api_name&gt;global.snd_xplore&lt;/api_name&gt;&lt;client_callable&gt;false&lt;/client_callable&gt;&lt;description&gt;The snd_xplore function here allows exploratory programming to take place in ServiceNow.&amp;#13;
+Simply call snd_xplore(my_obj) in a background script and watch all the objects get printed out on screen.&amp;#13;
+Alternatively, call snd_xplore.lookAt(obj) to just see the type and value of the object.&amp;#13;
+Check out the UI for more info: /snd_xplore.do&lt;/description&gt;&lt;name&gt;snd_xplore&lt;/name&gt;&lt;script&gt;&lt;![CDATA[var snd_xplore = (function () {
+
+  /**
+    Black list to prevent looking over inaccessible Java stuff.
+    The majority of these are fully capitalised properties found on Java Packages
+    which would otherwise throw an exception.
+    There is no point even adding these to the results list.
+    E.g. DB, Y, _XML, M2MMAINTAINORDER
+  **/
+  var blacklistRegExp = /^[A-Z0-9_$]+$/;
+
+  /**
+    Additional elements for the black List not captured by RegExp.
+    These property names will be completely ignored.
+  **/
+  var blacklist = [
+    //'i18n_SORTABLE', // Any JavaClass?
+    //'fDebugSessionLifetime' // GlideSession
+  ];
+  var blacklistStr;
+
+  /**
+    Red list types must not use toString as they will throw an exception.
+    They will still show up in the results though.
+  **/
+  var redlist = [
+    //'GlideElementHierarchicalVariables' // GlideRecord
+  ];
+  var redlistStr;
+
+  function isInScope() {
+    return !('print' in gs);
+  }
+
+  /**
+    summary:
+      Quick way to compile the arrays into string which are easily searchable.
+  **/
+  function compileLists() {
+    // prefix/suffix with comma so exact search can be made ',foo,'
+    blacklistStr = ',' + blacklist.join(',') + ',';
+    redlistStr = ',' + redlist.join(',') + ',';
+  }
+
+  /**
+    summary:
+      The default reporter.
+    description:
+      Follow this object format in order to build a custom reporter that
+      can be passed into snd_xplore for custom reporting requirements.
+  **/
+  var print_reporter = {
+
+    // #public: see if we are in scoped app and use appropriate function call
+    func: isInScope() ? 'debug' : 'print',
+
+    /**
+      summary:
+        Called when the main object is evaluated.
+      param: obj [Object]
+        A result object
+    **/
+    begin: function (obj) {
+      gs[this.func]('Xplore: [' + obj.type + '] : ' + obj.string);
+    },
+
+    /**
+      summary:
+        Called each time a property of the object is evaluated.
+      param: obj [Object]
+        A result object provided by snd_xplore
+    **/
+    result: function (obj) {
+      gs[this.func]('[' + obj.type + '] ' + obj.name + ' = ' + obj.string);
+    },
+
+    /**
+      summary:
+       Called when snd_xplore has finished running.
+    **/
+    complete: function () {
+      gs[this.func]('Complete.');
+    }
+  };
+
+  /**
+    summary:
+      Function for evaluating any object and getting its contents.
+
+    description:
+      The snd_xplore function here allows exploratory programming to take place
+      in ServiceNow. Simply call snd_xplore(my_obj) in a background script
+      and watch all the objects get printed out on screen.
+
+    param: obj [Any]
+      The object you want to explore!
+    param: reporter [Object] Optional
+      A custom reporter object so you can customise where the output gets sent.
+    param: options [Object] Optional
+      Customise what happens using this options object.
+      -show_props: [Boolean]
+        Set false to disable attempting to parse through the objects' properties.
+        Defaults to true.
+      see: lookAt
+  **/
+  function xplore(obj, reporter, options) {
+
+    function ensureProps(obj, mixer) {
+      for (var x in mixer) {
+        if (typeof obj[x] === 'undefined') {
+          obj[x] = mixer[x];
+        }
+      }
+    }
+
+    compileLists();
+
+    // get the default reporter if no reporter has been provided
+    if (!reporter) reporter = print_reporter;
+
+    // ensureProps the reporter object to ensure we have the right functions to call
+    ensureProps(reporter, {
+      begin: function () {},
+      result: function () {},
+      complete: function () {}
+    });
+
+    // ensureProps the options object to setup defaults
+    options = options || {};
+    ensureProps(options, {
+      name: '',
+      type: '',
+      value: '',
+      show_props: true,
+      show_strings: true
+    });
+
+    // start!
+    var target = lookAt(obj, '[Target]', options);
+    if (target.string == target.value) target.value = '';
+    reporter.begin(target);
+
+    // We may want to evaluate the properties against the blacklist for a Java class
+    var isJavaObject = target.type.indexOf('Java') &gt; -1;
+
+    if (options.show_props &amp;&amp; obj !== null &amp;&amp; obj !== undefined) {
+      for (var x in obj) {
+
+        // if we are evaluating a Java class then we need to check the Blacklist
+        // so we don't even attempt to look at that property as it will just
+        // halt the thread and generate an illegal access exception.
+        //if (isJavaObject) {
+          if (blacklistStr.indexOf(',' + x + ',') &gt; -1 || (isJavaObject &amp;&amp; x.match(blacklistRegExp))) {
+            /**reporter.result({
+              name: x,
+              type: 'blacklisted',
+              value: '[unknown]'
+            });**/
+            continue;
+          }
+        //}
+
+        // The try/catch is required for things like new GlideDateTime().tableName
+        // which can throw a NullPointerException on access.
+        try {
+          snd_xplore._temp = {
+            obj: obj[x],
+            x: x,
+            options: options
+          };
+
+          var o = GlideEvaluator.evaluateString('global.snd_xplore.lookAt(' +
+              'global.snd_xplore._temp.obj, ' +
+              'global.snd_xplore._temp.x, ' +
+              'global.snd_xplore._temp.options)');
+
+          if (o) {
+            if (o.string == o.value) o.value = '';
+            reporter.result(o);
+          }
+          //reporter.result(lookAt(obj[x], x, options));
+        } catch (e) {
+          reporter.result({
+            name: x,
+            type: Object.prototype.toString.call(obj[x]),
+            value: '[Property access error: ' + e  + ']'
+          });
+        }
+
+      }
+    }
+
+    // we are done!
+    reporter.complete();
+  }
+
+  /**
+    summary:
+      The magic method that works out what any object is and even attempts to
+      find it's contents.
+
+    description:
+      Takes any object and an optional name of that object and returns
+      a simple result object containing the details of what was found.
+
+    param: obj [Object]
+      Any object that needs to be looked at.
+    param: name [String] Optional
+      The name of the object to populate the result with.
+
+    returns: Object
+      An object containing the following properties:
+        -name [String]
+          The name of the object if it was provided, otherwise an empty string.
+        -type [String]
+          The class name of the object.
+        -value [String]
+          The value of the object, if possible. Some objects cannot be evaluated
+          due to protection within the ServiceNow Rhino environment.
+          Some objects are red listed which means evaluating toString on the object
+          fails and generates some kind of warning.
+        -show_strings: Boolean
+          Set false to disable attempting to locate the string value.
+          Defaults to true.
+  **/
+  function lookAt(obj, name, options) {
+    var result = {
+      name: name || '',
+      type: '',
+      value: '',
+      string: ''
+    };
+
+    if (obj === null || obj === undefined) {
+      result.type = '' + obj;
+      result.value = ''; //String(obj);
+      return result;
+    }
+
+    /**
+      This is the only 'known' way to find what any type of object is in the
+      ServiceNow Rhino environment. It gets the classname, too, which means
+      we are able to really see exactly what everything is.
+      The result is something like `[Object String]`. The slice removes the
+      stuff around `String`.
+    **/
+    var mainType = Object.prototype.toString.call(obj);
+    result.type = mainType.slice(8, -1);
+    if (result.type != 'Array') {
+      result.value = ''; //Packages.java.lang.String.valueOf(obj); // doesn't work in Geneva
+    }
+
+    if (mainType == '[object global]') {
+      result.string = '[Global Scope]';
+      return result;
+    }
+
+    // we cannot read the value of a scope object
+    if (options.scope == result.type) {
+      result.string = '[' + options.scope + ' Scope]';
+      return result;
+    }
+
+    // there may be more object exceptions to add here...
+    if (redlistStr.indexOf(',' + result.type + ',') &gt; -1) {
+      result.string = '[Property type is red-listed]';
+      return result;
+    }
+
+    if (options.show_strings || options.show_strings === undefined) {
+
+      // handle native JavaScript objects which we know have a toString
+      if (obj instanceof Function ||
+          obj instanceof Object ||
+          obj instanceof Array ||
+          obj instanceof Number ||
+          obj instanceof Boolean ||
+          obj instanceof String ||
+          obj instanceof RegExp) {
+        result.string = obj.toString();
+        return result;
+      }
+
+      // handle Java objects which break when trying to toString
+      if (result.type === 'Function' || result.type === 'Object') {
+        return result;
+      }
+
+      // catch all
+      try {
+        result.string = String(obj);
+      } catch (e) {
+        result.string = ''; //'[Property type ' + result.type + ' should be red-listed]';
+      }
+
+    } else {
+      result.string = '[user ignored]';
+    }
+
+    return result;
+  }
+
+  /**
+    summary:
+      wrap the lookAt function so it pre compiles the red and black lists.
+    see: lookAt
+  **/
+  xplore.lookAt = function () {
+    compileLists();
+    return lookAt.apply(this, arguments);
+  };
+
+  /**
+    summary:
+      Manually push a property to the redlist to prevent calling toString on it
+    param: name [String]
+  **/
+  xplore.redlist = function (name) {
+    redlist.push('' + name);
+  };
+
+  /**
+    summary:
+      Manually push a property name to the blacklist to completely ignore it
+    param: name [String]
+  **/
+  xplore.blacklist = function (name) {
+    blacklist.push('' + name);
+  };
+
+  /**
+    summary:
+      Return the redlist array.
+    returns: Array
+  **/
+  xplore.getRedlist = function () {
+    return redlist;
+  };
+  xplore.redlist_arr = redlist;
+
+  /**
+    summary:
+      Return the blacklist array.
+    returns: Array
+  **/
+  xplore.getBlacklist = function () {
+    return blacklist;
+  };
+  xplore.blacklist_arr = blacklist;
+
+  /**
+    summary:
+      Provide a quick way to test any object if it is breaking Xplore
+    description:
+      Prints all the objects that are being looked at one-by-one.
+      The final Info message will be the property that is causing an issue.
+  **/
+  xplore.test = function (obj) {
+    compileLists();
+    var obj_arr = [];
+    for (var x in obj) {
+      obj_arr.push(x);
+    }
+    obj_arr.sort();
+    for (var i = 0; i &lt; obj_arr.length; i++) {
+      if (!(i % 100)) {
+        gs.flushMessages(); // messages can only contain 100 max
+      }
+      x = obj_arr[i];
+      if (blacklistStr.indexOf(',' + x + ',') &lt; 0) {
+        gs.addInfoMessage(i + ': ' + x);
+        lookAt(obj[x]);
+      } else {
+        gs.addErrorMessage(i + ': Blacklisted: ' + x);
+      }
+    }
+    gs.addInfoMessage('Xplore test completed successfully.');
+  };
+
+  // #public: String
+  // version number of this script [Letter and Patch number].[hotfix].[internal version]
+  xplore.version = "G3.0.3";
+
+  return xplore;
+})();]]&gt;&lt;/script&gt;&lt;sys_class_name&gt;sys_script_include&lt;/sys_class_name&gt;&lt;sys_created_by&gt;james@snd&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2015-09-10 22:27:24&lt;/sys_created_on&gt;&lt;sys_customer_update&gt;true&lt;/sys_customer_update&gt;&lt;sys_id&gt;04cf1a2f0fd2020094f3c09ce1050eba&lt;/sys_id&gt;&lt;sys_mod_count&gt;116&lt;/sys_mod_count&gt;&lt;sys_name&gt;snd_xplore&lt;/sys_name&gt;&lt;sys_package display_value="Global" source="global"&gt;global&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_replace_on_upgrade&gt;false&lt;/sys_replace_on_upgrade&gt;&lt;sys_scope display_value="Xplore"&gt;0f6ab99a0f36060094f3c09ce1050ee8&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_script_include_04cf1a2f0fd2020094f3c09ce1050eba&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;james@sndeveloper.com&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2016-03-15 02:40:32&lt;/sys_updated_on&gt;&lt;/sys_script_include&gt;&lt;/record_update&gt;</payload>
+<remote_update_set display_value="Xplore - 3.5">9bf4d3670fc2d20094f3c09ce1050edc</remote_update_set>
 <replace_on_upgrade>false</replace_on_upgrade>
 <sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:09:50</sys_created_on>
-<sys_id>0cc39f670fc2d20094f3c09ce1050e28</sys_id>
+<sys_created_on>2016-03-15 12:15:15</sys_created_on>
+<sys_id>53f4d3670fc2d20094f3c09ce1050edd</sys_id>
 <sys_mod_count>0</sys_mod_count>
 <sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:09:50</sys_updated_on>
+<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
 <table/>
-<target_name>snd_xplore.log_request</target_name>
-<type>System Property</type>
+<target_name>snd_xplore</target_name>
+<type>Script Include</type>
 <update_domain>global</update_domain>
 <update_set display_value=""/>
 <view/>
@@ -1302,14 +1711,14 @@ $(function () {&#13;
   snd_xplore_editor.focus();&#13;
   $('#window_loader').removeClass('active');&#13;
 });</script><script_name/><sys_class_name>sys_ui_script</sys_class_name><sys_created_by>james@sndeveloper.com</sys_created_by><sys_created_on>2016-02-07 20:06:00</sys_created_on><sys_customer_update>true</sys_customer_update><sys_id>2d6d96b70f5d528094f3c09ce1050e85</sys_id><sys_mod_count>28</sys_mod_count><sys_name>snd_xplore_ui</sys_name><sys_package display_value="Xplore" source="0f6ab99a0f36060094f3c09ce1050ee8">0f6ab99a0f36060094f3c09ce1050ee8</sys_package><sys_policy/><sys_replace_on_upgrade>false</sys_replace_on_upgrade><sys_scope display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</sys_scope><sys_update_name>sys_ui_script_2d6d96b70f5d528094f3c09ce1050e85</sys_update_name><sys_updated_by>james@sndeveloper.com</sys_updated_by><sys_updated_on>2016-03-15 11:50:33</sys_updated_on><use_scoped_format>false</use_scoped_format></sys_ui_script></record_update>]]></payload>
-<remote_update_set display_value="Xplore - 3.5">84c39f670fc2d20094f3c09ce1050e28</remote_update_set>
+<remote_update_set display_value="Xplore - 3.5">9bf4d3670fc2d20094f3c09ce1050edc</remote_update_set>
 <replace_on_upgrade>false</replace_on_upgrade>
 <sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:09:50</sys_created_on>
-<sys_id>40c39f670fc2d20094f3c09ce1050e29</sys_id>
+<sys_created_on>2016-03-15 12:15:15</sys_created_on>
+<sys_id>57f4d3670fc2d20094f3c09ce1050edd</sys_id>
 <sys_mod_count>0</sys_mod_count>
 <sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:09:50</sys_updated_on>
+<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
 <table/>
 <target_name>snd_xplore_ui</target_name>
 <type>UI Script</type>
@@ -1325,14 +1734,14 @@ $(function () {&#13;
 <name>sys_app_application_4eb000280f2a020094f3c09ce1050e23</name>
 <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_application"><sys_app_application action="INSERT_OR_UPDATE"><active>true</active><category display_value="Custom Applications">e0355b31ef303000a61d5a3615c0fb78</category><description>An application for linking Xplore to the ServiceNow UI.&#13;
 The Xplore module attempts to create a nice link in the navigation bar for easy access to Xplore.</description><device_type>browser</device_type><hint/><name/><order>100</order><roles>admin</roles><sys_class_name>sys_app_application</sys_class_name><sys_created_by>james@snd</sys_created_by><sys_created_on>2015-09-13 13:26:54</sys_created_on><sys_customer_update>true</sys_customer_update><sys_domain>global</sys_domain><sys_domain_path>/</sys_domain_path><sys_id>4eb000280f2a020094f3c09ce1050e23</sys_id><sys_mod_count>2</sys_mod_count><sys_name>Xplore</sys_name><sys_overrides/><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_replace_on_upgrade>false</sys_replace_on_upgrade><sys_scope display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</sys_scope><sys_update_name>sys_app_application_4eb000280f2a020094f3c09ce1050e23</sys_update_name><sys_updated_by>james@snd</sys_updated_by><sys_updated_on>2015-10-01 19:07:27</sys_updated_on><title>Xplore</title><view_name/></sys_app_application></record_update>]]></payload>
-<remote_update_set display_value="Xplore - 3.5">84c39f670fc2d20094f3c09ce1050e28</remote_update_set>
+<remote_update_set display_value="Xplore - 3.5">9bf4d3670fc2d20094f3c09ce1050edc</remote_update_set>
 <replace_on_upgrade>false</replace_on_upgrade>
 <sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:09:50</sys_created_on>
-<sys_id>48c39f670fc2d20094f3c09ce1050e28</sys_id>
+<sys_created_on>2016-03-15 12:15:15</sys_created_on>
+<sys_id>5ff4d3670fc2d20094f3c09ce1050edc</sys_id>
 <sys_mod_count>0</sys_mod_count>
 <sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:09:50</sys_updated_on>
+<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
 <table/>
 <target_name>Xplore</target_name>
 <type>Application Menu</type>
@@ -1345,405 +1754,164 @@ The Xplore module attempts to create a nice link in the navigation bar for easy 
 <application display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</application>
 <category>customer</category>
 <comments/>
-<name>sys_script_include_04cf1a2f0fd2020094f3c09ce1050eba</name>
-<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sys_script_include"&gt;&lt;sys_script_include action="INSERT_OR_UPDATE"&gt;&lt;access&gt;public&lt;/access&gt;&lt;active&gt;true&lt;/active&gt;&lt;api_name&gt;global.snd_xplore&lt;/api_name&gt;&lt;client_callable&gt;false&lt;/client_callable&gt;&lt;description&gt;The snd_xplore function here allows exploratory programming to take place in ServiceNow.&amp;#13;
-Simply call snd_xplore(my_obj) in a background script and watch all the objects get printed out on screen.&amp;#13;
-Alternatively, call snd_xplore.lookAt(obj) to just see the type and value of the object.&amp;#13;
-Check out the UI for more info: /snd_xplore.do&lt;/description&gt;&lt;name&gt;snd_xplore&lt;/name&gt;&lt;script&gt;&lt;![CDATA[var snd_xplore = (function () {
+<name>sys_script_include_1aefea960f44924094f3c09ce1050ed7</name>
+<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sys_script_include"&gt;&lt;sys_script_include action="INSERT_OR_UPDATE"&gt;&lt;access&gt;public&lt;/access&gt;&lt;active&gt;true&lt;/active&gt;&lt;api_name&gt;global.snd_XploreReporter&lt;/api_name&gt;&lt;client_callable&gt;false&lt;/client_callable&gt;&lt;description/&gt;&lt;name&gt;snd_XploreReporter&lt;/name&gt;&lt;script&gt;&lt;![CDATA[/**
+  summary:
+    A reporter to pass to snd_xplore for capturing results
+**/
+function snd_XploreReporter() {};
 
-  /**
-    Black list to prevent looking over inaccessible Java stuff.
-    The majority of these are fully capitalised properties found on Java Packages
-    which would otherwise throw an exception.
-    There is no point even adding these to the results list.
-    E.g. DB, Y, _XML, M2MMAINTAINORDER
-  **/
-  var blacklistRegExp = /^[A-Z0-9_$]+$/;
+// #protected: a standard result object
+snd_XploreReporter.prototype.response = {
+  // The type of object that is being evaluated
+  type: '',
+  // the valueOf value of the object being evaluated
+  value: '',
+  // the list of property objects
+  report: [],
+  // the list of captured messages
+  messages: [],
+  // a list of logs that occured very recently
+  logs: [],
+  // the string value of the object being evaluated
+  string: ''
+};
 
-  /**
-    Additional elements for the black List not captured by RegExp.
-    These property names will be completely ignored.
-  **/
-  var blacklist = [
-    //'i18n_SORTABLE', // Any JavaClass?
-    //'fDebugSessionLifetime' // GlideSession
-  ];
-  var blacklistStr;
+/**
+  summary:
+    Get the response object.
+**/
+snd_XploreReporter.prototype.getResponse = function () {
+  return this.response;
+};
 
-  /**
-    Red list types must not use toString as they will throw an exception.
-    They will still show up in the results though.
-  **/
-  var redlist = [
-    //'GlideElementHierarchicalVariables' // GlideRecord
-  ];
-  var redlistStr;
+/**
+  summary:
+    Called when the main object is evaluated.
+  obj: Object
+    A result object provided by snd_xplore
+**/
+snd_XploreReporter.prototype.begin = function (obj) {
+  this.response.type = obj.type;
+  this.response.value = obj.value;
+  this.response.string = obj.string;
+};
 
-  function isInScope() {
-    return !('print' in gs);
+/**
+  summary:
+    Called each time a property of the object is evaluated.
+  obj: Object
+    A result object provided by snd_xplore
+**/
+snd_XploreReporter.prototype.result = function (obj) {
+  this.response.report.push(obj);
+};
+
+/**
+  summary:
+    Push messages onto the response message stack.
+**/
+snd_XploreReporter.prototype.addMessage = function (type, msg) {
+  this.response.messages.push({
+    t: type,
+    v: msg
+  });
+};
+
+snd_XploreReporter.prototype.addLog = function (logObj) {
+  this.response.logs.push(logObj);
+};
+
+/**
+  summary:
+    Get all the output messages generated in this session, then flush them.
+  description:
+    Pushes an array of objects containing two properties describing the message
+    into the response.messages array. Each object in the array looks like this:
+      t: String
+        The property type: log, info, error, access
+      v: String
+        The message.
+**/
+snd_XploreReporter.prototype.getOutputMessages = function () {
+  var tmp, i;
+
+  // access
+  tmp = gs.getAccessMessages().toArray();
+  for (i = 0; i &lt; tmp.length; i++) {
+    this.addMessage('access', tmp[i]);
   }
 
-  /**
-    summary:
-      Quick way to compile the arrays into string which are easily searchable.
-  **/
-  function compileLists() {
-    // prefix/suffix with comma so exact search can be made ',foo,'
-    blacklistStr = ',' + blacklist.join(',') + ',';
-    redlistStr = ',' + redlist.join(',') + ',';
+  // errors
+  tmp = gs.getErrorMessages().toArray();
+  for (i = 0; i &lt; tmp.length; i++) {
+    this.addMessage('error', tmp[i]);
   }
 
-  /**
-    summary:
-      The default reporter.
-    description:
-      Follow this object format in order to build a custom reporter that
-      can be passed into snd_xplore for custom reporting requirements.
-  **/
-  var print_reporter = {
+  // info
+  tmp = gs.getInfoMessages().toArray();
+  for (i = 0; i &lt; tmp.length; i++) {
+    this.addMessage('info', tmp[i]);
+  }
 
-    // #public: see if we are in scoped app and use appropriate function call
-    func: isInScope() ? 'debug' : 'print',
+  // gs.print
+  tmp = GlideSessionDebug.getOutputMessages().toArray();
+  for (i = 0; i &lt; tmp.length; i++) {
+    this.addMessage('log', tmp[i].line.replace(' : ', ' ')); // remove unnecessary colon
+  }
 
-    /**
-      summary:
-        Called when the main object is evaluated.
-      param: obj [Object]
-        A result object
-    **/
-    begin: function (obj) {
-      gs[this.func]('Xplore: [' + obj.type + '] : ' + obj.string);
-    },
+  // remove all the messages we just retrieved
+  GlideSessionDebug.clearOutputMessages();
+  gs.flushAccessMessages();
+  gs.flushMessages();
+};
 
-    /**
-      summary:
-        Called each time a property of the object is evaluated.
-      param: obj [Object]
-        A result object provided by snd_xplore
-    **/
-    result: function (obj) {
-      gs[this.func]('[' + obj.type + '] ' + obj.name + ' = ' + obj.string);
-    },
 
-    /**
-      summary:
-       Called when snd_xplore has finished running.
-    **/
-    complete: function () {
-      gs[this.func]('Complete.');
-    }
+/**
+  summary:
+    Get any errors or warning that occured for the user in the last minute or so.
+  returns: Array
+    An array of objects containing the properties:
+      created: Number
+      level: String
+      Message: String
+      Source: String
+**/
+snd_XploreReporter.prototype.getLogs = function () {
+  var levelMap = {
+    '-1': 'Debug',
+    '0': 'Info',
+    '1': 'Warning',
+    '2': 'Error'
   };
-
-  /**
-    summary:
-      Function for evaluating any object and getting its contents.
-
-    description:
-      The snd_xplore function here allows exploratory programming to take place
-      in ServiceNow. Simply call snd_xplore(my_obj) in a background script
-      and watch all the objects get printed out on screen.
-
-    param: obj [Any]
-      The object you want to explore!
-    param: reporter [Object] Optional
-      A custom reporter object so you can customise where the output gets sent.
-    param: options [Object] Optional
-      Customise what happens using this options object.
-      -show_props: [Boolean]
-        Set false to disable attempting to parse through the objects' properties.
-        Defaults to true.
-      see: lookAt
-  **/
-  function xplore(obj, reporter, options) {
-
-    function ensureProps(obj, mixer) {
-      for (var x in mixer) {
-        if (typeof obj[x] === 'undefined') {
-          obj[x] = mixer[x];
-        }
-      }
-    }
-
-    compileLists();
-
-    // get the default reporter if no reporter has been provided
-    if (!reporter) reporter = print_reporter;
-
-    // ensureProps the reporter object to ensure we have the right functions to call
-    ensureProps(reporter, {
-      begin: function () {},
-      result: function () {},
-      complete: function () {}
+  var errors = [];
+  var gr = new GlideRecord('syslog');
+  gr.addQuery('sys_created_on', 'ON', 'Current minute@javascript:gs.minutesAgoStart(0)@javascript:gs.minutesAgoEnd(0)');
+  gr.addQuery('sys_created_by', '=', gs.getUserName());
+  gr.addQuery('level', 'IN', '1,2');
+  gr.orderBy('sys_created_on');
+  gr.query();
+  while (gr.next()) {
+    this.addLog({
+      created: gr.sys_created_on.getDisplayValue(),
+      level: levelMap[gr.getValue('level')],
+      message: gr.getValue('message'),
+      source: gr.getValue('source')
     });
-
-    // ensureProps the options object to setup defaults
-    options = options || {};
-    ensureProps(options, {
-      name: '',
-      type: '',
-      value: '',
-      show_props: true,
-      show_strings: true
-    });
-
-    // start!
-    var target = lookAt(obj, '[Target]', options);
-    if (target.string == target.value) target.value = '';
-    reporter.begin(target);
-
-    // We may want to evaluate the properties against the blacklist for a Java class
-    var isJavaObject = target.type.indexOf('Java') &gt; -1;
-
-    if (options.show_props &amp;&amp; obj !== null &amp;&amp; obj !== undefined) {
-      for (var x in obj) {
-
-        // if we are evaluating a Java class then we need to check the Blacklist
-        // so we don't even attempt to look at that property as it will just
-        // halt the thread and generate an illegal access exception.
-        //if (isJavaObject) {
-          if (blacklistStr.indexOf(',' + x + ',') &gt; -1 || (isJavaObject &amp;&amp; x.match(blacklistRegExp))) {
-            /**reporter.result({
-              name: x,
-              type: 'blacklisted',
-              value: '[unknown]'
-            });**/
-            continue;
-          }
-        //}
-
-        // The try/catch is required for things like new GlideDateTime().tableName
-        // which can throw a NullPointerException on access.
-        try {
-          snd_xplore._temp = {
-            obj: obj[x],
-            x: x,
-            options: options
-          };
-
-          var o = GlideEvaluator.evaluateString('global.snd_xplore.lookAt(' +
-              'global.snd_xplore._temp.obj, ' +
-              'global.snd_xplore._temp.x, ' +
-              'global.snd_xplore._temp.options)');
-
-          if (o) {
-            if (o.string == o.value) o.value = '';
-            reporter.result(o);
-          }
-          //reporter.result(lookAt(obj[x], x, options));
-        } catch (e) {
-          reporter.result({
-            name: x,
-            type: Object.prototype.toString.call(obj[x]),
-            value: '[Property access error: ' + e  + ']'
-          });
-        }
-
-      }
-    }
-
-    // we are done!
-    reporter.complete();
   }
-
-  /**
-    summary:
-      The magic method that works out what any object is and even attempts to
-      find it's contents.
-
-    description:
-      Takes any object and an optional name of that object and returns
-      a simple result object containing the details of what was found.
-
-    param: obj [Object]
-      Any object that needs to be looked at.
-    param: name [String] Optional
-      The name of the object to populate the result with.
-
-    returns: Object
-      An object containing the following properties:
-        -name [String]
-          The name of the object if it was provided, otherwise an empty string.
-        -type [String]
-          The class name of the object.
-        -value [String]
-          The value of the object, if possible. Some objects cannot be evaluated
-          due to protection within the ServiceNow Rhino environment.
-          Some objects are red listed which means evaluating toString on the object
-          fails and generates some kind of warning.
-        -show_strings: Boolean
-          Set false to disable attempting to locate the string value.
-          Defaults to true.
-  **/
-  function lookAt(obj, name, options) {
-    var result = {
-      name: name || '',
-      type: '',
-      value: '',
-      string: ''
-    };
-
-    if (obj === null || obj === undefined) {
-      result.type = '' + obj;
-      result.value = ''; //String(obj);
-      return result;
-    }
-
-    /**
-      This is the only 'known' way to find what any type of object is in the
-      ServiceNow Rhino environment. It gets the classname, too, which means
-      we are able to really see exactly what everything is.
-      The result is something like `[Object String]`. The slice removes the
-      stuff around `String`.
-    **/
-    var mainType = Object.prototype.toString.call(obj);
-    result.type = mainType.slice(8, -1);
-    if (result.type != 'Array') {
-      result.value = ''; //Packages.java.lang.String.valueOf(obj); // doesn't work in Geneva
-    }
-
-    if (mainType == '[object global]') {
-      result.string = '[Global Scope]';
-      return result;
-    }
-
-    // we cannot read the value of a scope object
-    if (options.scope == result.type) {
-      result.string = '[' + options.scope + ' Scope]';
-      return result;
-    }
-
-    // there may be more object exceptions to add here...
-    if (redlistStr.indexOf(',' + result.type + ',') &gt; -1) {
-      result.string = '[Property type is red-listed]';
-      return result;
-    }
-
-    if (options.show_strings || options.show_strings === undefined) {
-
-      // handle native JavaScript objects which we know have a toString
-      if (obj instanceof Function ||
-          obj instanceof Object ||
-          obj instanceof Array ||
-          obj instanceof Number ||
-          obj instanceof Boolean ||
-          obj instanceof String ||
-          obj instanceof RegExp) {
-        result.string = obj.toString();
-        return result;
-      }
-
-      // handle Java objects which break when trying to toString
-      if (result.type === 'Function' || result.type === 'Object') {
-        return result;
-      }
-
-      // catch all
-      try {
-        result.string = String(obj);
-      } catch (e) {
-        result.string = ''; //'[Property type ' + result.type + ' should be red-listed]';
-      }
-
-    } else {
-      result.string = '[user ignored]';
-    }
-
-    return result;
-  }
-
-  /**
-    summary:
-      wrap the lookAt function so it pre compiles the red and black lists.
-    see: lookAt
-  **/
-  xplore.lookAt = function () {
-    compileLists();
-    return lookAt.apply(this, arguments);
-  };
-
-  /**
-    summary:
-      Manually push a property to the redlist to prevent calling toString on it
-    param: name [String]
-  **/
-  xplore.redlist = function (name) {
-    redlist.push('' + name);
-  };
-
-  /**
-    summary:
-      Manually push a property name to the blacklist to completely ignore it
-    param: name [String]
-  **/
-  xplore.blacklist = function (name) {
-    blacklist.push('' + name);
-  };
-
-  /**
-    summary:
-      Return the redlist array.
-    returns: Array
-  **/
-  xplore.getRedlist = function () {
-    return redlist;
-  };
-  xplore.redlist_arr = redlist;
-
-  /**
-    summary:
-      Return the blacklist array.
-    returns: Array
-  **/
-  xplore.getBlacklist = function () {
-    return blacklist;
-  };
-  xplore.blacklist_arr = blacklist;
-
-  /**
-    summary:
-      Provide a quick way to test any object if it is breaking Xplore
-    description:
-      Prints all the objects that are being looked at one-by-one.
-      The final Info message will be the property that is causing an issue.
-  **/
-  xplore.test = function (obj) {
-    compileLists();
-    var obj_arr = [];
-    for (var x in obj) {
-      obj_arr.push(x);
-    }
-    obj_arr.sort();
-    for (var i = 0; i &lt; obj_arr.length; i++) {
-      if (!(i % 100)) {
-        gs.flushMessages(); // messages can only contain 100 max
-      }
-      x = obj_arr[i];
-      if (blacklistStr.indexOf(',' + x + ',') &lt; 0) {
-        gs.addInfoMessage(i + ': ' + x);
-        lookAt(obj[x]);
-      } else {
-        gs.addErrorMessage(i + ': Blacklisted: ' + x);
-      }
-    }
-    gs.addInfoMessage('Xplore test completed successfully.');
-  };
-
-  // #public: String
-  // version number of this script [Letter and Patch number].[hotfix].[internal version]
-  xplore.version = "G3.0.3";
-
-  return xplore;
-})();]]&gt;&lt;/script&gt;&lt;sys_class_name&gt;sys_script_include&lt;/sys_class_name&gt;&lt;sys_created_by&gt;james@snd&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2015-09-10 22:27:24&lt;/sys_created_on&gt;&lt;sys_customer_update&gt;true&lt;/sys_customer_update&gt;&lt;sys_id&gt;04cf1a2f0fd2020094f3c09ce1050eba&lt;/sys_id&gt;&lt;sys_mod_count&gt;116&lt;/sys_mod_count&gt;&lt;sys_name&gt;snd_xplore&lt;/sys_name&gt;&lt;sys_package display_value="Global" source="global"&gt;global&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_replace_on_upgrade&gt;false&lt;/sys_replace_on_upgrade&gt;&lt;sys_scope display_value="Xplore"&gt;0f6ab99a0f36060094f3c09ce1050ee8&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_script_include_04cf1a2f0fd2020094f3c09ce1050eba&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;james@sndeveloper.com&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2016-03-15 02:40:32&lt;/sys_updated_on&gt;&lt;/sys_script_include&gt;&lt;/record_update&gt;</payload>
-<remote_update_set display_value="Xplore - 3.5">84c39f670fc2d20094f3c09ce1050e28</remote_update_set>
+  return errors;
+};
+]]&gt;&lt;/script&gt;&lt;sys_class_name&gt;sys_script_include&lt;/sys_class_name&gt;&lt;sys_created_by&gt;james@snd&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2015-12-03 02:15:50&lt;/sys_created_on&gt;&lt;sys_customer_update&gt;true&lt;/sys_customer_update&gt;&lt;sys_id&gt;1aefea960f44924094f3c09ce1050ed7&lt;/sys_id&gt;&lt;sys_mod_count&gt;1&lt;/sys_mod_count&gt;&lt;sys_name&gt;snd_XploreReporter&lt;/sys_name&gt;&lt;sys_package display_value="Xplore" source="0f6ab99a0f36060094f3c09ce1050ee8"&gt;0f6ab99a0f36060094f3c09ce1050ee8&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_replace_on_upgrade&gt;false&lt;/sys_replace_on_upgrade&gt;&lt;sys_scope display_value="Xplore"&gt;0f6ab99a0f36060094f3c09ce1050ee8&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_script_include_1aefea960f44924094f3c09ce1050ed7&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;james@snd&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2015-12-03 02:25:49&lt;/sys_updated_on&gt;&lt;/sys_script_include&gt;&lt;/record_update&gt;</payload>
+<remote_update_set display_value="Xplore - 3.5">9bf4d3670fc2d20094f3c09ce1050edc</remote_update_set>
 <replace_on_upgrade>false</replace_on_upgrade>
 <sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:09:50</sys_created_on>
-<sys_id>4cc39f670fc2d20094f3c09ce1050e28</sys_id>
+<sys_created_on>2016-03-15 12:15:15</sys_created_on>
+<sys_id>93f4d3670fc2d20094f3c09ce1050edd</sys_id>
 <sys_mod_count>0</sys_mod_count>
 <sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:09:50</sys_updated_on>
+<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
 <table/>
-<target_name>snd_xplore</target_name>
+<target_name>snd_XploreReporter</target_name>
 <type>Script Include</type>
 <update_domain>global</update_domain>
 <update_set display_value=""/>
@@ -2211,14 +2379,14 @@ snd_xplore.regex = (function () {&#13;
 &#13;
   return testRegex;&#13;
 })();</script><script_name/><sys_class_name>sys_ui_script</sys_class_name><sys_created_by>james@snd</sys_created_by><sys_created_on>2015-09-19 05:04:58</sys_created_on><sys_customer_update>true</sys_customer_update><sys_id>2f4741da0fa6420094f3c09ce1050e22</sys_id><sys_mod_count>132</sys_mod_count><sys_name>snd_xplore</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_replace_on_upgrade>false</sys_replace_on_upgrade><sys_scope display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</sys_scope><sys_update_name>sys_ui_script_2f4741da0fa6420094f3c09ce1050e22</sys_update_name><sys_updated_by>james@sndeveloper.com</sys_updated_by><sys_updated_on>2016-03-15 10:15:12</sys_updated_on><use_scoped_format>false</use_scoped_format></sys_ui_script></record_update>]]></payload>
-<remote_update_set display_value="Xplore - 3.5">84c39f670fc2d20094f3c09ce1050e28</remote_update_set>
+<remote_update_set display_value="Xplore - 3.5">9bf4d3670fc2d20094f3c09ce1050edc</remote_update_set>
 <replace_on_upgrade>false</replace_on_upgrade>
 <sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:09:50</sys_created_on>
-<sys_id>80c39f670fc2d20094f3c09ce1050e29</sys_id>
+<sys_created_on>2016-03-15 12:15:15</sys_created_on>
+<sys_id>97f4d3670fc2d20094f3c09ce1050edd</sys_id>
 <sys_mod_count>0</sys_mod_count>
 <sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:09:50</sys_updated_on>
+<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
 <table/>
 <target_name>snd_xplore</target_name>
 <type>UI Script</type>
@@ -2233,14 +2401,14 @@ snd_xplore.regex = (function () {&#13;
 <comments/>
 <name>sys_app_module_02aff9e00f6a020094f3c09ce1050ece</name>
 <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_module"><sys_app_module action="INSERT_OR_UPDATE"><active>true</active><application display_value="Xplore">4eb000280f2a020094f3c09ce1050e23</application><assessment/><content_page/><device_type/><filter/><hint>Xplore: the ServiceNow developer toolset</hint><homepage/><image/><link_type>DIRECT</link_type><map_page/><mobile_title>Xplore</mobile_title><mobile_view_name>Mobile</mobile_view_name><name/><order/><override_menu_roles>false</override_menu_roles><query>snd_xplore.do</query><report/><roles>admin</roles><survey/><survey_overwrite>true</survey_overwrite><sys_class_name>sys_app_module</sys_class_name><sys_created_by>james@snd</sys_created_by><sys_created_on>2015-09-13 22:42:06</sys_created_on><sys_customer_update>true</sys_customer_update><sys_domain>global</sys_domain><sys_domain_path>/</sys_domain_path><sys_id>02aff9e00f6a020094f3c09ce1050ece</sys_id><sys_mod_count>21</sys_mod_count><sys_name>Xplore</sys_name><sys_overrides/><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_replace_on_upgrade>false</sys_replace_on_upgrade><sys_scope display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</sys_scope><sys_update_name>sys_app_module_02aff9e00f6a020094f3c09ce1050ece</sys_update_name><sys_updated_by>james@snd</sys_updated_by><sys_updated_on>2015-12-16 14:25:21</sys_updated_on><timeline_page/><title>Xplore</title><uncancelable>false</uncancelable><view_name/><window_name>_blank</window_name></sys_app_module></record_update>]]></payload>
-<remote_update_set display_value="Xplore - 3.5">84c39f670fc2d20094f3c09ce1050e28</remote_update_set>
+<remote_update_set display_value="Xplore - 3.5">9bf4d3670fc2d20094f3c09ce1050edc</remote_update_set>
 <replace_on_upgrade>false</replace_on_upgrade>
 <sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:09:50</sys_created_on>
-<sys_id>88c39f670fc2d20094f3c09ce1050e28</sys_id>
+<sys_created_on>2016-03-15 12:15:15</sys_created_on>
+<sys_id>9ff4d3670fc2d20094f3c09ce1050edc</sys_id>
 <sys_mod_count>0</sys_mod_count>
 <sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:09:50</sys_updated_on>
+<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
 <table/>
 <target_name>Xplore</target_name>
 <type>Module</type>
@@ -2253,165 +2421,307 @@ snd_xplore.regex = (function () {&#13;
 <application display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</application>
 <category>customer</category>
 <comments/>
-<name>sys_script_include_1aefea960f44924094f3c09ce1050ed7</name>
-<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sys_script_include"&gt;&lt;sys_script_include action="INSERT_OR_UPDATE"&gt;&lt;access&gt;public&lt;/access&gt;&lt;active&gt;true&lt;/active&gt;&lt;api_name&gt;global.snd_XploreReporter&lt;/api_name&gt;&lt;client_callable&gt;false&lt;/client_callable&gt;&lt;description/&gt;&lt;name&gt;snd_XploreReporter&lt;/name&gt;&lt;script&gt;&lt;![CDATA[/**
-  summary:
-    A reporter to pass to snd_xplore for capturing results
-**/
-function snd_XploreReporter() {};
+<name>sys_ui_macro_b6e5deb30f5d528094f3c09ce1050e71</name>
+<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sys_ui_macro"&gt;&lt;sys_ui_macro action="INSERT_OR_UPDATE"&gt;&lt;active&gt;true&lt;/active&gt;&lt;category&gt;general&lt;/category&gt;&lt;description/&gt;&lt;media_type/&gt;&lt;name&gt;snd_xplore_info&lt;/name&gt;&lt;scoped_name/&gt;&lt;sys_class_name&gt;sys_ui_macro&lt;/sys_class_name&gt;&lt;sys_created_by&gt;james@sndeveloper.com&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2016-02-07 19:31:05&lt;/sys_created_on&gt;&lt;sys_customer_update&gt;true&lt;/sys_customer_update&gt;&lt;sys_id&gt;b6e5deb30f5d528094f3c09ce1050e71&lt;/sys_id&gt;&lt;sys_mod_count&gt;30&lt;/sys_mod_count&gt;&lt;sys_name&gt;snd_xplore_info&lt;/sys_name&gt;&lt;sys_package display_value="Xplore" source="0f6ab99a0f36060094f3c09ce1050ee8"&gt;0f6ab99a0f36060094f3c09ce1050ee8&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_replace_on_upgrade&gt;false&lt;/sys_replace_on_upgrade&gt;&lt;sys_scope display_value="Xplore"&gt;0f6ab99a0f36060094f3c09ce1050ee8&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_ui_macro_b6e5deb30f5d528094f3c09ce1050e71&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;james@sndeveloper.com&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2016-03-15 11:26:22&lt;/sys_updated_on&gt;&lt;xml&gt;&lt;![CDATA[&lt;?xml version="1.0" encoding="utf-8" ?&gt;
+&lt;j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null"&gt;
+&lt;div class="row" style="margin-top: 12px; font-size: 14px;"&gt;
 
-// #protected: a standard result object
-snd_XploreReporter.prototype.response = {
-  // The type of object that is being evaluated
-  type: '',
-  // the valueOf value of the object being evaluated
-  value: '',
-  // the list of property objects
-  report: [],
-  // the list of captured messages
-  messages: [],
-  // a list of logs that occured very recently
-  logs: [],
-  // the string value of the object being evaluated
-  string: ''
-};
+  &lt;div class="col-xs-12"&gt;
 
-/**
-  summary:
-    Get the response object.
-**/
-snd_XploreReporter.prototype.getResponse = function () {
-  return this.response;
-};
+    &lt;div class="alert alert-danger"&gt;
+      &lt;strong&gt;Warning:&lt;/strong&gt; This utility runs code in your
+      environment. Make sure you know what you are doing as it is
+      entirely possible for you to screw up your instance.
+    &lt;/div&gt;
 
-/**
-  summary:
-    Called when the main object is evaluated.
-  obj: Object
-    A result object provided by snd_xplore
-**/
-snd_XploreReporter.prototype.begin = function (obj) {
-  this.response.type = obj.type;
-  this.response.value = obj.value;
-  this.response.string = obj.string;
-};
+    &lt;div class="panel panel-default"&gt;
+      &lt;div class="panel-heading" role="tab"&gt;
+        &lt;h4 class="panel-title"&gt;
+          &lt;a href="#info_welcome" role="button" data-toggle="collapse"&gt;WELCOME!&lt;/a&gt;
+        &lt;/h4&gt;
+      &lt;/div&gt;
+      &lt;div id="info_welcome" class="panel-collapse collapse in" role="tabpanel"&gt;
+        &lt;div class="panel-body"&gt;
+          &lt;p&gt;Hey! Thanks for downloading Xplore.&lt;/p&gt;
+          &lt;p&gt;Xplore is a free, independently developed utility for ServiceNow that
+            has been built 'for developers, by developers'. We really appreciate
+            all the community input we get!&lt;/p&gt;
 
-/**
-  summary:
-    Called each time a property of the object is evaluated.
-  obj: Object
-    A result object provided by snd_xplore
-**/
-snd_XploreReporter.prototype.result = function (obj) {
-  this.response.report.push(obj);
-};
+          &lt;p&gt;&lt;strong&gt;Ways you can help!&lt;/strong&gt;
+            &lt;ul class="list-group list-example"&gt;
+              &lt;li class="list-group-item"&gt;
+                &lt;a href="https://share.servicenow.com/app.do#/detailV2/c42105f2e1581a007c390227ffa71e61/reviews"
+                  target="_blank"&gt;
+                  &lt;span class="glyphicon glyphicon-thumbs-up"&gt;&lt;/span&gt;
+                  Write a review&lt;/a&gt;
+              &lt;/li&gt;
+              &lt;li class="list-group-item"&gt;
+                &lt;a href="https://github.com/sn-developer/Xplore" target="_blank"&gt;
+                &lt;span class="glyphicon glyphicon-wrench"&gt;&lt;/span&gt;
+                Contribute on GitHub&lt;/a&gt;
+              &lt;/li&gt;
+              &lt;li class="list-group-item"&gt;
+                &lt;a href="mailto:info@sndeveloper.com?subject=Xplore Feedback"&gt;
+                  &lt;span class="glyphicon glyphicon-envelope"&gt;&lt;/span&gt;
+                  Say hello!&lt;/a&gt;
+              &lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/p&gt;
 
-/**
-  summary:
-    Push messages onto the response message stack.
-**/
-snd_XploreReporter.prototype.addMessage = function (type, msg) {
-  this.response.messages.push({
-    t: type,
-    v: msg
-  });
-};
+          &lt;p&gt;Thanks!&lt;/p&gt;
+          &lt;p&gt;&lt;a href="https://twitter.com/James_Neale" target="_blank"&gt;James&lt;/a&gt;
+          and
+          &lt;a href="https://twitter.com/simthort" target="_blank"&gt;Tim&lt;/a&gt;
+          &lt;/p&gt;
 
-snd_XploreReporter.prototype.addLog = function (logObj) {
-  this.response.logs.push(logObj);
-};
+          &lt;p class="small"&gt;
+            &lt;a href="https://twitter.com/intent/tweet?button_hashtag=Xplore${AMP}text=My%20job%20as%20a%20%23servicenowdev%20just%20got%20a%20lot%20easier!%20%40sn_developer" class="twitter-hashtag-button" data-related="sn_developer" data-url="https://goo.gl/fAyYTA" target="_blank"&gt;Tweet #Xplore&lt;/a&gt;
+            |
+            &lt;a href="https://twitter.com/sn_developer" class="twitter-follow-button"
+            data-show-count="false" target="_blank"&gt;Follow @sn_developer&lt;/a&gt;
+            |
+            &lt;a href="https://www.linkedin.com/company/sn-developer" target="_blank"&gt;Find us on LinkedIn&lt;/a&gt;
+          &lt;/p&gt;
 
-/**
-  summary:
-    Get all the output messages generated in this session, then flush them.
-  description:
-    Pushes an array of objects containing two properties describing the message
-    into the response.messages array. Each object in the array looks like this:
-      t: String
-        The property type: log, info, error, access
-      v: String
-        The message.
-**/
-snd_XploreReporter.prototype.getOutputMessages = function () {
-  var tmp, i;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
 
-  // access
-  tmp = gs.getAccessMessages().toArray();
-  for (i = 0; i &lt; tmp.length; i++) {
-    this.addMessage('access', tmp[i]);
-  }
+    &lt;div class="panel-group" id="info_accordion" role="tablist"&gt;
 
-  // errors
-  tmp = gs.getErrorMessages().toArray();
-  for (i = 0; i &lt; tmp.length; i++) {
-    this.addMessage('error', tmp[i]);
-  }
+      &lt;div class="panel panel-default"&gt;
+        &lt;div class="panel-heading" role="tab"&gt;
+          &lt;h4 class="panel-title"&gt;
+            &lt;a href="#info_script_editor" role="button" data-toggle="collapse"
+              data-parent="#info_accordion"&gt;SCRIPT EDITOR&lt;/a&gt;
+          &lt;/h4&gt;
+        &lt;/div&gt;
+        &lt;div id="info_script_editor" class="panel-collapse collapse in" role="tabpanel"&gt;
+          &lt;div class="panel-body"&gt;
+            &lt;p&gt;Use the script editor on the left to write and run scripts
+              in ServiceNow, much like a background script, but
+              supercharged. The last object in the script will be shown
+              here in a detailed output tab.&lt;/p&gt;
+           &lt;p&gt;Use the choice list to choose where you want to run your
+              code, either server or client.&lt;/p&gt;
+            &lt;p&gt;Launching Xplore from within ServiceNow will give you
+              access to the various framesServiceNow uses.&lt;/p&gt;
+            &lt;p&gt;
+              Not sure what to do? Try one of these demos:
+              &lt;div class="list-group xplore_demo list-example"&gt;
+                &lt;a data-demo="GlideRecord" href="#demo"
+                  class="list-group-item list-group-item-info"&gt;Demo: GlideRecord&lt;/a&gt;
+                &lt;a data-demo="Array" href="#demo"
+                  class="list-group-item list-group-item-info"&gt;Demo: Array&lt;/a&gt;
+                &lt;a data-demo="GlideUser" href="#demo"
+                  class="list-group-item list-group-item-info"&gt;Demo: GlideUser&lt;/a&gt;
+                &lt;a data-demo="Logging" href="#demo"
+                  class="list-group-item list-group-item-info"&gt;Demo: Logging and Messages&lt;/a&gt;
+                &lt;a data-demo="scope" href="#demo"
+                  class="list-group-item list-group-item-info"&gt;Demo: Current scope&lt;/a&gt;
+              &lt;/div&gt;
+            &lt;/p&gt;
+            &lt;p class="alert alert-warning"&gt;Tip: Use the keyboard shortcut
+              &lt;kbd&gt;Ctrl + Enter&lt;/kbd&gt; to run.&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
 
-  // info
-  tmp = gs.getInfoMessages().toArray();
-  for (i = 0; i &lt; tmp.length; i++) {
-    this.addMessage('info', tmp[i]);
-  }
+      &lt;div class="panel panel-default"&gt;
+        &lt;div class="panel-heading" role="tab"&gt;
+          &lt;h4 class="panel-title"&gt;
+            &lt;a href="#info_user_data" role="button" data-toggle="collapse"
+              data-parent="#info_accordion"&gt;USER DATA&lt;/a&gt;
+          &lt;/h4&gt;
+        &lt;/div&gt;
+        &lt;div id="info_user_data" class="panel-collapse collapse" role="tabpanel"&gt;
+          &lt;div class="panel-body"&gt;
+            &lt;p&gt;Paste in large chunks of text like XML and work with
+              them in your script.&lt;/p&gt;
+            &lt;div class="list-group xplore_demo list-example"&gt;
+              &lt;a data-demo="user_data" href="#demo"
+                class="list-group-item list-group-item-info"&gt;Demo: Format XML&lt;/a&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
 
-  // gs.print
-  tmp = GlideSessionDebug.getOutputMessages().toArray();
-  for (i = 0; i &lt; tmp.length; i++) {
-    this.addMessage('log', tmp[i].line.replace(' : ', ' ')); // remove unnecessary colon
-  }
+      &lt;div class="panel panel-default"&gt;
+        &lt;div class="panel-heading" role="tab"&gt;
+          &lt;h4 class="panel-title"&gt;
+            &lt;a href="#info_regex" role="button" data-toggle="collapse"
+              data-parent="#info_accordion"&gt;REGEX&lt;/a&gt;
+          &lt;/h4&gt;
+        &lt;/div&gt;
+        &lt;div id="info_regex" class="panel-collapse collapse" role="tabpanel"&gt;
+          &lt;div class="panel-body"&gt;
+            &lt;p&gt;You can test out regular expressions natively in ServiceNow!&lt;/p&gt;
+            &lt;p&gt;If you've done any work with regular expressions then you will know
+              that sometimes regular expressions don't work the same way
+              in ServiceNow as they do in browsers or other languages.&lt;/p&gt;
+            &lt;p&gt;Simply type in your expression and a test string, give
+              it a second, and it will automatically test your expression
+              for you and show you the results - including the match groupings.&lt;/p&gt;
+            &lt;p class="alert alert-warning"&gt;Tip: Change to 'Client' to test an
+              expression in your browser.&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
 
-  // remove all the messages we just retrieved
-  GlideSessionDebug.clearOutputMessages();
-  gs.flushAccessMessages();
-  gs.flushMessages();
-};
+      &lt;div class="panel panel-default"&gt;
+        &lt;div class="panel-heading" role="tab"&gt;
+          &lt;h4 class="panel-title"&gt;
+            &lt;a href="#info_table_hierarchy" role="button" data-toggle="collapse"
+              data-parent="#info_accordion"&gt;TABLE HIERARCHY&lt;/a&gt;
+          &lt;/h4&gt;
+        &lt;/div&gt;
+        &lt;div id="info_table_hierarchy" class="panel-collapse collapse"
+          role="tabpanel"&gt;
+          &lt;div class="panel-body"&gt;
+            &lt;p&gt;The table hierarchy tool allows you to view the hiearchy
+              of a table in an interactive view.&lt;/p&gt;
+            &lt;p&gt;Type in the name or label of a table you are interested
+              in and hit &lt;kbd&gt;Enter&lt;/kbd&gt;&lt;/p&gt;
+            &lt;p&gt;Navigate through the hierarchy (very useful for things
+              like cmdb_ci) and use handy links to open the list or
+              form view of any table.&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
 
+      &lt;div class="panel panel-default"&gt;
+        &lt;div class="panel-heading" role="tab"&gt;
+          &lt;h4 class="panel-title"&gt;
+            &lt;a href="#info_logs" role="button" data-toggle="collapse"
+              data-parent="#info_accordion"&gt;SYSTEM LOGS&lt;/a&gt;
+          &lt;/h4&gt;
+        &lt;/div&gt;
+        &lt;div id="info_logs" class="panel-collapse collapse" role="tabpanel"&gt;
+          &lt;div class="panel-body"&gt;
+            &lt;p&gt;The system log is now embedded into Xplore for easy access.&lt;/p&gt;
+            &lt;p class="alert alert-warning"&gt;Tip: Double-clicking the 'Logs' tab
+            will automatically reset the log window.&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
 
-/**
-  summary:
-    Get any errors or warning that occured for the user in the last minute or so.
-  returns: Array
-    An array of objects containing the properties:
-      created: Number
-      level: String
-      Message: String
-      Source: String
-**/
-snd_XploreReporter.prototype.getLogs = function () {
-  var levelMap = {
-    '-1': 'Debug',
-    '0': 'Info',
-    '1': 'Warning',
-    '2': 'Error'
-  };
-  var errors = [];
-  var gr = new GlideRecord('syslog');
-  gr.addQuery('sys_created_on', 'ON', 'Current minute@javascript:gs.minutesAgoStart(0)@javascript:gs.minutesAgoEnd(0)');
-  gr.addQuery('sys_created_by', '=', gs.getUserName());
-  gr.addQuery('level', 'IN', '1,2');
-  gr.orderBy('sys_created_on');
-  gr.query();
-  while (gr.next()) {
-    this.addLog({
-      created: gr.sys_created_on.getDisplayValue(),
-      level: levelMap[gr.getValue('level')],
-      message: gr.getValue('message'),
-      source: gr.getValue('source')
-    });
-  }
-  return errors;
-};
-]]&gt;&lt;/script&gt;&lt;sys_class_name&gt;sys_script_include&lt;/sys_class_name&gt;&lt;sys_created_by&gt;james@snd&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2015-12-03 02:15:50&lt;/sys_created_on&gt;&lt;sys_customer_update&gt;true&lt;/sys_customer_update&gt;&lt;sys_id&gt;1aefea960f44924094f3c09ce1050ed7&lt;/sys_id&gt;&lt;sys_mod_count&gt;1&lt;/sys_mod_count&gt;&lt;sys_name&gt;snd_XploreReporter&lt;/sys_name&gt;&lt;sys_package display_value="Xplore" source="0f6ab99a0f36060094f3c09ce1050ee8"&gt;0f6ab99a0f36060094f3c09ce1050ee8&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_replace_on_upgrade&gt;false&lt;/sys_replace_on_upgrade&gt;&lt;sys_scope display_value="Xplore"&gt;0f6ab99a0f36060094f3c09ce1050ee8&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_script_include_1aefea960f44924094f3c09ce1050ed7&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;james@snd&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2015-12-03 02:25:49&lt;/sys_updated_on&gt;&lt;/sys_script_include&gt;&lt;/record_update&gt;</payload>
-<remote_update_set display_value="Xplore - 3.5">84c39f670fc2d20094f3c09ce1050e28</remote_update_set>
+      &lt;div class="panel panel-default"&gt;
+        &lt;div class="panel-heading" role="tab"&gt;
+          &lt;h4 class="panel-title"&gt;
+            &lt;a href="#info_tips" role="button" data-toggle="collapse"
+              data-parent="#info_accordion"&gt;TIPS&lt;/a&gt;
+          &lt;/h4&gt;
+        &lt;/div&gt;
+        &lt;div id="info_tips" class="panel-collapse collapse" role="tabpanel"&gt;
+          &lt;div class="panel-body"&gt;
+            &lt;h4&gt;Logging&lt;/h4&gt;
+            &lt;p&gt;Xplore supports capturing server messages using the
+              following native ServiceNow logging functions:&lt;/p&gt;
+            &lt;ul class="list-example"&gt;
+              &lt;li&gt;&lt;code&gt;gs.log("Hello world")&lt;/code&gt;&lt;/li&gt;
+              &lt;li&gt;&lt;code&gt;gs.print("Hello world")&lt;/code&gt;&lt;/li&gt;
+              &lt;li&gt;&lt;code&gt;gs.info("Hello world")&lt;/code&gt;&lt;/li&gt;
+              &lt;li&gt;&lt;code&gt;gs.warn("Hello world")&lt;/code&gt;&lt;/li&gt;
+              &lt;li&gt;&lt;code&gt;gs.error("Hello world")&lt;/code&gt;&lt;/li&gt;
+              &lt;li&gt;&lt;code&gt;gs.addInfoMessage("Hello world")&lt;/code&gt;&lt;/li&gt;
+              &lt;li&gt;&lt;code&gt;gs.addErrorMessage("Hello world")&lt;/code&gt;&lt;/li&gt;
+            &lt;/ul&gt;
+            &lt;p&gt;Some server exceptions result in the transaction being aborted by
+              ServiceNow which means you will have limited (if any) output.
+              Xplore helps with this by automatically retrieving
+              the session log statements that were generated up to the time of the error
+             (using the functions shown above) and showing them in the output pane.
+            &lt;/p&gt;
+
+            &lt;p&gt;Client side logs can be captured as well:&lt;/p&gt;
+            &lt;ul class="list-example"&gt;
+              &lt;li&gt;&lt;code&gt;jslog("Hello world")&lt;/code&gt;&lt;/li&gt;
+            &lt;/ul&gt;
+
+            &lt;h4&gt;Script Include&lt;/h4&gt;
+            &lt;p&gt;Xplore is based on a global Script Include that you can
+              run anywhere in ServiceNow.&lt;/p&gt;
+
+            &lt;h5&gt;snd_xplore(obj)&lt;/h5&gt;
+            &lt;p class="col-xs-12"&gt;Uses the default reporter to print everything using gs.print()&lt;/p&gt;
+
+            &lt;h5&gt;snd_xplore.lookAt(obj)&lt;/h5&gt;
+            &lt;p class="col-xs-12"&gt;Get an object containing the properties 'type' and
+              'value' of your object.&lt;/p&gt;
+
+            &lt;h5&gt;snd_xplore(obj, my_reporter)&lt;/h5&gt;
+            &lt;p class="col-xs-12"&gt;You can also write your own reporter to handle the output
+              of snd_xplore.
+              Check out the snd_xplore Script Include for the built in print_reporter
+              which works in both global and scoped apps. This page uses a custom
+              print reporter to generate JSON and package it all back to the client
+              over AJAX.&lt;/p&gt;
+
+            &lt;h5&gt;snd_xplore.test(obj)&lt;/h5&gt;
+            &lt;p class="col-xs-12"&gt;Sometimes when you are 'Xploring' an object, you
+              will come across properties that throw exceptions when you try to
+              read their value. You can bypass this property by updating the
+              Xplore Red List on the fly, or add the property to the
+              'redlist' array in the snd_xplore Script Include.&lt;/p&gt;
+
+            &lt;h5&gt;snd_xplore.blacklist('illegalProp')&lt;/h5&gt;
+            &lt;p class="col-xs-12"&gt;Blacklisted properties are those that throw illegal
+              access exceptions. ServiceNow don't even want you trying to access these,
+              let alone see their value. Xplore has a built in template to filter the
+              majority of these, but sometimes they will slip through. Bypass these
+              properties on the fly, or add the property to the 'blacklist' array
+              in the snd_xplore Script Include.&lt;/p&gt;
+
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+    &lt;/div&gt;&lt;!-- /info_accordion --&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="row"&gt;
+  &lt;pre style="font-size:10px; background: transparent; border: none; text-align: center;"&gt;
+                                                                77777
+                                                                7:::7
+                                                                7:::7
+                                                                7:::7
+  www.sndeveloper.com  777777777777777777           7777777777777:::7
+ 7::::::::::::::::::7  7:::::::::::::::::77       7:::::::::::::::::7
+7::::7777777777777777  7:::777777777777::::7     7::::77777777777:::7
+7:::7                  7:::7            7:::7   7:::7           7:::7
+7::::77777777777777    7:::7            7:::7  7:::7            7:::7
+ 7:::::::::::::::::7   7:::7            7:::7  7:::7            7:::7
+  77777777777777::::7  7:::7            7:::7  7:::7            7:::7
+                7:::7  7:::7            7:::7   7:::7           7:::7
+7777777777777777::::7  7:::7            7:::7    7::::77777777777:::7
+7::::::::::::::::::7   7:::7            7:::7     7:::::::::::::::::7
+7777777777777777777    77777            77777       77777777777777777
+  &lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;div class="row"&gt;
+  &lt;div class="col-xs-12"&gt;
+    &lt;p&gt;
+      Version: ${snd_xplore.version}. The UI client uses
+      &lt;a href="http://getbootstrap.com/" target="_blank"&gt;Bootstrap&lt;/a&gt;,
+      &lt;a href="https://jquery.com/" target="_blank"&gt;JQuery&lt;/a&gt;,
+      and &lt;a href="https://codemirror.net/" target="_blank"&gt;CodeMirror&lt;/a&gt;.
+    &lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;/j:jelly&gt;]]&gt;&lt;/xml&gt;&lt;/sys_ui_macro&gt;&lt;/record_update&gt;</payload>
+<remote_update_set display_value="Xplore - 3.5">9bf4d3670fc2d20094f3c09ce1050edc</remote_update_set>
 <replace_on_upgrade>false</replace_on_upgrade>
 <sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:09:50</sys_created_on>
-<sys_id>8cc39f670fc2d20094f3c09ce1050e28</sys_id>
+<sys_created_on>2016-03-15 12:15:15</sys_created_on>
+<sys_id>d3f4d3670fc2d20094f3c09ce1050edd</sys_id>
 <sys_mod_count>0</sys_mod_count>
 <sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:09:50</sys_updated_on>
+<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
 <table/>
-<target_name>snd_XploreReporter</target_name>
-<type>Script Include</type>
+<target_name>snd_xplore_info</target_name>
+<type>Macro</type>
 <update_domain>global</update_domain>
 <update_set display_value=""/>
 <view/>
@@ -2822,14 +3132,14 @@ snd_XploreReporter.prototype.getLogs = function () {
   return new SndXploreReporter();&#13;
 }());&#13;
 </script><script_name/><sys_class_name>sys_ui_script</sys_class_name><sys_created_by>james@snd</sys_created_by><sys_created_on>2015-09-23 23:34:14</sys_created_on><sys_customer_update>true</sys_customer_update><sys_id>c9abed770f2a820094f3c09ce1050e7f</sys_id><sys_mod_count>120</sys_mod_count><sys_name>snd_xplore_reporter</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_replace_on_upgrade>false</sys_replace_on_upgrade><sys_scope display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</sys_scope><sys_update_name>sys_ui_script_c9abed770f2a820094f3c09ce1050e7f</sys_update_name><sys_updated_by>james@sndeveloper.com</sys_updated_by><sys_updated_on>2016-03-15 11:36:54</sys_updated_on><use_scoped_format>false</use_scoped_format></sys_ui_script></record_update>]]></payload>
-<remote_update_set display_value="Xplore - 3.5">84c39f670fc2d20094f3c09ce1050e28</remote_update_set>
+<remote_update_set display_value="Xplore - 3.5">9bf4d3670fc2d20094f3c09ce1050edc</remote_update_set>
 <replace_on_upgrade>false</replace_on_upgrade>
 <sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:09:51</sys_created_on>
-<sys_id>c0c39f670fc2d20094f3c09ce1050e29</sys_id>
+<sys_created_on>2016-03-15 12:15:15</sys_created_on>
+<sys_id>d7f4d3670fc2d20094f3c09ce1050edd</sys_id>
 <sys_mod_count>0</sys_mod_count>
 <sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:09:51</sys_updated_on>
+<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
 <table/>
 <target_name>snd_xplore_reporter</target_name>
 <type>UI Script</type>
@@ -3245,14 +3555,14 @@ select::-ms-expand {&#13;
 li.L0, li.L1, li.L2, li.L3,&#13;
 li.L5, li.L6, li.L7, li.L8&#13;
 { list-style-type: decimal !important }</style><sys_class_name>content_css</sys_class_name><sys_created_by>james@snd</sys_created_by><sys_created_on>2015-09-13 14:58:52</sys_created_on><sys_customer_update>true</sys_customer_update><sys_id>efd550a80f2a020094f3c09ce1050ecf</sys_id><sys_mod_count>62</sys_mod_count><sys_name>snd_xplore</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_replace_on_upgrade>false</sys_replace_on_upgrade><sys_scope display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</sys_scope><sys_update_name>content_css_efd550a80f2a020094f3c09ce1050ecf</sys_update_name><sys_updated_by>james@sndeveloper.com</sys_updated_by><sys_updated_on>2016-03-15 11:49:59</sys_updated_on><type>local</type><url/></content_css></record_update>]]></payload>
-<remote_update_set display_value="Xplore - 3.5">84c39f670fc2d20094f3c09ce1050e28</remote_update_set>
+<remote_update_set display_value="Xplore - 3.5">9bf4d3670fc2d20094f3c09ce1050edc</remote_update_set>
 <replace_on_upgrade>false</replace_on_upgrade>
 <sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:09:50</sys_created_on>
-<sys_id>c4c39f670fc2d20094f3c09ce1050e28</sys_id>
+<sys_created_on>2016-03-15 12:15:15</sys_created_on>
+<sys_id>dbf4d3670fc2d20094f3c09ce1050edc</sys_id>
 <sys_mod_count>0</sys_mod_count>
 <sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:09:50</sys_updated_on>
+<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
 <table/>
 <target_name>snd_xplore</target_name>
 <type>Style Sheet</type>
@@ -4266,327 +4576,17 @@ function XploreTableHierarchy(table, options) {
 
   return getHierarchy(table);
 }]]&gt;&lt;/script&gt;&lt;sys_class_name&gt;sys_processor&lt;/sys_class_name&gt;&lt;sys_created_by&gt;james@snd&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2015-09-18 20:32:13&lt;/sys_created_on&gt;&lt;sys_customer_update&gt;true&lt;/sys_customer_update&gt;&lt;sys_id&gt;39225f460f66420094f3c09ce1050e91&lt;/sys_id&gt;&lt;sys_mod_count&gt;310&lt;/sys_mod_count&gt;&lt;sys_name&gt;snd_xplore&lt;/sys_name&gt;&lt;sys_package display_value="Global" source="global"&gt;global&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_replace_on_upgrade&gt;false&lt;/sys_replace_on_upgrade&gt;&lt;sys_scope display_value="Xplore"&gt;0f6ab99a0f36060094f3c09ce1050ee8&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_processor_39225f460f66420094f3c09ce1050e91&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;james@sndeveloper.com&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2016-03-15 10:30:43&lt;/sys_updated_on&gt;&lt;type&gt;script&lt;/type&gt;&lt;/sys_processor&gt;&lt;/record_update&gt;</payload>
-<remote_update_set display_value="Xplore - 3.5">84c39f670fc2d20094f3c09ce1050e28</remote_update_set>
+<remote_update_set display_value="Xplore - 3.5">9bf4d3670fc2d20094f3c09ce1050edc</remote_update_set>
 <replace_on_upgrade>false</replace_on_upgrade>
 <sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:09:50</sys_created_on>
-<sys_id>c8c39f670fc2d20094f3c09ce1050e28</sys_id>
+<sys_created_on>2016-03-15 12:15:15</sys_created_on>
+<sys_id>dff4d3670fc2d20094f3c09ce1050edc</sys_id>
 <sys_mod_count>0</sys_mod_count>
 <sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:09:50</sys_updated_on>
+<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
 <table/>
 <target_name>snd_xplore</target_name>
 <type>Processor</type>
-<update_domain>global</update_domain>
-<update_set display_value=""/>
-<view/>
-</sys_update_xml>
-<sys_update_xml action="INSERT_OR_UPDATE">
-<action>INSERT_OR_UPDATE</action>
-<application display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</application>
-<category>customer</category>
-<comments/>
-<name>sys_ui_macro_b6e5deb30f5d528094f3c09ce1050e71</name>
-<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sys_ui_macro"&gt;&lt;sys_ui_macro action="INSERT_OR_UPDATE"&gt;&lt;active&gt;true&lt;/active&gt;&lt;category&gt;general&lt;/category&gt;&lt;description/&gt;&lt;media_type/&gt;&lt;name&gt;snd_xplore_info&lt;/name&gt;&lt;scoped_name/&gt;&lt;sys_class_name&gt;sys_ui_macro&lt;/sys_class_name&gt;&lt;sys_created_by&gt;james@sndeveloper.com&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2016-02-07 19:31:05&lt;/sys_created_on&gt;&lt;sys_customer_update&gt;true&lt;/sys_customer_update&gt;&lt;sys_id&gt;b6e5deb30f5d528094f3c09ce1050e71&lt;/sys_id&gt;&lt;sys_mod_count&gt;30&lt;/sys_mod_count&gt;&lt;sys_name&gt;snd_xplore_info&lt;/sys_name&gt;&lt;sys_package display_value="Xplore" source="0f6ab99a0f36060094f3c09ce1050ee8"&gt;0f6ab99a0f36060094f3c09ce1050ee8&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_replace_on_upgrade&gt;false&lt;/sys_replace_on_upgrade&gt;&lt;sys_scope display_value="Xplore"&gt;0f6ab99a0f36060094f3c09ce1050ee8&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_ui_macro_b6e5deb30f5d528094f3c09ce1050e71&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;james@sndeveloper.com&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2016-03-15 11:26:22&lt;/sys_updated_on&gt;&lt;xml&gt;&lt;![CDATA[&lt;?xml version="1.0" encoding="utf-8" ?&gt;
-&lt;j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null"&gt;
-&lt;div class="row" style="margin-top: 12px; font-size: 14px;"&gt;
-
-  &lt;div class="col-xs-12"&gt;
-
-    &lt;div class="alert alert-danger"&gt;
-      &lt;strong&gt;Warning:&lt;/strong&gt; This utility runs code in your
-      environment. Make sure you know what you are doing as it is
-      entirely possible for you to screw up your instance.
-    &lt;/div&gt;
-
-    &lt;div class="panel panel-default"&gt;
-      &lt;div class="panel-heading" role="tab"&gt;
-        &lt;h4 class="panel-title"&gt;
-          &lt;a href="#info_welcome" role="button" data-toggle="collapse"&gt;WELCOME!&lt;/a&gt;
-        &lt;/h4&gt;
-      &lt;/div&gt;
-      &lt;div id="info_welcome" class="panel-collapse collapse in" role="tabpanel"&gt;
-        &lt;div class="panel-body"&gt;
-          &lt;p&gt;Hey! Thanks for downloading Xplore.&lt;/p&gt;
-          &lt;p&gt;Xplore is a free, independently developed utility for ServiceNow that
-            has been built 'for developers, by developers'. We really appreciate
-            all the community input we get!&lt;/p&gt;
-
-          &lt;p&gt;&lt;strong&gt;Ways you can help!&lt;/strong&gt;
-            &lt;ul class="list-group list-example"&gt;
-              &lt;li class="list-group-item"&gt;
-                &lt;a href="https://share.servicenow.com/app.do#/detailV2/c42105f2e1581a007c390227ffa71e61/reviews"
-                  target="_blank"&gt;
-                  &lt;span class="glyphicon glyphicon-thumbs-up"&gt;&lt;/span&gt;
-                  Write a review&lt;/a&gt;
-              &lt;/li&gt;
-              &lt;li class="list-group-item"&gt;
-                &lt;a href="https://github.com/sn-developer/Xplore" target="_blank"&gt;
-                &lt;span class="glyphicon glyphicon-wrench"&gt;&lt;/span&gt;
-                Contribute on GitHub&lt;/a&gt;
-              &lt;/li&gt;
-              &lt;li class="list-group-item"&gt;
-                &lt;a href="mailto:info@sndeveloper.com?subject=Xplore Feedback"&gt;
-                  &lt;span class="glyphicon glyphicon-envelope"&gt;&lt;/span&gt;
-                  Say hello!&lt;/a&gt;
-              &lt;/li&gt;
-            &lt;/ul&gt;
-          &lt;/p&gt;
-
-          &lt;p&gt;Thanks!&lt;/p&gt;
-          &lt;p&gt;&lt;a href="https://twitter.com/James_Neale" target="_blank"&gt;James&lt;/a&gt;
-          and
-          &lt;a href="https://twitter.com/simthort" target="_blank"&gt;Tim&lt;/a&gt;
-          &lt;/p&gt;
-
-          &lt;p class="small"&gt;
-            &lt;a href="https://twitter.com/intent/tweet?button_hashtag=Xplore${AMP}text=My%20job%20as%20a%20%23servicenowdev%20just%20got%20a%20lot%20easier!%20%40sn_developer" class="twitter-hashtag-button" data-related="sn_developer" data-url="https://goo.gl/fAyYTA" target="_blank"&gt;Tweet #Xplore&lt;/a&gt;
-            |
-            &lt;a href="https://twitter.com/sn_developer" class="twitter-follow-button"
-            data-show-count="false" target="_blank"&gt;Follow @sn_developer&lt;/a&gt;
-            |
-            &lt;a href="https://www.linkedin.com/company/sn-developer" target="_blank"&gt;Find us on LinkedIn&lt;/a&gt;
-          &lt;/p&gt;
-
-        &lt;/div&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-
-    &lt;div class="panel-group" id="info_accordion" role="tablist"&gt;
-
-      &lt;div class="panel panel-default"&gt;
-        &lt;div class="panel-heading" role="tab"&gt;
-          &lt;h4 class="panel-title"&gt;
-            &lt;a href="#info_script_editor" role="button" data-toggle="collapse"
-              data-parent="#info_accordion"&gt;SCRIPT EDITOR&lt;/a&gt;
-          &lt;/h4&gt;
-        &lt;/div&gt;
-        &lt;div id="info_script_editor" class="panel-collapse collapse in" role="tabpanel"&gt;
-          &lt;div class="panel-body"&gt;
-            &lt;p&gt;Use the script editor on the left to write and run scripts
-              in ServiceNow, much like a background script, but
-              supercharged. The last object in the script will be shown
-              here in a detailed output tab.&lt;/p&gt;
-           &lt;p&gt;Use the choice list to choose where you want to run your
-              code, either server or client.&lt;/p&gt;
-            &lt;p&gt;Launching Xplore from within ServiceNow will give you
-              access to the various framesServiceNow uses.&lt;/p&gt;
-            &lt;p&gt;
-              Not sure what to do? Try one of these demos:
-              &lt;div class="list-group xplore_demo list-example"&gt;
-                &lt;a data-demo="GlideRecord" href="#demo"
-                  class="list-group-item list-group-item-info"&gt;Demo: GlideRecord&lt;/a&gt;
-                &lt;a data-demo="Array" href="#demo"
-                  class="list-group-item list-group-item-info"&gt;Demo: Array&lt;/a&gt;
-                &lt;a data-demo="GlideUser" href="#demo"
-                  class="list-group-item list-group-item-info"&gt;Demo: GlideUser&lt;/a&gt;
-                &lt;a data-demo="Logging" href="#demo"
-                  class="list-group-item list-group-item-info"&gt;Demo: Logging and Messages&lt;/a&gt;
-                &lt;a data-demo="scope" href="#demo"
-                  class="list-group-item list-group-item-info"&gt;Demo: Current scope&lt;/a&gt;
-              &lt;/div&gt;
-            &lt;/p&gt;
-            &lt;p class="alert alert-warning"&gt;Tip: Use the keyboard shortcut
-              &lt;kbd&gt;Ctrl + Enter&lt;/kbd&gt; to run.&lt;/p&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-
-      &lt;div class="panel panel-default"&gt;
-        &lt;div class="panel-heading" role="tab"&gt;
-          &lt;h4 class="panel-title"&gt;
-            &lt;a href="#info_user_data" role="button" data-toggle="collapse"
-              data-parent="#info_accordion"&gt;USER DATA&lt;/a&gt;
-          &lt;/h4&gt;
-        &lt;/div&gt;
-        &lt;div id="info_user_data" class="panel-collapse collapse" role="tabpanel"&gt;
-          &lt;div class="panel-body"&gt;
-            &lt;p&gt;Paste in large chunks of text like XML and work with
-              them in your script.&lt;/p&gt;
-            &lt;div class="list-group xplore_demo list-example"&gt;
-              &lt;a data-demo="user_data" href="#demo"
-                class="list-group-item list-group-item-info"&gt;Demo: Format XML&lt;/a&gt;
-            &lt;/div&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-
-      &lt;div class="panel panel-default"&gt;
-        &lt;div class="panel-heading" role="tab"&gt;
-          &lt;h4 class="panel-title"&gt;
-            &lt;a href="#info_regex" role="button" data-toggle="collapse"
-              data-parent="#info_accordion"&gt;REGEX&lt;/a&gt;
-          &lt;/h4&gt;
-        &lt;/div&gt;
-        &lt;div id="info_regex" class="panel-collapse collapse" role="tabpanel"&gt;
-          &lt;div class="panel-body"&gt;
-            &lt;p&gt;You can test out regular expressions natively in ServiceNow!&lt;/p&gt;
-            &lt;p&gt;If you've done any work with regular expressions then you will know
-              that sometimes regular expressions don't work the same way
-              in ServiceNow as they do in browsers or other languages.&lt;/p&gt;
-            &lt;p&gt;Simply type in your expression and a test string, give
-              it a second, and it will automatically test your expression
-              for you and show you the results - including the match groupings.&lt;/p&gt;
-            &lt;p class="alert alert-warning"&gt;Tip: Change to 'Client' to test an
-              expression in your browser.&lt;/p&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-
-      &lt;div class="panel panel-default"&gt;
-        &lt;div class="panel-heading" role="tab"&gt;
-          &lt;h4 class="panel-title"&gt;
-            &lt;a href="#info_table_hierarchy" role="button" data-toggle="collapse"
-              data-parent="#info_accordion"&gt;TABLE HIERARCHY&lt;/a&gt;
-          &lt;/h4&gt;
-        &lt;/div&gt;
-        &lt;div id="info_table_hierarchy" class="panel-collapse collapse"
-          role="tabpanel"&gt;
-          &lt;div class="panel-body"&gt;
-            &lt;p&gt;The table hierarchy tool allows you to view the hiearchy
-              of a table in an interactive view.&lt;/p&gt;
-            &lt;p&gt;Type in the name or label of a table you are interested
-              in and hit &lt;kbd&gt;Enter&lt;/kbd&gt;&lt;/p&gt;
-            &lt;p&gt;Navigate through the hierarchy (very useful for things
-              like cmdb_ci) and use handy links to open the list or
-              form view of any table.&lt;/p&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-
-      &lt;div class="panel panel-default"&gt;
-        &lt;div class="panel-heading" role="tab"&gt;
-          &lt;h4 class="panel-title"&gt;
-            &lt;a href="#info_logs" role="button" data-toggle="collapse"
-              data-parent="#info_accordion"&gt;SYSTEM LOGS&lt;/a&gt;
-          &lt;/h4&gt;
-        &lt;/div&gt;
-        &lt;div id="info_logs" class="panel-collapse collapse" role="tabpanel"&gt;
-          &lt;div class="panel-body"&gt;
-            &lt;p&gt;The system log is now embedded into Xplore for easy access.&lt;/p&gt;
-            &lt;p class="alert alert-warning"&gt;Tip: Double-clicking the 'Logs' tab
-            will automatically reset the log window.&lt;/p&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-
-      &lt;div class="panel panel-default"&gt;
-        &lt;div class="panel-heading" role="tab"&gt;
-          &lt;h4 class="panel-title"&gt;
-            &lt;a href="#info_tips" role="button" data-toggle="collapse"
-              data-parent="#info_accordion"&gt;TIPS&lt;/a&gt;
-          &lt;/h4&gt;
-        &lt;/div&gt;
-        &lt;div id="info_tips" class="panel-collapse collapse" role="tabpanel"&gt;
-          &lt;div class="panel-body"&gt;
-            &lt;h4&gt;Logging&lt;/h4&gt;
-            &lt;p&gt;Xplore supports capturing server messages using the
-              following native ServiceNow logging functions:&lt;/p&gt;
-            &lt;ul class="list-example"&gt;
-              &lt;li&gt;&lt;code&gt;gs.log("Hello world")&lt;/code&gt;&lt;/li&gt;
-              &lt;li&gt;&lt;code&gt;gs.print("Hello world")&lt;/code&gt;&lt;/li&gt;
-              &lt;li&gt;&lt;code&gt;gs.info("Hello world")&lt;/code&gt;&lt;/li&gt;
-              &lt;li&gt;&lt;code&gt;gs.warn("Hello world")&lt;/code&gt;&lt;/li&gt;
-              &lt;li&gt;&lt;code&gt;gs.error("Hello world")&lt;/code&gt;&lt;/li&gt;
-              &lt;li&gt;&lt;code&gt;gs.addInfoMessage("Hello world")&lt;/code&gt;&lt;/li&gt;
-              &lt;li&gt;&lt;code&gt;gs.addErrorMessage("Hello world")&lt;/code&gt;&lt;/li&gt;
-            &lt;/ul&gt;
-            &lt;p&gt;Some server exceptions result in the transaction being aborted by
-              ServiceNow which means you will have limited (if any) output.
-              Xplore helps with this by automatically retrieving
-              the session log statements that were generated up to the time of the error
-             (using the functions shown above) and showing them in the output pane.
-            &lt;/p&gt;
-
-            &lt;p&gt;Client side logs can be captured as well:&lt;/p&gt;
-            &lt;ul class="list-example"&gt;
-              &lt;li&gt;&lt;code&gt;jslog("Hello world")&lt;/code&gt;&lt;/li&gt;
-            &lt;/ul&gt;
-
-            &lt;h4&gt;Script Include&lt;/h4&gt;
-            &lt;p&gt;Xplore is based on a global Script Include that you can
-              run anywhere in ServiceNow.&lt;/p&gt;
-
-            &lt;h5&gt;snd_xplore(obj)&lt;/h5&gt;
-            &lt;p class="col-xs-12"&gt;Uses the default reporter to print everything using gs.print()&lt;/p&gt;
-
-            &lt;h5&gt;snd_xplore.lookAt(obj)&lt;/h5&gt;
-            &lt;p class="col-xs-12"&gt;Get an object containing the properties 'type' and
-              'value' of your object.&lt;/p&gt;
-
-            &lt;h5&gt;snd_xplore(obj, my_reporter)&lt;/h5&gt;
-            &lt;p class="col-xs-12"&gt;You can also write your own reporter to handle the output
-              of snd_xplore.
-              Check out the snd_xplore Script Include for the built in print_reporter
-              which works in both global and scoped apps. This page uses a custom
-              print reporter to generate JSON and package it all back to the client
-              over AJAX.&lt;/p&gt;
-
-            &lt;h5&gt;snd_xplore.test(obj)&lt;/h5&gt;
-            &lt;p class="col-xs-12"&gt;Sometimes when you are 'Xploring' an object, you
-              will come across properties that throw exceptions when you try to
-              read their value. You can bypass this property by updating the
-              Xplore Red List on the fly, or add the property to the
-              'redlist' array in the snd_xplore Script Include.&lt;/p&gt;
-
-            &lt;h5&gt;snd_xplore.blacklist('illegalProp')&lt;/h5&gt;
-            &lt;p class="col-xs-12"&gt;Blacklisted properties are those that throw illegal
-              access exceptions. ServiceNow don't even want you trying to access these,
-              let alone see their value. Xplore has a built in template to filter the
-              majority of these, but sometimes they will slip through. Bypass these
-              properties on the fly, or add the property to the 'blacklist' array
-              in the snd_xplore Script Include.&lt;/p&gt;
-
-          &lt;/div&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-
-    &lt;/div&gt;&lt;!-- /info_accordion --&gt;
-  &lt;/div&gt;
-&lt;/div&gt;
-
-&lt;div class="row"&gt;
-  &lt;pre style="font-size:10px; background: transparent; border: none; text-align: center;"&gt;
-                                                                77777
-                                                                7:::7
-                                                                7:::7
-                                                                7:::7
-  www.sndeveloper.com  777777777777777777           7777777777777:::7
- 7::::::::::::::::::7  7:::::::::::::::::77       7:::::::::::::::::7
-7::::7777777777777777  7:::777777777777::::7     7::::77777777777:::7
-7:::7                  7:::7            7:::7   7:::7           7:::7
-7::::77777777777777    7:::7            7:::7  7:::7            7:::7
- 7:::::::::::::::::7   7:::7            7:::7  7:::7            7:::7
-  77777777777777::::7  7:::7            7:::7  7:::7            7:::7
-                7:::7  7:::7            7:::7   7:::7           7:::7
-7777777777777777::::7  7:::7            7:::7    7::::77777777777:::7
-7::::::::::::::::::7   7:::7            7:::7     7:::::::::::::::::7
-7777777777777777777    77777            77777       77777777777777777
-  &lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;div class="row"&gt;
-  &lt;div class="col-xs-12"&gt;
-    &lt;p&gt;
-      Version: ${snd_xplore.version}. The UI client uses
-      &lt;a href="http://getbootstrap.com/" target="_blank"&gt;Bootstrap&lt;/a&gt;,
-      &lt;a href="https://jquery.com/" target="_blank"&gt;JQuery&lt;/a&gt;,
-      and &lt;a href="https://codemirror.net/" target="_blank"&gt;CodeMirror&lt;/a&gt;.
-    &lt;/p&gt;
-  &lt;/div&gt;
-&lt;/div&gt;
-&lt;/j:jelly&gt;]]&gt;&lt;/xml&gt;&lt;/sys_ui_macro&gt;&lt;/record_update&gt;</payload>
-<remote_update_set display_value="Xplore - 3.5">84c39f670fc2d20094f3c09ce1050e28</remote_update_set>
-<replace_on_upgrade>false</replace_on_upgrade>
-<sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:09:50</sys_created_on>
-<sys_id>ccc39f670fc2d20094f3c09ce1050e28</sys_id>
-<sys_mod_count>0</sys_mod_count>
-<sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:09:50</sys_updated_on>
-<table/>
-<target_name>snd_xplore_info</target_name>
-<type>Macro</type>
 <update_domain>global</update_domain>
 <update_set display_value=""/>
 <view/>
