@@ -169,19 +169,28 @@ var snd_xplore = (function () {
       }
     })
     .fail(function (xhr) {
-      $.ajax({
-        type: 'GET',
-        url: '/snd_xplore.do?action=logs',
-        dataType: 'json'
-      })
-      .done(function (result) {
-        params.reporter.done(result);
-      })
-      .fail(function () {
+      if (xhr.responseText) {
         var result = psuedoResult();
-        message(result, 'error', 'Server execution failed. The node logs may or may not be helpful.');
+        message(result, '1', xhr.responseText); // 1 = warning
         params.reporter.done(result);
-      });
+      } else {
+        $.ajax({
+          type: 'GET',
+          url: '/snd_xplore.do?action=logs',
+          dataType: 'json'
+        })
+        .done(function (result) {
+          if (!result.messages.length) {
+            message(result, 'error', 'Request failed.');
+          }
+          params.reporter.done(result);
+        })
+        .fail(function () {
+          var result = psuedoResult();
+          message(result, 'error', 'Server execution failed. The node logs may or may not be helpful.');
+          params.reporter.done(result);
+        });
+      }
     });
   }
 

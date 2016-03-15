@@ -11,6 +11,11 @@ Originally created by James Neale <james@sndeveloper.com>
 
 ## Xplore Change Log
 
+## Version 3.4 (G3.0.2) IN PROGRESS
+- Feature: Add system property to determine roles required - default to security_admin
+- Feature: Show current working application.
+
+
 ## Version 3.3 (G3.0.1)
 - Feature: Add User Data pane for working with large text strings e.g. XML
 - Feature: Improve table hierarchy search with expression support, label support
