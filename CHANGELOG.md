@@ -12,8 +12,10 @@ Originally created by James Neale <james@sndeveloper.com>
 ## Xplore Change Log
 
 ## Version 3.4 (G3.0.2) IN PROGRESS
-- Feature: Add system property to determine roles required - default to security_admin
-- Feature: Show current working application.
+- Feature: Add cancel button to cancel long running transactions.
+- Feature: Setting to allow output messages to escape HTML.
+- Feature: Xplore will run while impersonating.
+- Interface modifications.
 
 
 ## Version 3.3 (G3.0.1)
