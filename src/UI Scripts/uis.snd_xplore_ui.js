@@ -350,8 +350,9 @@ var snd_xplore_table_util = (function () {
         }
         html += ' [<a href="#show" data-show="' + dbo.name + '">' +
             dbo.name + '</a>]';
-        html += ' <a href="' + dbo.name + '_list.do" target="_blank"><i class="glyphicon glyphicon-list-alt" /></a>';
-        html += ' <a href="' + dbo.name + '.do" target="_blank"><i class="glyphicon glyphicon-open-file" /></a>';
+        html += ' <a href="' + dbo.name + '_list.do" target="_blank" title="Open list"><i class="glyphicon glyphicon-list-alt" /></a>';
+        html += ' <a href="' + dbo.name + '.do" target="_blank" title="Open form"><i class="glyphicon glyphicon-open-file" /></a>';
+        html += ' <a href="sys_db_object.do?sys_id=' + dbo.sys_id + '" target="_blank" title="Open table definition"><i class="glyphicon glyphicon-cog" /></a>';
         if (dbo.children.length) {
           html += '<ul>';
           $.each(dbo.children, function (i, childDbo) {
