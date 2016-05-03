@@ -155,6 +155,51 @@ function ActionProcessor() {
     return tables;
   }
 
+  /**
+    summary:
+      Get records from a table.
+    param: table [String]
+      The table to search.
+    param: fields [Array]
+      An array of field names to return.
+    param: query [String] Optional
+      An encoded query to use to restrict the records.
+    param: limit [Integer] Optional
+      Limit the number of records returned.
+    returns: Array
+      An array of record objects containing the requested fields.
+  **/
+  function getRecordValues(table, fields, query, limit) {
+    var records = [],
+        gr;
+
+    function mapFields(gr) {
+      var o = {};
+      for (var i = 0; i < fields.length; i++) {
+        var f = fields[i];
+        if (f.indexOf('$') == '0') {
+          o[f] = gr[f.substr(1)].getDisplayValue();
+        } else {
+          o[f] = gr.getValue(f);
+        }
+      }
+      return o;
+    }
+
+    gr = new GlideRecord(table);
+    if (gr.isValid()) {
+      gr.addEncodedQuery(query);
+      if (limit) {
+        gr.setLimit(limit);
+      }
+      gr._query();
+      while (gr._next()) {
+        records.push(mapFields(gr));
+      }
+    }
+    return records;
+  }
+
   /*--- End Processor Specific Functions ---*/
 
   /**
@@ -208,6 +253,24 @@ function ActionProcessor() {
           };
           data.search_label = data.search_label == '1' || data.search_label == 'true';
           response = responseFactory(true, XploreTableHierarchy(getParam('table'), data));
+          break;
+        case 'getScripts':
+          response = responseFactory(true, getRecordValues(
+            'sys_script_include', ['sys_id', 'name', 'api_name', '$sys_scope'], 'ORDERBYname^EQ'));
+          break;
+        case 'getScript':
+          data = getParam('sys_id');
+          if (data.length == 32) {
+            var records = getRecordValues(
+              'sys_script_include', ['name', 'api_name', 'script'], 'sys_id=' + data, 1);
+            if (records.length) {
+              response = responseFactory(true, records[0]);
+            } else {
+              throw 'Not found.';
+            }
+          } else {
+            throw 'Expected sys_id not valid.';
+          }
           break;
         default:
           throw 'Invalid request.';

@@ -9,7 +9,7 @@
     The string to search for, e.g. gs.log
   param: options [Object] Optional
     An object containing configuration options
-    - format_md: [Boolean] Format the result as a MarkDown string. Defaults false.
+    - markdown: [Boolean] Format the result as a MarkDown string. Defaults false.
     - case_sensitive: [Boolean] Make searches case sensitive. Default false.
   returns: Array
   e.g.
@@ -35,7 +35,7 @@
     }
   ]
   usage:
-    snd_xploreSearch('gs.log', {format_md: 1});
+    snd_xploreSearch('gs.log', {markdown: 1});
 **/
 function snd_xploreSearch(search, options) {
 
@@ -247,5 +247,7 @@ function snd_xploreSearch(search, options) {
   // sort the final results by table lable
   sortByProp(results, 'label');
 
-  return options.format_md ? formatToString(results) : results;
+  return options.markdown ? formatToString(results) : results;
 }
+
+//snd_xploreSearch('utils', {markdown: true, case_sensitive: false});

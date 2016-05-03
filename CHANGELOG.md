@@ -2,6 +2,10 @@
 A toolkit for every ServiceNow developer.
 Created by @James_Neale <james@sndeveloper.com>
 
+### Version 3.6 (G3.0.4)
+- Feature: Output wrapping controlled by setting. Defaulted to wrap.
+- Change: Improved Settings pane.
+
 ### Version 3.5 (G3.0.3)
 - Feature: Prettify code in output pane.
 - Feature: Timer to show how long the transaction has been running.

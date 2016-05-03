@@ -394,6 +394,128 @@ var snd_xplore_table_util = (function () {
 })();
 
 /*************************************
+           SCRIPT SEARCH
+**************************************/
+
+
+var snd_script_search_util = (function () {
+
+  var api = {};
+  var $list = $('#script_pane_list');
+  var $script_pane_404 = $('#script_pane_404');
+
+  function search(value) {
+    var anchors;
+    if(value) {
+      value = value.toUpperCase();
+      anchors = $list.find('a');
+      anchors.filter(function (i, a) {
+        return (a.textContent || a.innerText || "").toUpperCase().indexOf(value)>=0;
+      }).parent().show();
+      anchors.filter(function (i, a) {
+        return (a.textContent || a.innerText || "").toUpperCase().indexOf(value)==-1;
+      }).parent().hide();
+    } else {
+      $list.find("li").show();
+    }
+  }
+
+  function loading(b) {
+    $('#script_pane_loading').toggle(b);
+  }
+
+  api.search = (function () {
+    var requested = false;
+    var filter;
+    return function (value) {
+      filter = value;
+      if (requested) return;
+      loading(true);
+      $script_pane_404.hide();
+      if (!api.records) {
+        requested = true;
+        api.loadAll().done(function () {
+          requested = false;
+          search(filter);
+          loading(false);
+        });
+      } else {
+        search(filter);
+        loading(false);
+      }
+    };
+  })();
+
+  api.addScript = function (sys_id) {
+    loading(true);
+    $.ajax({
+      type: 'GET',
+      url: '/snd_xplore.do?action=getScript&sys_id=' + sys_id,
+      dataType: 'json'
+    }).
+    done(function (result) {
+      var old = snd_xplore_editor.getValue();
+      if (old.trim().length > 0) old += '\n\n';
+      snd_xplore_editor.setValue(
+        old +
+        '/*************************************' + '\n' +
+        ' ' + result.api_name + '\n' +
+        ' *************************************/' + '\n' +
+        result.script);
+      loading(false);
+    }).
+    fail(function () {
+      snd_log('Error: snd_script_search_util.addScript failed.');
+      loading(false);
+    });
+  };
+
+  api.loadAll = function () {
+    loading(true);
+    return $.ajax({
+      type: 'GET',
+      url: '/snd_xplore.do?action=getScripts',
+      dataType: 'json'
+    }).
+    done(function (result) {
+      api.records = result;
+      $list.empty();
+      $.each(result, function (i, item) {
+        var scope = item.$sys_scope == 'Global' ? '' : ' (' + item.$sys_scope + ')';
+        $list.append($('<li><a href="javascript:void(0)" data-sys-id="' + item.sys_id + '">' +
+          item.name + scope + '</a></li>'));
+      });
+      loading(false);
+    }).
+    fail(function () {
+      snd_log('Error: snd_script_search_util.loadAll failed.');
+      loading(false)
+    });
+  }
+
+  // handle script search
+  $('#script_pane_search')
+  .change(function () {
+    snd_script_search_util.search($(this).val());
+    return false;
+  })
+  .keyup(function () {
+    $(this).change();
+  });
+
+  $('#script_pane_list').on('click', 'a', function (e) {
+    var $anchor = $(this);
+    if (!$anchor.attr('data-sys-id')) {
+      snd_log('Error: script link does not have sys_id attribute');
+    } else {
+      snd_script_search_util.addScript($anchor.attr('data-sys-id'));
+    }
+  });
+
+  return api;
+})();
+
+/*************************************
               INIT
 **************************************/
 
@@ -463,22 +585,44 @@ $(function () {
   });
 
   // Setup property toggles
-  $('#show_props,#show_strings').bootstrapToggle({
-    on: 'Show',
-    off: 'Hide',
-    size: 'mini',
-    onstyle: 'success',
-    offstyle: 'danger',
-    width: 75
-  });
-  $('#show_html_messages').bootstrapToggle({
-    on: 'HTML',
-    off: 'Text',
-    onstyle: 'default',
-    offstyle: 'default',
-    size: 'mini',
-    width: 75
-  });
+  $('#show_props,#show_strings').
+    bootstrapToggle({
+      on: 'Show',
+      off: 'Hide',
+      size: 'mini',
+      onstyle: 'success',
+      offstyle: 'danger',
+      width: 75
+    });
+  $('#show_html_messages').
+    bootstrapToggle({
+      on: 'HTML',
+      off: 'Text',
+      onstyle: 'success',
+      offstyle: 'warning',
+      size: 'mini',
+      width: 75
+    });
+  $('#wrap_output_pre').
+    bootstrapToggle({
+      on: 'Wrap',
+      off: 'No wrap',
+      onstyle: 'success',
+      offstyle: 'warning',
+      size: 'mini',
+      width: 75
+    }).change(function () {
+      if (this.checked) {
+        $('body').addClass('wrap-pre');
+      } else {
+        $('body').removeClass('wrap-pre');
+      }
+    });
+
+  // set default to wrapped
+  if ($('#wrap_output_pre:checked')) {
+    $('body').addClass('wrap-pre');
+  }
 
   // regex input trigger
   $('#regex,#regex_options,#regex_input').on('keyup', function () {
@@ -522,18 +666,18 @@ $(function () {
       if (this === $target.get(0)) {
         var workbenchLeft = $('#side_controls').outerWidth();
         if (!$pane.is(':visible')) {
-          workbenchLeft += $pane.outerWidth();
-          $('#workbench').animate({left: workbenchLeft}, 400, function () {
+          //workbenchLeft += $pane.outerWidth();
+          //$('#workbench').animate({left: workbenchLeft}, 400, function () {
             $pane.fadeIn(400);
-            resizeOutputContent();
-          });
+            //resizeOutputContent();
+          //});
         } else {
-          $pane.fadeOut(400, function () {
-            $('#workbench').animate({left: workbenchLeft}, 400, function () {
-              $('#workbench').css('left', '');
-              resizeOutputContent()
-            });
-          });
+          $pane.fadeOut(400);//, function () {
+            //$('#workbench').animate({left: workbenchLeft}, 400, function () {
+              //$('#workbench').css('left', '');
+              //resizeOutputContent()
+            //});
+          //});
         }
         $this.toggleClass('active');
       } else {

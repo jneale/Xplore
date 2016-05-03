@@ -70,6 +70,16 @@ pre {
   font-size: 11px;
 }
 
+.wrap-pre pre {
+  /* Make Pre tags wrap nicely. Better than having to scroll right for 10000 chars */
+  white-space: pre-wrap;      /* CSS 3 */
+  white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+  white-space: -pre-wrap;     /* Opera 4-6 */
+  white-space: -o-pre-wrap;   /* Opera 7 */
+  word-wrap: break-word;      /* Internet Explorer 5.5+ */
+  white-space: normal;
+}
+
 h5 {
   font-weight: bold;
   margin-top: 18px;
@@ -389,6 +399,12 @@ sup .label-as-badge {
 @keyframes spin {
     from { transform: scale(1) rotate(0deg);}
     to { transform: scale(1) rotate(360deg);}
+}
+
+/* Adjust for BootstrapToggle */
+.checkbox, .radio {
+  margin-top: 15px;
+  margin-bottom: 15px;
 }
 
 /* fix IE select */

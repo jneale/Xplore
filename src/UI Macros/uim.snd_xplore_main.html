@@ -83,23 +83,60 @@
           <li><a href="javascript:void(0);" title="Settings" data-pane="settings_pane">
             <i class="glyphicon glyphicon-cog"></i></a>
           </li>
+          <li>
+            <a href="javascript:void(0)" title="Open Script" data-pane="script_pane">
+              <i class="glyphicon glyphicon-paste"></i></a>
+          </li>
         </ul>
       </div>
 
       <div id="settings_pane" class="side_pane" style="display: none;">
-        <h3>Script Runner Settings</h3>
+        <p class="lead">Settings</p>
         <div class="checkbox">
-            <input type="checkbox" id="show_props" checked="checked" />
-            Show object properties
+          <input type="checkbox" id="show_props" checked="checked" />
+          <strong>Show Object Properties*</strong>
+          <p>Xplore will display the properties of the resulting objects of
+            any script you run. Turn off if you only care about the object
+            itself.</p>
         </div>
         <div class="checkbox">
           <input type="checkbox" id="show_strings" checked="checked" />
-          Show property string values
+          <strong>Show String Values*</strong>
+          <p>Xplore will attempt to display the string values of the object and
+            its properties. Turn off if you encounter access errors or you don't
+            want to see strings. When off, all string values are shown as
+            &quot;<span class="text-danger">[user ignored]</span>&quot;.</p>
         </div>
         <div class="checkbox">
           <input type="checkbox" id="show_html_messages" checked="checked" />
-          Show output messages as HTML or plain text
+          <strong>HTML Message Format*</strong>
+          <p>Output messages are shown as they are generated which means if they
+            contain something like an anchor tag the anchor will work. Turn off
+            if you want to see the raw string.</p>
         </div>
+        <div class="checkbox">
+          <input type="checkbox" id="wrap_output_pre" checked="checked" />
+          <strong>Wrap Long Strings</strong>
+          <p>Wrapping of long strings, i.e. functions, means you don't have to
+            scroll right in the output pane to read them. If you'd rather see
+            each line as-is then change this setting.</p>
+        </div>
+        <p class="small">*New values will apply to the next script being run.</p>
+      </div>
+
+      <div id="script_pane" class="side_pane" style="display: none;">
+        <div id="script_pane_loading" class="pull-right" style="display:none;">
+          <i class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></i>
+        </div>
+        <p class="lead">Scripts</p>
+        <p>Easily append script includes to the editor window.</p>
+        <input type="text" class="form-control" id="script_pane_search"
+          placeholder="Search..." />
+        <hr />
+        <p class="alert alert-warning" id="script_pane_404" style="display: none">
+          Nothing found.
+        </p>
+        <ul id="script_pane_list"></ul>
       </div>
 
       <div id="workbench">
