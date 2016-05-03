@@ -768,6 +768,7 @@ function XploreRunner() {
     var gse = new GlideScopedEvaluator();
     gse.putVariable('reporter', reporter);
     gse.putVariable('script', script);
+    gse.putVariable('user_data', options.user_data);
     gse.evaluateScript(gr, 'script');
   }
 

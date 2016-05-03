@@ -22,9 +22,13 @@ function getMinutesSince(startTime) {
   return minutes + ':' + seconds + '.' + ds;
 }
 
+// main UI object
+var snd_xplore_ui = {};
+
 /*************************************
               XPLORE
 **************************************/
+
 var snd_xplore_util = {
   countup_interval: null,
   loading: function () {
@@ -173,9 +177,11 @@ $('.xplore_demo').on('click', 'a', function (e) {
   }
 });
 
+
 /*************************************
               REGEX
 **************************************/
+
 var snd_xplore_regex_util = (function () {
   $intro_panel   = $('#regex_intro_panel');
   $match_panel   = $('#regex_match_panel');
@@ -297,9 +303,11 @@ var snd_xplore_regex_util = (function () {
   };
 })();
 
+
 /*************************************
               TABLES
 **************************************/
+
 var snd_xplore_table_util = (function () {
 
   var api = {
@@ -393,10 +401,10 @@ var snd_xplore_table_util = (function () {
 
 })();
 
+
 /*************************************
            SCRIPT SEARCH
 **************************************/
-
 
 var snd_script_search_util = (function () {
 
@@ -405,16 +413,29 @@ var snd_script_search_util = (function () {
   var $script_pane_404 = $('#script_pane_404');
 
   function search(value) {
-    var anchors;
+    var elements,
+        match,
+        nomatch;
+
     if(value) {
+
       value = value.toUpperCase();
-      anchors = $list.find('a');
-      anchors.filter(function (i, a) {
-        return (a.textContent || a.innerText || "").toUpperCase().indexOf(value)>=0;
-      }).parent().show();
-      anchors.filter(function (i, a) {
-        return (a.textContent || a.innerText || "").toUpperCase().indexOf(value)==-1;
-      }).parent().hide();
+      elements = $list.find('span.script-name');
+
+      match = elements.filter(function (i, el) {
+        return (el.textContent || el.innerText || "").toUpperCase().indexOf(value)>=0;
+      });
+      match.parent().show();
+
+      nomatch = elements.filter(function (i, el) {
+        return (el.textContent || el.innerText || "").toUpperCase().indexOf(value)==-1;
+      });
+      nomatch.parent().hide();
+
+      if (!match.length) {
+        $script_pane_404.show();
+      }
+
     } else {
       $list.find("li").show();
     }
@@ -446,7 +467,7 @@ var snd_script_search_util = (function () {
     };
   })();
 
-  api.addScript = function (sys_id) {
+  api.addScript = function (sys_id, replace) {
     loading(true);
     $.ajax({
       type: 'GET',
@@ -455,14 +476,27 @@ var snd_script_search_util = (function () {
     }).
     done(function (result) {
       var old = snd_xplore_editor.getValue();
-      if (old.trim().length > 0) old += '\n\n';
+
+      if (old) {
+        if (replace != '1') {
+          if (old.length > 0) old += '\n\n';
+        } else if(!confirm('Warning! This will replace your code.')) {
+          return;
+        } else {
+          old = '';
+        }
+      }
+
       snd_xplore_editor.setValue(
         old +
         '/*************************************' + '\n' +
-        ' ' + result.api_name + '\n' +
+        '  ' + result.api_name + '\n' +
         ' *************************************/' + '\n' +
         result.script);
       loading(false);
+
+      // close the pane
+      snd_xplore_ui.side_panes.closeAll();
     }).
     fail(function () {
       snd_log('Error: snd_script_search_util.addScript failed.');
@@ -482,16 +516,21 @@ var snd_script_search_util = (function () {
       $list.empty();
       $.each(result, function (i, item) {
         var scope = item.$sys_scope == 'Global' ? '' : ' (' + item.$sys_scope + ')';
-        $list.append($('<li><a href="javascript:void(0)" data-sys-id="' + item.sys_id + '">' +
-          item.name + scope + '</a></li>'));
+        $list.append($('<li>' +
+          '<span class="script-link script-name" data-sys-id="' + item.sys_id + '">' +
+          item.name + scope + '</span> ' +
+          '<span class="script-link script-replace pull-right" data-sys-id="' + item.sys_id + '" ' +
+          'data-replace="1">' +
+          'replace</span>' +
+          '</li>'));
       });
       loading(false);
     }).
     fail(function () {
       snd_log('Error: snd_script_search_util.loadAll failed.');
-      loading(false)
+      loading(false);
     });
-  }
+  };
 
   // handle script search
   $('#script_pane_search')
@@ -503,17 +542,82 @@ var snd_script_search_util = (function () {
     $(this).change();
   });
 
-  $('#script_pane_list').on('click', 'a', function (e) {
+  $('#script_pane_list').on('click', 'span.script-link', function (e) {
     var $anchor = $(this);
     if (!$anchor.attr('data-sys-id')) {
       snd_log('Error: script link does not have sys_id attribute');
     } else {
-      snd_script_search_util.addScript($anchor.attr('data-sys-id'));
+      snd_script_search_util.addScript($anchor.attr('data-sys-id'), $anchor.attr('data-replace'));
     }
+  });
+
+  $('#side_controls a[data-pane="script_pane"]').one('click', function () {
+    api.loadAll();
   });
 
   return api;
 })();
+
+
+/*************************************
+            SIDE PANES
+**************************************/
+
+(function () {
+
+  window.snd_xplore_ui.side_panes = {
+    closeAll: function () {
+      $('.side_pane').fadeOut(400);
+      $('#side_controls li a[data-pane]').removeClass('active');
+    }
+  };
+
+  // setup the side pane controls
+  $('#side_controls li').on('click', 'a', function () {
+    var $target = $(this);
+    if (!$target.attr('data-pane')) return;
+
+    $('#side_controls li a').each(function () {
+      var $this = $(this);
+      var pane = $this.attr('data-pane');
+      if (!pane) return;
+      var $pane = $('#' + pane);
+
+      if (this === $target.get(0)) {
+        var workbenchLeft = $('#side_controls').outerWidth();
+        if (!$pane.is(':visible')) {
+          //workbenchLeft += $pane.outerWidth();
+          //$('#workbench').animate({left: workbenchLeft}, 400, function () {
+            $pane.fadeIn(400);
+            //resizeOutputContent();
+          //});
+        } else {
+          $pane.fadeOut(400);//, function () {
+            //$('#workbench').animate({left: workbenchLeft}, 400, function () {
+              //$('#workbench').css('left', '');
+              //resizeOutputContent()
+            //});
+          //});
+        }
+        $this.toggleClass('active');
+      } else {
+        $this.removeClass('active');
+        $pane.hide();
+      }
+    });
+  });
+
+  // auto close the data panes when clicked outside
+  $(document).click(function(event) {
+    if(!$(event.target).closest('.side_pane').length &&
+        !$(event.target).closest('#side_controls').length &&
+        !$(event.target).hasClass('.side_pane')) {
+      snd_xplore_ui.side_panes.closeAll();
+    }
+  });
+
+})();
+
 
 /*************************************
               INIT
@@ -613,15 +717,15 @@ $(function () {
       width: 75
     }).change(function () {
       if (this.checked) {
-        $('body').addClass('wrap-pre');
+        $('#script_output').addClass('wrap-pre');
       } else {
-        $('body').removeClass('wrap-pre');
+        $('#script_output').removeClass('wrap-pre');
       }
     });
 
   // set default to wrapped
   if ($('#wrap_output_pre:checked')) {
-    $('body').addClass('wrap-pre');
+    $('#script_output').addClass('wrap-pre');
   }
 
   // regex input trigger
@@ -652,40 +756,7 @@ $(function () {
     }
   });
 
-  // setup the side pane controls
-  $('#side_controls li').on('click', 'a', function () {
-    var $target = $(this);
-    if (!$target.attr('data-pane')) return;
 
-    $('#side_controls li a').each(function () {
-      var $this = $(this);
-      var pane = $this.attr('data-pane');
-      if (!pane) return;
-      var $pane = $('#' + pane);
-
-      if (this === $target.get(0)) {
-        var workbenchLeft = $('#side_controls').outerWidth();
-        if (!$pane.is(':visible')) {
-          //workbenchLeft += $pane.outerWidth();
-          //$('#workbench').animate({left: workbenchLeft}, 400, function () {
-            $pane.fadeIn(400);
-            //resizeOutputContent();
-          //});
-        } else {
-          $pane.fadeOut(400);//, function () {
-            //$('#workbench').animate({left: workbenchLeft}, 400, function () {
-              //$('#workbench').css('left', '');
-              //resizeOutputContent()
-            //});
-          //});
-        }
-        $this.toggleClass('active');
-      } else {
-        $this.removeClass('active');
-        $pane.hide();
-      }
-    });
-  });
 
   // setup the editor toggle button
   $('#editor_toggle').on('click', function () {

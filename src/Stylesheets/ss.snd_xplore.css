@@ -77,7 +77,6 @@ pre {
   white-space: -pre-wrap;     /* Opera 4-6 */
   white-space: -o-pre-wrap;   /* Opera 7 */
   word-wrap: break-word;      /* Internet Explorer 5.5+ */
-  white-space: normal;
 }
 
 h5 {
@@ -143,9 +142,11 @@ sup .label-as-badge {
   display: block;
   position: relative;
   padding: 15px 0;
-  -webkit-transition: all .3s ease;
-  -moz-transition: all .3s ease;
-  transition: all .3s ease;
+  -webkit-transition: all ease-in 300ms;
+  -moz-transition: all ease-in 300ms;
+  -ms-transition: all ease-in 300ms;
+  -o-transition: all ease-in 300ms;
+  transition: all ease-in 300ms;
 }
 
 #side_controls ul > li > a.active {
@@ -386,19 +387,67 @@ sup .label-as-badge {
   margin-right: 0;
 }
 
-.glyphicon-refresh-animate {
-    -animation: spin .7s infinite linear;
-    -webkit-animation: spin2 .7s infinite linear;
+#script_pane_list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+#script_pane_list li {
+  border-top: 1px solid #e9e9e9;
+  padding: 2px 4px;
+}
+#script_pane_list li:hover {
+  background-color: #e9e9e9;
+  padding-left: 6px;
+}
+#script_pane_list li .script-link:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+#script_pane_list li .script-replace {
+  opacity: 0;
+  -webkit-transition:all linear 200ms;
+  -moz-transition:all linear 200ms;
+  -ms-transition:all linear 200ms;
+  -o-transition:all linear 200ms;
+  transition: all linear 200ms;
+}
+#script_pane_list li:hover .script-replace {
+  opacity: 1;
+}
+#script_pane_search {
+  margin-bottom: 20px;
 }
 
-@-webkit-keyframes spin2 {
-    from { -webkit-transform: rotate(0deg);}
-    to { -webkit-transform: rotate(360deg);}
+.spin {
+  animation: spin 900ms infinite linear;
+  -o-animation: spin 900ms infinite linear;
+  -ms-animation: spin 900ms infinite linear;
+  -webkit-animation: spin 900ms infinite linear;
+  -moz-animation: spin 900ms infinite linear;
 }
-
 @keyframes spin {
-    from { transform: scale(1) rotate(0deg);}
-    to { transform: scale(1) rotate(360deg);}
+  100%{ transform: rotate(360deg); transform: rotate(360deg); }
+}
+@-o-keyframes spin {
+  100%{ -o-transform: rotate(360deg); transform: rotate(360deg); }
+}
+@-ms-keyframes spin {
+  100%{ -ms-transform: rotate(360deg); transform: rotate(360deg); }
+}
+@-webkit-keyframes spin {
+  100%{ -webkit-transform: rotate(360deg); transform: rotate(360deg); }
+}
+@-moz-keyframes load-spin {
+  100%{ -moz-transform: rotate(360deg); transform: rotate(360deg); }
+}
+
+/* Fix spin offset */
+.glyphicon-refresh.spin {
+  padding-top: 1px;
+}
+.loading>.glyphicon-refresh.spin {
+  padding-left: 1px;
 }
 
 /* Adjust for BootstrapToggle */

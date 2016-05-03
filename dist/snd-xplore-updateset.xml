@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<unload unload_date="2016-03-15 12:15:16">
+<unload unload_date="2016-05-03 18:11:29">
 <sys_remote_update_set action="INSERT_OR_UPDATE">
 <application display_value="Global">global</application>
 <application_name>Global</application_name>
@@ -12,46 +12,29 @@
 A toolkit for every ServiceNow developer.
 Created by @James_Neale &lt;james@sndeveloper.com&gt;
 
-### Version 3.5 (G3.0.3)
-- Feature: Prettify code in output pane.
-- Feature: Timer to show how long the transaction has been running.
-- Feature: Default output pane message.
-- Change: Show logs and output messages when a transaction is cancelled.
-- Fix: Typos
-
-
-### Version 3.4 (G3.0.2) INTERNAL
-- Feature: Add cancel button to cancel long running transactions.
-- Feature: Setting to allow output messages to escape HTML.
-- Feature: Xplore will run while impersonating.
-- Interface modifications.
-
-
-### Version 3.3 (G3.0.1) INTERNAL
-- Feature: Add User Data pane for working with large text strings e.g. XML
-- Feature: Improve table hierarchy search with expression support, label support
-  and a search button (just hit &lt;ENTER&gt; instead of waiting).
-- Feature: Made the info page permanent, merged with side bar info, added new content.
-- Feature: Added a settings side bar menu for supporting new show\_props and show\_strings
-  options.
-- Change: Log frame tab click reload now only occurs on double click.
-- Fix: Fixed tab overlay issue when showing the side bar on smaller screens
-  which caused the tabs to stack.
-- Fix: Made the glasses injection script more robust.
-- Removed: Original informational side bar.</description>
+### Version 3.6 (G3.0.4)
+- Feature: Output wrapping controlled by setting. Defaulted to wrap.
+- Feature: New side pane: Script Include importer.
+- UI: Improved Settings pane.
+- UI: Made setting panes overlay script editor instead of shrink it.
+- UI: Updated Share link so it doesn't point to an old version.
+- UI: Added additional Table Hierarchy link.
+- Fix: Set default wrapping for long text to match the checkbox setting.
+- Fix: user_data object now works in scoped scripts on the source instance.
+- Tested in Helsinki.</description>
 <inserted/>
-<name>Xplore - 3.5</name>
+<name>Xplore - 3.6</name>
 <origin_sys_id/>
 <release_date/>
-<remote_sys_id>eae41f2b0fc2d20094f3c09ce1050e63</remote_sys_id>
+<remote_sys_id>7016fc670f4b1a0094f3c09ce1050e39</remote_sys_id>
 <state>loaded</state>
 <summary/>
 <sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:15:15</sys_created_on>
-<sys_id>9bf4d3670fc2d20094f3c09ce1050edc</sys_id>
+<sys_created_on>2016-05-03 18:11:29</sys_created_on>
+<sys_id>836cf8e70f4b1a0094f3c09ce1050e14</sys_id>
 <sys_mod_count>0</sys_mod_count>
 <sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
+<sys_updated_on>2016-05-03 18:11:29</sys_updated_on>
 <update_set display_value=""/>
 <update_source display_value=""/>
 <updated/>
@@ -61,20 +44,127 @@ Created by @James_Neale &lt;james@sndeveloper.com&gt;
 <application display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</application>
 <category>customer</category>
 <comments/>
-<name>sys_properties_7ab919cb0fee420094f3c09ce1050e41</name>
-<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties"><sys_properties action="INSERT_OR_UPDATE"><choices/><description>Log server side scripts that are run using /snd_xplore.do much the same that background scripts do.</description><ignore_cache>false</ignore_cache><is_private>false</is_private><name>snd_xplore.log_request</name><read_roles/><suffix/><sys_class_name>sys_properties</sys_class_name><sys_created_by>james@snd</sys_created_by><sys_created_on>2015-09-21 14:21:13</sys_created_on><sys_customer_update>true</sys_customer_update><sys_id>7ab919cb0fee420094f3c09ce1050e41</sys_id><sys_mod_count>4</sys_mod_count><sys_name>snd_xplore.log_request</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_replace_on_upgrade>false</sys_replace_on_upgrade><sys_scope display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</sys_scope><sys_update_name>sys_properties_7ab919cb0fee420094f3c09ce1050e41</sys_update_name><sys_updated_by>james@snd</sys_updated_by><sys_updated_on>2015-10-01 19:06:44</sys_updated_on><type>boolean</type><value>true</value><write_roles/></sys_properties><sys_translated_text action="delete_multiple" query="documentkey=7ab919cb0fee420094f3c09ce1050e41"/></record_update>]]></payload>
-<remote_update_set display_value="Xplore - 3.5">9bf4d3670fc2d20094f3c09ce1050edc</remote_update_set>
+<name>sys_ui_script_e9a20c7e0f54564094f3c09ce1050eb4</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script"><sys_ui_script action="INSERT_OR_UPDATE"><active>true</active><description>Inject the glasses icon into the UI.&#13;
+Tested in Fuji and Geneva.</description><global>true</global><name>snd_xplore_glasses</name><script>function snd_xplore_glasses () {&#13;
+  if (typeof jQuery === 'function' &amp;&amp; typeof top.$j === 'function') {&#13;
+    jQuery(document).ready(function () {&#13;
+      var top = window.top;&#13;
+&#13;
+      if (typeof top.snd_xplore_loaded != 'undefined') {&#13;
+        return;&#13;
+      }&#13;
+      top.snd_xplore_loaded = true;&#13;
+&#13;
+      var hasAdmin = (function () {&#13;
+        try {&#13;
+          var roles;&#13;
+          if (typeof top.NOW == 'object') {&#13;
+            roles = top.NOW.user.roles.split(',');&#13;
+          } else if (typeof window.g_user == 'object' &amp;&amp; window.g_user.roles) {&#13;
+            roles = window.g_user.roles;&#13;
+          }&#13;
+          if (!roles) return false;&#13;
+          for (var i = roles.length - 1; i &gt; -1; i--) {&#13;
+            if (roles[i] == 'admin') return true;&#13;
+          }&#13;
+        } catch (e) {&#13;
+          jslog('Error with snd_xplore_glasses script finding user roles: ' + e);&#13;
+        }&#13;
+        return false;&#13;
+      })();&#13;
+&#13;
+      var isUI16 = top.$j('.navpage-header-content').length &gt; 0;&#13;
+&#13;
+      var title = "Xplore: the professional ServiceNow developer toolkit.";&#13;
+&#13;
+      var widgetHtml;&#13;
+&#13;
+      if (hasAdmin) {&#13;
+&#13;
+        // UI16 - Geneva&#13;
+        if (isUI16) {&#13;
+          widgetHtml = '&lt;div class="navpage-header-content"&gt;' +&#13;
+            '&lt;button data-placement="auto" class="btn btn-icon icon-glasses"' +&#13;
+            ' title="' + title + '" data-original-title="Xplore" onclick="window.open(\'/snd_xplore.do\', \'_blank\');"&gt;' +&#13;
+              '&lt;span class="sr-only"&gt;Xplore&lt;/span&gt;' +&#13;
+            '&lt;/button&gt;&lt;/div&gt;';&#13;
+          top.$j('#sysparm_search').parents('div.navpage-header-content').first().after(widgetHtml);&#13;
+        }&#13;
+&#13;
+        // UI15 - Fuji&#13;
+        else {&#13;
+          widgetHtml = '&lt;span id="snd_xplore_span" ' +&#13;
+            'style="visibility: visible; display: inline-block; zoom: 1; vertical-align: middle;"&gt;' +&#13;
+              '&lt;span tabindex="0" onclick="window.open(\'/snd_xplore.do\', \'_blank\');"' +&#13;
+              ' class="icon-glasses sn-tooltip-basic"' +&#13;
+              ' style="cursor: pointer; font-size: 20px; border: 0;"' +&#13;
+              ' title="' + title + '"&gt;&lt;span class="sr-only"&gt;' + title +&#13;
+              '&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;';&#13;
+          top.$j('#nav_header_stripe_decorations_left').append(widgetHtml);&#13;
+        }&#13;
+&#13;
+      }&#13;
+    });&#13;
+  }&#13;
+}&#13;
+snd_xplore_glasses();</script><script_name/><sys_class_name>sys_ui_script</sys_class_name><sys_created_by>james@snd</sys_created_by><sys_created_on>2015-12-16 13:13:07</sys_created_on><sys_customer_update>true</sys_customer_update><sys_id>e9a20c7e0f54564094f3c09ce1050eb4</sys_id><sys_mod_count>9</sys_mod_count><sys_name>snd_xplore_glasses</sys_name><sys_package display_value="Xplore" source="0f6ab99a0f36060094f3c09ce1050ee8">0f6ab99a0f36060094f3c09ce1050ee8</sys_package><sys_policy/><sys_replace_on_upgrade>false</sys_replace_on_upgrade><sys_scope display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</sys_scope><sys_update_name>sys_ui_script_e9a20c7e0f54564094f3c09ce1050eb4</sys_update_name><sys_updated_by>james@sndeveloper.com</sys_updated_by><sys_updated_on>2016-02-07 20:46:53</sys_updated_on><use_scoped_format>false</use_scoped_format></sys_ui_script></record_update>]]></payload>
+<remote_update_set display_value="Xplore - 3.6">836cf8e70f4b1a0094f3c09ce1050e14</remote_update_set>
 <replace_on_upgrade>false</replace_on_upgrade>
 <sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:15:15</sys_created_on>
-<sys_id>13f4d3670fc2d20094f3c09ce1050edd</sys_id>
+<sys_created_on>2016-05-03 18:11:29</sys_created_on>
+<sys_id>036cf8e70f4b1a0094f3c09ce1050e15</sys_id>
 <sys_mod_count>0</sys_mod_count>
 <sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
+<sys_updated_on>2016-05-03 18:11:29</sys_updated_on>
+<table/>
+<target_name>snd_xplore_glasses</target_name>
+<type>UI Script</type>
+<update_domain>global                          </update_domain>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</application>
+<category>customer</category>
+<comments/>
+<name>sys_app_0f6ab99a0f36060094f3c09ce1050ee8</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_app"><sys_app action="INSERT_OR_UPDATE"><active>true</active><licensable>true</licensable><logo/><menu display_value="Xplore">4eb000280f2a020094f3c09ce1050e23</menu><name>Xplore</name><scope>global</scope><short_description># Xplore: Developer Toolkit A toolkit for every ServiceNow developer. Created by @James_Neale &lt;james@sndeveloper.com&gt;</short_description><source>0f6ab99a0f36060094f3c09ce1050ee8</source><store_correlation_id/><store_url/><sys_class_name>sys_app</sys_class_name><sys_code/><sys_created_by>james@snd</sys_created_by><sys_created_on>2015-10-01 19:03:06</sys_created_on><sys_id>0f6ab99a0f36060094f3c09ce1050ee8</sys_id><sys_mod_count>16</sys_mod_count><sys_updated_by>james@sndeveloper.com</sys_updated_by><sys_updated_on>2016-05-03 12:31:44</sys_updated_on><template/><user_role display_value="admin" name="admin">2831a114c611228501d4ea6c309d626d</user_role><vendor/><vendor_prefix/><version>3.6</version></sys_app></record_update>]]></payload>
+<remote_update_set display_value="Xplore - 3.6">836cf8e70f4b1a0094f3c09ce1050e14</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>james@sndeveloper.com</sys_created_by>
+<sys_created_on>2016-05-03 18:11:29</sys_created_on>
+<sys_id>076cf8e70f4b1a0094f3c09ce1050e14</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>james@sndeveloper.com</sys_updated_by>
+<sys_updated_on>2016-05-03 18:11:29</sys_updated_on>
+<table/>
+<target_name>Xplore</target_name>
+<type>Custom Application</type>
+<update_domain>global                          </update_domain>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</application>
+<category>customer</category>
+<comments/>
+<name>sys_properties_7ab919cb0fee420094f3c09ce1050e41</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties"><sys_properties action="INSERT_OR_UPDATE"><choices/><description>Log server side scripts that are run using /snd_xplore.do much the same that background scripts do.</description><ignore_cache>false</ignore_cache><is_private>false</is_private><name>snd_xplore.log_request</name><read_roles/><suffix/><sys_class_name>sys_properties</sys_class_name><sys_created_by>james@snd</sys_created_by><sys_created_on>2015-09-21 14:21:13</sys_created_on><sys_customer_update>true</sys_customer_update><sys_id>7ab919cb0fee420094f3c09ce1050e41</sys_id><sys_mod_count>4</sys_mod_count><sys_name>snd_xplore.log_request</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_replace_on_upgrade>false</sys_replace_on_upgrade><sys_scope display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</sys_scope><sys_update_name>sys_properties_7ab919cb0fee420094f3c09ce1050e41</sys_update_name><sys_updated_by>james@snd</sys_updated_by><sys_updated_on>2015-10-01 19:06:44</sys_updated_on><type>boolean</type><value>true</value><write_roles/></sys_properties><sys_translated_text action="delete_multiple" query="documentkey=7ab919cb0fee420094f3c09ce1050e41"/></record_update>]]></payload>
+<remote_update_set display_value="Xplore - 3.6">836cf8e70f4b1a0094f3c09ce1050e14</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>james@sndeveloper.com</sys_created_by>
+<sys_created_on>2016-05-03 18:11:29</sys_created_on>
+<sys_id>0b6cf8e70f4b1a0094f3c09ce1050e14</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>james@sndeveloper.com</sys_updated_by>
+<sys_updated_on>2016-05-03 18:11:29</sys_updated_on>
 <table/>
 <target_name>snd_xplore.log_request</target_name>
 <type>System Property</type>
-<update_domain>global</update_domain>
+<update_domain>global                          </update_domain>
 <update_set display_value=""/>
 <view/>
 </sys_update_xml>
@@ -84,7 +174,7 @@ Created by @James_Neale &lt;james@sndeveloper.com&gt;
 <category>customer</category>
 <comments/>
 <name>sys_ui_macro_e768ef690f4c524094f3c09ce1050e60</name>
-<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sys_ui_macro"&gt;&lt;sys_ui_macro action="INSERT_OR_UPDATE"&gt;&lt;active&gt;true&lt;/active&gt;&lt;category&gt;general&lt;/category&gt;&lt;description/&gt;&lt;media_type/&gt;&lt;name&gt;snd_xplore_main&lt;/name&gt;&lt;scoped_name/&gt;&lt;sys_class_name&gt;sys_ui_macro&lt;/sys_class_name&gt;&lt;sys_created_by&gt;james@snd&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2015-11-30 22:27:04&lt;/sys_created_on&gt;&lt;sys_customer_update&gt;true&lt;/sys_customer_update&gt;&lt;sys_id&gt;e768ef690f4c524094f3c09ce1050e60&lt;/sys_id&gt;&lt;sys_mod_count&gt;224&lt;/sys_mod_count&gt;&lt;sys_name&gt;snd_xplore_main&lt;/sys_name&gt;&lt;sys_package display_value="Xplore" source="0f6ab99a0f36060094f3c09ce1050ee8"&gt;0f6ab99a0f36060094f3c09ce1050ee8&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_replace_on_upgrade&gt;false&lt;/sys_replace_on_upgrade&gt;&lt;sys_scope display_value="Xplore"&gt;0f6ab99a0f36060094f3c09ce1050ee8&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_ui_macro_e768ef690f4c524094f3c09ce1050e60&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;james@sndeveloper.com&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2016-03-15 11:13:28&lt;/sys_updated_on&gt;&lt;xml&gt;&lt;![CDATA[&lt;?xml version="1.0" encoding="utf-8" ?&gt;
+<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sys_ui_macro"&gt;&lt;sys_ui_macro action="INSERT_OR_UPDATE"&gt;&lt;active&gt;true&lt;/active&gt;&lt;category&gt;general&lt;/category&gt;&lt;description/&gt;&lt;media_type/&gt;&lt;name&gt;snd_xplore_main&lt;/name&gt;&lt;scoped_name/&gt;&lt;sys_class_name&gt;sys_ui_macro&lt;/sys_class_name&gt;&lt;sys_created_by&gt;james@snd&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2015-11-30 22:27:04&lt;/sys_created_on&gt;&lt;sys_customer_update&gt;true&lt;/sys_customer_update&gt;&lt;sys_id&gt;e768ef690f4c524094f3c09ce1050e60&lt;/sys_id&gt;&lt;sys_mod_count&gt;243&lt;/sys_mod_count&gt;&lt;sys_name&gt;snd_xplore_main&lt;/sys_name&gt;&lt;sys_package display_value="Xplore" source="0f6ab99a0f36060094f3c09ce1050ee8"&gt;0f6ab99a0f36060094f3c09ce1050ee8&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_replace_on_upgrade&gt;false&lt;/sys_replace_on_upgrade&gt;&lt;sys_scope display_value="Xplore"&gt;0f6ab99a0f36060094f3c09ce1050ee8&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_ui_macro_e768ef690f4c524094f3c09ce1050e60&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;james@sndeveloper.com&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2016-05-03 17:17:31&lt;/sys_updated_on&gt;&lt;xml&gt;&lt;![CDATA[&lt;?xml version="1.0" encoding="utf-8" ?&gt;
 &lt;j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null"&gt;
 &lt;html lang="en"&gt;
   &lt;head&gt;
@@ -117,7 +207,7 @@ Created by @James_Neale &lt;james@sndeveloper.com&gt;
 
     &lt;div id="window_loader" class="page_loader active"&gt;
       &lt;div class="loading"&gt;
-        &lt;i class="glyphicon glyphicon-refresh glyphicon-refresh-animate"&gt;&lt;/i&gt;
+        &lt;i class="glyphicon glyphicon-refresh spin"&gt;&lt;/i&gt;
       &lt;/div&gt;
     &lt;/div&gt;
 
@@ -169,23 +259,60 @@ Created by @James_Neale &lt;james@sndeveloper.com&gt;
           &lt;li&gt;&lt;a href="javascript:void(0);" title="Settings" data-pane="settings_pane"&gt;
             &lt;i class="glyphicon glyphicon-cog"&gt;&lt;/i&gt;&lt;/a&gt;
           &lt;/li&gt;
+          &lt;li&gt;
+            &lt;a href="javascript:void(0)" title="Open Script" data-pane="script_pane"&gt;
+              &lt;i class="glyphicon glyphicon-paste"&gt;&lt;/i&gt;&lt;/a&gt;
+          &lt;/li&gt;
         &lt;/ul&gt;
       &lt;/div&gt;
 
       &lt;div id="settings_pane" class="side_pane" style="display: none;"&gt;
-        &lt;h3&gt;Script Runner Settings&lt;/h3&gt;
+        &lt;p class="lead"&gt;Settings&lt;/p&gt;
         &lt;div class="checkbox"&gt;
-            &lt;input type="checkbox" id="show_props" checked="checked" /&gt;
-            Show object properties
+          &lt;input type="checkbox" id="show_props" checked="checked" /&gt;
+          &lt;strong&gt;Show Object Properties*&lt;/strong&gt;
+          &lt;p&gt;Xplore will display the properties of the resulting objects of
+            any script you run. Turn off if you only care about the object
+            itself.&lt;/p&gt;
         &lt;/div&gt;
         &lt;div class="checkbox"&gt;
           &lt;input type="checkbox" id="show_strings" checked="checked" /&gt;
-          Show property string values
+          &lt;strong&gt;Show String Values*&lt;/strong&gt;
+          &lt;p&gt;Xplore will attempt to display the string values of the object and
+            its properties. Turn off if you encounter access errors or you don't
+            want to see strings. When off, all string values are shown as
+            &amp;quot;&lt;span class="text-danger"&gt;[user ignored]&lt;/span&gt;&amp;quot;.&lt;/p&gt;
         &lt;/div&gt;
         &lt;div class="checkbox"&gt;
           &lt;input type="checkbox" id="show_html_messages" checked="checked" /&gt;
-          Show output messages as HTML or plain text
+          &lt;strong&gt;HTML Message Format*&lt;/strong&gt;
+          &lt;p&gt;Output messages are shown as they are generated which means if they
+            contain something like an anchor tag the anchor will work. Turn off
+            if you want to see the raw string.&lt;/p&gt;
         &lt;/div&gt;
+        &lt;div class="checkbox"&gt;
+          &lt;input type="checkbox" id="wrap_output_pre" checked="checked" /&gt;
+          &lt;strong&gt;Wrap Long Strings&lt;/strong&gt;
+          &lt;p&gt;Wrapping of long strings, i.e. functions, means you don't have to
+            scroll right in the output pane to read them. If you'd rather see
+            each line as-is then change this setting.&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;p class="small"&gt;*New values will apply to the next script being run.&lt;/p&gt;
+      &lt;/div&gt;
+
+      &lt;div id="script_pane" class="side_pane" style="display: none;"&gt;
+        &lt;div id="script_pane_loading" class="pull-right" style="display:none;"&gt;
+          &lt;i class="glyphicon glyphicon-refresh spin"&gt;&lt;/i&gt;
+        &lt;/div&gt;
+        &lt;p class="lead"&gt;Scripts&lt;/p&gt;
+        &lt;p&gt;Easily append script includes to the editor window.&lt;/p&gt;
+        &lt;input type="text" class="form-control" id="script_pane_search"
+          placeholder="Search..." /&gt;
+
+        &lt;p class="alert alert-warning" id="script_pane_404" style="display: none"&gt;
+          Nothing found.
+        &lt;/p&gt;
+        &lt;ul id="script_pane_list"&gt;&lt;/ul&gt;
       &lt;/div&gt;
 
       &lt;div id="workbench"&gt;
@@ -199,7 +326,7 @@ Created by @James_Neale &lt;james@sndeveloper.com&gt;
 
           &lt;div id="output_loader" class="page_loader"&gt;
             &lt;div class="loading"&gt;
-              &lt;i class="glyphicon glyphicon-refresh glyphicon-refresh-animate"&gt;&lt;/i&gt;
+              &lt;i class="glyphicon glyphicon-refresh spin"&gt;&lt;/i&gt;
               &lt;div id="countup"&gt;&lt;/div&gt;
             &lt;/div&gt;
           &lt;/div&gt;
@@ -298,7 +425,7 @@ Created by @James_Neale &lt;james@sndeveloper.com&gt;
                 &lt;div class="wrap row"&gt;
                   &lt;div class="col-xs-12"&gt;
                     &lt;div id="regex_loading" class="pull-right" style="display:none;"&gt;
-                      &lt;i class="glyphicon glyphicon-refresh glyphicon-refresh-animate"&gt;&lt;/i&gt;
+                      &lt;i class="glyphicon glyphicon-refresh spin"&gt;&lt;/i&gt;
                     &lt;/div&gt;
                     &lt;h4&gt;Regular Expression&lt;/h4&gt;
                     &lt;div&gt;
@@ -413,7 +540,7 @@ Created by @James_Neale &lt;james@sndeveloper.com&gt;
                 &lt;div class="wrap row"&gt;
                   &lt;div class="col-xs-12"&gt;
                     &lt;div id="table_hierarchy_loading" class="pull-right" style="display:none;"&gt;
-                      &lt;i class="glyphicon glyphicon-refresh glyphicon-refresh-animate"&gt;&lt;/i&gt;
+                      &lt;i class="glyphicon glyphicon-refresh spin"&gt;&lt;/i&gt;
                     &lt;/div&gt;
                     &lt;h4&gt;Table Hierarchy&lt;/h4&gt;
                     &lt;div class="panel-body"&gt;
@@ -487,18 +614,18 @@ Created by @James_Neale &lt;james@sndeveloper.com&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 &lt;/j:jelly&gt;]]&gt;&lt;/xml&gt;&lt;/sys_ui_macro&gt;&lt;/record_update&gt;</payload>
-<remote_update_set display_value="Xplore - 3.5">9bf4d3670fc2d20094f3c09ce1050edc</remote_update_set>
+<remote_update_set display_value="Xplore - 3.6">836cf8e70f4b1a0094f3c09ce1050e14</remote_update_set>
 <replace_on_upgrade>false</replace_on_upgrade>
 <sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:15:15</sys_created_on>
-<sys_id>17f4d3670fc2d20094f3c09ce1050edd</sys_id>
+<sys_created_on>2016-05-03 18:11:29</sys_created_on>
+<sys_id>0f6cf8e70f4b1a0094f3c09ce1050e14</sys_id>
 <sys_mod_count>0</sys_mod_count>
 <sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
+<sys_updated_on>2016-05-03 18:11:29</sys_updated_on>
 <table/>
 <target_name>snd_xplore_main</target_name>
 <type>Macro</type>
-<update_domain>global</update_domain>
+<update_domain>global                          </update_domain>
 <update_set display_value=""/>
 <view/>
 </sys_update_xml>
@@ -507,104 +634,20 @@ Created by @James_Neale &lt;james@sndeveloper.com&gt;
 <application display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</application>
 <category>customer</category>
 <comments/>
-<name>sys_ui_script_e9a20c7e0f54564094f3c09ce1050eb4</name>
-<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script"><sys_ui_script action="INSERT_OR_UPDATE"><active>true</active><description>Inject the glasses icon into the UI.&#13;
-Tested in Fuji and Geneva.</description><global>true</global><name>snd_xplore_glasses</name><script>function snd_xplore_glasses () {&#13;
-  if (typeof jQuery === 'function' &amp;&amp; typeof top.$j === 'function') {&#13;
-    jQuery(document).ready(function () {&#13;
-      var top = window.top;&#13;
-&#13;
-      if (typeof top.snd_xplore_loaded != 'undefined') {&#13;
-        return;&#13;
-      }&#13;
-      top.snd_xplore_loaded = true;&#13;
-&#13;
-      var hasAdmin = (function () {&#13;
-        try {&#13;
-          var roles;&#13;
-          if (typeof top.NOW == 'object') {&#13;
-            roles = top.NOW.user.roles.split(',');&#13;
-          } else if (typeof window.g_user == 'object' &amp;&amp; window.g_user.roles) {&#13;
-            roles = window.g_user.roles;&#13;
-          }&#13;
-          if (!roles) return false;&#13;
-          for (var i = roles.length - 1; i &gt; -1; i--) {&#13;
-            if (roles[i] == 'admin') return true;&#13;
-          }&#13;
-        } catch (e) {&#13;
-          jslog('Error with snd_xplore_glasses script finding user roles: ' + e);&#13;
-        }&#13;
-        return false;&#13;
-      })();&#13;
-&#13;
-      var isUI16 = top.$j('.navpage-header-content').length &gt; 0;&#13;
-&#13;
-      var title = "Xplore: the professional ServiceNow developer toolkit.";&#13;
-&#13;
-      var widgetHtml;&#13;
-&#13;
-      if (hasAdmin) {&#13;
-&#13;
-        // UI16 - Geneva&#13;
-        if (isUI16) {&#13;
-          widgetHtml = '&lt;div class="navpage-header-content"&gt;' +&#13;
-            '&lt;button data-placement="auto" class="btn btn-icon icon-glasses"' +&#13;
-            ' title="' + title + '" data-original-title="Xplore" onclick="window.open(\'/snd_xplore.do\', \'_blank\');"&gt;' +&#13;
-              '&lt;span class="sr-only"&gt;Xplore&lt;/span&gt;' +&#13;
-            '&lt;/button&gt;&lt;/div&gt;';&#13;
-          top.$j('#sysparm_search').parents('div.navpage-header-content').first().after(widgetHtml);&#13;
-        }&#13;
-&#13;
-        // UI15 - Fuji&#13;
-        else {&#13;
-          widgetHtml = '&lt;span id="snd_xplore_span" ' +&#13;
-            'style="visibility: visible; display: inline-block; zoom: 1; vertical-align: middle;"&gt;' +&#13;
-              '&lt;span tabindex="0" onclick="window.open(\'/snd_xplore.do\', \'_blank\');"' +&#13;
-              ' class="icon-glasses sn-tooltip-basic"' +&#13;
-              ' style="cursor: pointer; font-size: 20px; border: 0;"' +&#13;
-              ' title="' + title + '"&gt;&lt;span class="sr-only"&gt;' + title +&#13;
-              '&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;';&#13;
-          top.$j('#nav_header_stripe_decorations_left').append(widgetHtml);&#13;
-        }&#13;
-&#13;
-      }&#13;
-    });&#13;
-  }&#13;
-}&#13;
-snd_xplore_glasses();</script><script_name/><sys_class_name>sys_ui_script</sys_class_name><sys_created_by>james@snd</sys_created_by><sys_created_on>2015-12-16 13:13:07</sys_created_on><sys_customer_update>true</sys_customer_update><sys_id>e9a20c7e0f54564094f3c09ce1050eb4</sys_id><sys_mod_count>9</sys_mod_count><sys_name>snd_xplore_glasses</sys_name><sys_package display_value="Xplore" source="0f6ab99a0f36060094f3c09ce1050ee8">0f6ab99a0f36060094f3c09ce1050ee8</sys_package><sys_policy/><sys_replace_on_upgrade>false</sys_replace_on_upgrade><sys_scope display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</sys_scope><sys_update_name>sys_ui_script_e9a20c7e0f54564094f3c09ce1050eb4</sys_update_name><sys_updated_by>james@sndeveloper.com</sys_updated_by><sys_updated_on>2016-02-07 20:46:53</sys_updated_on><use_scoped_format>false</use_scoped_format></sys_ui_script></record_update>]]></payload>
-<remote_update_set display_value="Xplore - 3.5">9bf4d3670fc2d20094f3c09ce1050edc</remote_update_set>
+<name>sys_app_application_4eb000280f2a020094f3c09ce1050e23</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_application"><sys_app_application action="INSERT_OR_UPDATE"><active>true</active><category display_value="Custom Applications">e0355b31ef303000a61d5a3615c0fb78</category><description>An application for linking Xplore to the ServiceNow UI.&#13;
+The Xplore module attempts to create a nice link in the navigation bar for easy access to Xplore.</description><device_type>browser</device_type><hint/><name/><order>100</order><roles>admin</roles><sys_class_name>sys_app_application</sys_class_name><sys_created_by>james@snd</sys_created_by><sys_created_on>2015-09-13 13:26:54</sys_created_on><sys_customer_update>true</sys_customer_update><sys_domain>global</sys_domain><sys_domain_path>/</sys_domain_path><sys_id>4eb000280f2a020094f3c09ce1050e23</sys_id><sys_mod_count>2</sys_mod_count><sys_name>Xplore</sys_name><sys_overrides/><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_replace_on_upgrade>false</sys_replace_on_upgrade><sys_scope display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</sys_scope><sys_update_name>sys_app_application_4eb000280f2a020094f3c09ce1050e23</sys_update_name><sys_updated_by>james@snd</sys_updated_by><sys_updated_on>2015-10-01 19:07:27</sys_updated_on><title>Xplore</title><view_name/></sys_app_application></record_update>]]></payload>
+<remote_update_set display_value="Xplore - 3.6">836cf8e70f4b1a0094f3c09ce1050e14</remote_update_set>
 <replace_on_upgrade>false</replace_on_upgrade>
 <sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:15:15</sys_created_on>
-<sys_id>1bf4d3670fc2d20094f3c09ce1050edd</sys_id>
+<sys_created_on>2016-05-03 18:11:29</sys_created_on>
+<sys_id>476cf8e70f4b1a0094f3c09ce1050e14</sys_id>
 <sys_mod_count>0</sys_mod_count>
 <sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
-<table/>
-<target_name>snd_xplore_glasses</target_name>
-<type>UI Script</type>
-<update_domain>global</update_domain>
-<update_set display_value=""/>
-<view/>
-</sys_update_xml>
-<sys_update_xml action="INSERT_OR_UPDATE">
-<action>INSERT_OR_UPDATE</action>
-<application display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</application>
-<category>customer</category>
-<comments/>
-<name>sys_app_0f6ab99a0f36060094f3c09ce1050ee8</name>
-<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_app"><sys_app action="INSERT_OR_UPDATE"><active>true</active><licensable>true</licensable><logo/><menu display_value="Xplore">4eb000280f2a020094f3c09ce1050e23</menu><name>Xplore</name><scope>global</scope><short_description># Xplore: Developer Toolkit A toolkit for every ServiceNow developer. Created by @James_Neale &lt;james@sndeveloper.com&gt;</short_description><source>0f6ab99a0f36060094f3c09ce1050ee8</source><store_correlation_id/><store_url/><sys_class_name>sys_app</sys_class_name><sys_code/><sys_created_by>james@snd</sys_created_by><sys_created_on>2015-10-01 19:03:06</sys_created_on><sys_id>0f6ab99a0f36060094f3c09ce1050ee8</sys_id><sys_mod_count>15</sys_mod_count><sys_updated_by>james@sndeveloper.com</sys_updated_by><sys_updated_on>2016-03-15 12:14:45</sys_updated_on><template/><user_role display_value="admin" name="admin">2831a114c611228501d4ea6c309d626d</user_role><vendor/><vendor_prefix/><version>3.5</version></sys_app></record_update>]]></payload>
-<remote_update_set display_value="Xplore - 3.5">9bf4d3670fc2d20094f3c09ce1050edc</remote_update_set>
-<replace_on_upgrade>false</replace_on_upgrade>
-<sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:15:15</sys_created_on>
-<sys_id>1ff4d3670fc2d20094f3c09ce1050edc</sys_id>
-<sys_mod_count>0</sys_mod_count>
-<sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
+<sys_updated_on>2016-05-03 18:11:29</sys_updated_on>
 <table/>
 <target_name>Xplore</target_name>
-<type>Custom Application</type>
+<type>Application Menu</type>
 <update_domain>global</update_domain>
 <update_set display_value=""/>
 <view/>
@@ -999,22 +1042,22 @@ Check out the UI for more info: /snd_xplore.do&lt;/description&gt;&lt;name&gt;sn
 
   // #public: String
   // version number of this script [Letter and Patch number].[hotfix].[internal version]
-  xplore.version = "G3.0.3";
+  xplore.version = "G3.0.4";
 
   return xplore;
-})();]]&gt;&lt;/script&gt;&lt;sys_class_name&gt;sys_script_include&lt;/sys_class_name&gt;&lt;sys_created_by&gt;james@snd&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2015-09-10 22:27:24&lt;/sys_created_on&gt;&lt;sys_customer_update&gt;true&lt;/sys_customer_update&gt;&lt;sys_id&gt;04cf1a2f0fd2020094f3c09ce1050eba&lt;/sys_id&gt;&lt;sys_mod_count&gt;116&lt;/sys_mod_count&gt;&lt;sys_name&gt;snd_xplore&lt;/sys_name&gt;&lt;sys_package display_value="Global" source="global"&gt;global&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_replace_on_upgrade&gt;false&lt;/sys_replace_on_upgrade&gt;&lt;sys_scope display_value="Xplore"&gt;0f6ab99a0f36060094f3c09ce1050ee8&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_script_include_04cf1a2f0fd2020094f3c09ce1050eba&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;james@sndeveloper.com&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2016-03-15 02:40:32&lt;/sys_updated_on&gt;&lt;/sys_script_include&gt;&lt;/record_update&gt;</payload>
-<remote_update_set display_value="Xplore - 3.5">9bf4d3670fc2d20094f3c09ce1050edc</remote_update_set>
+})();]]&gt;&lt;/script&gt;&lt;sys_class_name&gt;sys_script_include&lt;/sys_class_name&gt;&lt;sys_created_by&gt;james@snd&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2015-09-10 22:27:24&lt;/sys_created_on&gt;&lt;sys_customer_update&gt;true&lt;/sys_customer_update&gt;&lt;sys_id&gt;04cf1a2f0fd2020094f3c09ce1050eba&lt;/sys_id&gt;&lt;sys_mod_count&gt;117&lt;/sys_mod_count&gt;&lt;sys_name&gt;snd_xplore&lt;/sys_name&gt;&lt;sys_package display_value="Global" source="global"&gt;global&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_replace_on_upgrade&gt;false&lt;/sys_replace_on_upgrade&gt;&lt;sys_scope display_value="Xplore"&gt;0f6ab99a0f36060094f3c09ce1050ee8&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_script_include_04cf1a2f0fd2020094f3c09ce1050eba&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;james@sndeveloper.com&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2016-03-16 08:44:01&lt;/sys_updated_on&gt;&lt;/sys_script_include&gt;&lt;/record_update&gt;</payload>
+<remote_update_set display_value="Xplore - 3.6">836cf8e70f4b1a0094f3c09ce1050e14</remote_update_set>
 <replace_on_upgrade>false</replace_on_upgrade>
 <sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:15:15</sys_created_on>
-<sys_id>53f4d3670fc2d20094f3c09ce1050edd</sys_id>
+<sys_created_on>2016-05-03 18:11:29</sys_created_on>
+<sys_id>4b6cf8e70f4b1a0094f3c09ce1050e14</sys_id>
 <sys_mod_count>0</sys_mod_count>
 <sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
+<sys_updated_on>2016-05-03 18:11:29</sys_updated_on>
 <table/>
 <target_name>snd_xplore</target_name>
 <type>Script Include</type>
-<update_domain>global</update_domain>
+<update_domain>global                          </update_domain>
 <update_set display_value=""/>
 <view/>
 </sys_update_xml>
@@ -1048,9 +1091,13 @@ function getMinutesSince(startTime) {&#13;
   return minutes + ':' + seconds + '.' + ds;&#13;
 }&#13;
 &#13;
+// main UI object&#13;
+var snd_xplore_ui = {};&#13;
+&#13;
 /*************************************&#13;
               XPLORE&#13;
 **************************************/&#13;
+&#13;
 var snd_xplore_util = {&#13;
   countup_interval: null,&#13;
   loading: function () {&#13;
@@ -1199,9 +1246,11 @@ $('.xplore_demo').on('click', 'a', function (e) {&#13;
   }&#13;
 });&#13;
 &#13;
+&#13;
 /*************************************&#13;
               REGEX&#13;
 **************************************/&#13;
+&#13;
 var snd_xplore_regex_util = (function () {&#13;
   $intro_panel   = $('#regex_intro_panel');&#13;
   $match_panel   = $('#regex_match_panel');&#13;
@@ -1323,9 +1372,11 @@ var snd_xplore_regex_util = (function () {&#13;
   };&#13;
 })();&#13;
 &#13;
+&#13;
 /*************************************&#13;
               TABLES&#13;
 **************************************/&#13;
+&#13;
 var snd_xplore_table_util = (function () {&#13;
 &#13;
   var api = {&#13;
@@ -1376,8 +1427,9 @@ var snd_xplore_table_util = (function () {&#13;
         }&#13;
         html += ' [&lt;a href="#show" data-show="' + dbo.name + '"&gt;' +&#13;
             dbo.name + '&lt;/a&gt;]';&#13;
-        html += ' &lt;a href="' + dbo.name + '_list.do" target="_blank"&gt;&lt;i class="glyphicon glyphicon-list-alt" /&gt;&lt;/a&gt;';&#13;
-        html += ' &lt;a href="' + dbo.name + '.do" target="_blank"&gt;&lt;i class="glyphicon glyphicon-open-file" /&gt;&lt;/a&gt;';&#13;
+        html += ' &lt;a href="' + dbo.name + '_list.do" target="_blank" title="Open list"&gt;&lt;i class="glyphicon glyphicon-list-alt" /&gt;&lt;/a&gt;';&#13;
+        html += ' &lt;a href="' + dbo.name + '.do" target="_blank" title="Open form"&gt;&lt;i class="glyphicon glyphicon-open-file" /&gt;&lt;/a&gt;';&#13;
+        html += ' &lt;a href="sys_db_object.do?sys_id=' + dbo.sys_id + '" target="_blank" title="Open table definition"&gt;&lt;i class="glyphicon glyphicon-cog" /&gt;&lt;/a&gt;';&#13;
         if (dbo.children.length) {&#13;
           html += '&lt;ul&gt;';&#13;
           $.each(dbo.children, function (i, childDbo) {&#13;
@@ -1417,6 +1469,224 @@ var snd_xplore_table_util = (function () {&#13;
   return api;&#13;
 &#13;
 })();&#13;
+&#13;
+&#13;
+/*************************************&#13;
+           SCRIPT SEARCH&#13;
+**************************************/&#13;
+&#13;
+var snd_script_search_util = (function () {&#13;
+&#13;
+  var api = {};&#13;
+  var $list = $('#script_pane_list');&#13;
+  var $script_pane_404 = $('#script_pane_404');&#13;
+&#13;
+  function search(value) {&#13;
+    var elements,&#13;
+        match,&#13;
+        nomatch;&#13;
+&#13;
+    if(value) {&#13;
+&#13;
+      value = value.toUpperCase();&#13;
+      elements = $list.find('span.script-name');&#13;
+&#13;
+      match = elements.filter(function (i, el) {&#13;
+        return (el.textContent || el.innerText || "").toUpperCase().indexOf(value)&gt;=0;&#13;
+      });&#13;
+      match.parent().show();&#13;
+&#13;
+      nomatch = elements.filter(function (i, el) {&#13;
+        return (el.textContent || el.innerText || "").toUpperCase().indexOf(value)==-1;&#13;
+      });&#13;
+      nomatch.parent().hide();&#13;
+&#13;
+      if (!match.length) {&#13;
+        $script_pane_404.show();&#13;
+      }&#13;
+&#13;
+    } else {&#13;
+      $list.find("li").show();&#13;
+    }&#13;
+  }&#13;
+&#13;
+  function loading(b) {&#13;
+    $('#script_pane_loading').toggle(b);&#13;
+  }&#13;
+&#13;
+  api.search = (function () {&#13;
+    var requested = false;&#13;
+    var filter;&#13;
+    return function (value) {&#13;
+      filter = value;&#13;
+      if (requested) return;&#13;
+      loading(true);&#13;
+      $script_pane_404.hide();&#13;
+      if (!api.records) {&#13;
+        requested = true;&#13;
+        api.loadAll().done(function () {&#13;
+          requested = false;&#13;
+          search(filter);&#13;
+          loading(false);&#13;
+        });&#13;
+      } else {&#13;
+        search(filter);&#13;
+        loading(false);&#13;
+      }&#13;
+    };&#13;
+  })();&#13;
+&#13;
+  api.addScript = function (sys_id, replace) {&#13;
+    loading(true);&#13;
+    $.ajax({&#13;
+      type: 'GET',&#13;
+      url: '/snd_xplore.do?action=getScript&amp;sys_id=' + sys_id,&#13;
+      dataType: 'json'&#13;
+    }).&#13;
+    done(function (result) {&#13;
+      var old = snd_xplore_editor.getValue();&#13;
+&#13;
+      if (old) {&#13;
+        if (replace != '1') {&#13;
+          if (old.length &gt; 0) old += '\n\n';&#13;
+        } else if(!confirm('Warning! This will replace your code.')) {&#13;
+          return;&#13;
+        } else {&#13;
+          old = '';&#13;
+        }&#13;
+      }&#13;
+&#13;
+      snd_xplore_editor.setValue(&#13;
+        old +&#13;
+        '/*************************************' + '\n' +&#13;
+        '  ' + result.api_name + '\n' +&#13;
+        ' *************************************/' + '\n' +&#13;
+        result.script);&#13;
+      loading(false);&#13;
+&#13;
+      // close the pane&#13;
+      snd_xplore_ui.side_panes.closeAll();&#13;
+    }).&#13;
+    fail(function () {&#13;
+      snd_log('Error: snd_script_search_util.addScript failed.');&#13;
+      loading(false);&#13;
+    });&#13;
+  };&#13;
+&#13;
+  api.loadAll = function () {&#13;
+    loading(true);&#13;
+    return $.ajax({&#13;
+      type: 'GET',&#13;
+      url: '/snd_xplore.do?action=getScripts',&#13;
+      dataType: 'json'&#13;
+    }).&#13;
+    done(function (result) {&#13;
+      api.records = result;&#13;
+      $list.empty();&#13;
+      $.each(result, function (i, item) {&#13;
+        var scope = item.$sys_scope == 'Global' ? '' : ' (' + item.$sys_scope + ')';&#13;
+        $list.append($('&lt;li&gt;' +&#13;
+          '&lt;span class="script-link script-name" data-sys-id="' + item.sys_id + '"&gt;' +&#13;
+          item.name + scope + '&lt;/span&gt; ' +&#13;
+          '&lt;span class="script-link script-replace pull-right" data-sys-id="' + item.sys_id + '" ' +&#13;
+          'data-replace="1"&gt;' +&#13;
+          'replace&lt;/span&gt;' +&#13;
+          '&lt;/li&gt;'));&#13;
+      });&#13;
+      loading(false);&#13;
+    }).&#13;
+    fail(function () {&#13;
+      snd_log('Error: snd_script_search_util.loadAll failed.');&#13;
+      loading(false);&#13;
+    });&#13;
+  };&#13;
+&#13;
+  // handle script search&#13;
+  $('#script_pane_search')&#13;
+  .change(function () {&#13;
+    snd_script_search_util.search($(this).val());&#13;
+    return false;&#13;
+  })&#13;
+  .keyup(function () {&#13;
+    $(this).change();&#13;
+  });&#13;
+&#13;
+  $('#script_pane_list').on('click', 'span.script-link', function (e) {&#13;
+    var $anchor = $(this);&#13;
+    if (!$anchor.attr('data-sys-id')) {&#13;
+      snd_log('Error: script link does not have sys_id attribute');&#13;
+    } else {&#13;
+      snd_script_search_util.addScript($anchor.attr('data-sys-id'), $anchor.attr('data-replace'));&#13;
+    }&#13;
+  });&#13;
+&#13;
+  $('#side_controls a[data-pane="script_pane"]').one('click', function () {&#13;
+    api.loadAll();&#13;
+  });&#13;
+&#13;
+  return api;&#13;
+})();&#13;
+&#13;
+&#13;
+/*************************************&#13;
+            SIDE PANES&#13;
+**************************************/&#13;
+&#13;
+(function () {&#13;
+&#13;
+  window.snd_xplore_ui.side_panes = {&#13;
+    closeAll: function () {&#13;
+      $('.side_pane').fadeOut(400);&#13;
+      $('#side_controls li a[data-pane]').removeClass('active');&#13;
+    }&#13;
+  };&#13;
+&#13;
+  // setup the side pane controls&#13;
+  $('#side_controls li').on('click', 'a', function () {&#13;
+    var $target = $(this);&#13;
+    if (!$target.attr('data-pane')) return;&#13;
+&#13;
+    $('#side_controls li a').each(function () {&#13;
+      var $this = $(this);&#13;
+      var pane = $this.attr('data-pane');&#13;
+      if (!pane) return;&#13;
+      var $pane = $('#' + pane);&#13;
+&#13;
+      if (this === $target.get(0)) {&#13;
+        var workbenchLeft = $('#side_controls').outerWidth();&#13;
+        if (!$pane.is(':visible')) {&#13;
+          //workbenchLeft += $pane.outerWidth();&#13;
+          //$('#workbench').animate({left: workbenchLeft}, 400, function () {&#13;
+            $pane.fadeIn(400);&#13;
+            //resizeOutputContent();&#13;
+          //});&#13;
+        } else {&#13;
+          $pane.fadeOut(400);//, function () {&#13;
+            //$('#workbench').animate({left: workbenchLeft}, 400, function () {&#13;
+              //$('#workbench').css('left', '');&#13;
+              //resizeOutputContent()&#13;
+            //});&#13;
+          //});&#13;
+        }&#13;
+        $this.toggleClass('active');&#13;
+      } else {&#13;
+        $this.removeClass('active');&#13;
+        $pane.hide();&#13;
+      }&#13;
+    });&#13;
+  });&#13;
+&#13;
+  // auto close the data panes when clicked outside&#13;
+  $(document).click(function(event) {&#13;
+    if(!$(event.target).closest('.side_pane').length &amp;&amp;&#13;
+        !$(event.target).closest('#side_controls').length &amp;&amp;&#13;
+        !$(event.target).hasClass('.side_pane')) {&#13;
+      snd_xplore_ui.side_panes.closeAll();&#13;
+    }&#13;
+  });&#13;
+&#13;
+})();&#13;
+&#13;
 &#13;
 /*************************************&#13;
               INIT&#13;
@@ -1488,22 +1758,44 @@ $(function () {&#13;
   });&#13;
 &#13;
   // Setup property toggles&#13;
-  $('#show_props,#show_strings').bootstrapToggle({&#13;
-    on: 'Show',&#13;
-    off: 'Hide',&#13;
-    size: 'mini',&#13;
-    onstyle: 'success',&#13;
-    offstyle: 'danger',&#13;
-    width: 75&#13;
-  });&#13;
-  $('#show_html_messages').bootstrapToggle({&#13;
-    on: 'HTML',&#13;
-    off: 'Text',&#13;
-    onstyle: 'default',&#13;
-    offstyle: 'default',&#13;
-    size: 'mini',&#13;
-    width: 75&#13;
-  });&#13;
+  $('#show_props,#show_strings').&#13;
+    bootstrapToggle({&#13;
+      on: 'Show',&#13;
+      off: 'Hide',&#13;
+      size: 'mini',&#13;
+      onstyle: 'success',&#13;
+      offstyle: 'danger',&#13;
+      width: 75&#13;
+    });&#13;
+  $('#show_html_messages').&#13;
+    bootstrapToggle({&#13;
+      on: 'HTML',&#13;
+      off: 'Text',&#13;
+      onstyle: 'success',&#13;
+      offstyle: 'warning',&#13;
+      size: 'mini',&#13;
+      width: 75&#13;
+    });&#13;
+  $('#wrap_output_pre').&#13;
+    bootstrapToggle({&#13;
+      on: 'Wrap',&#13;
+      off: 'No wrap',&#13;
+      onstyle: 'success',&#13;
+      offstyle: 'warning',&#13;
+      size: 'mini',&#13;
+      width: 75&#13;
+    }).change(function () {&#13;
+      if (this.checked) {&#13;
+        $('#script_output').addClass('wrap-pre');&#13;
+      } else {&#13;
+        $('#script_output').removeClass('wrap-pre');&#13;
+      }&#13;
+    });&#13;
+&#13;
+  // set default to wrapped&#13;
+  if ($('#wrap_output_pre:checked')) {&#13;
+    $('#script_output').addClass('wrap-pre');&#13;
+  }&#13;
 &#13;
   // regex input trigger&#13;
   $('#regex,#regex_options,#regex_input').on('keyup', function () {&#13;
@@ -1533,40 +1825,7 @@ $(function () {&#13;
     }&#13;
   });&#13;
 &#13;
-  // setup the side pane controls&#13;
-  $('#side_controls li').on('click', 'a', function () {&#13;
-    var $target = $(this);&#13;
-    if (!$target.attr('data-pane')) return;&#13;
 &#13;
-    $('#side_controls li a').each(function () {&#13;
-      var $this = $(this);&#13;
-      var pane = $this.attr('data-pane');&#13;
-      if (!pane) return;&#13;
-      var $pane = $('#' + pane);&#13;
-&#13;
-      if (this === $target.get(0)) {&#13;
-        var workbenchLeft = $('#side_controls').outerWidth();&#13;
-        if (!$pane.is(':visible')) {&#13;
-          workbenchLeft += $pane.outerWidth();&#13;
-          $('#workbench').animate({left: workbenchLeft}, 400, function () {&#13;
-            $pane.fadeIn(400);&#13;
-            resizeOutputContent();&#13;
-          });&#13;
-        } else {&#13;
-          $pane.fadeOut(400, function () {&#13;
-            $('#workbench').animate({left: workbenchLeft}, 400, function () {&#13;
-              $('#workbench').css('left', '');&#13;
-              resizeOutputContent()&#13;
-            });&#13;
-          });&#13;
-        }&#13;
-        $this.toggleClass('active');&#13;
-      } else {&#13;
-        $this.removeClass('active');&#13;
-        $pane.hide();&#13;
-      }&#13;
-    });&#13;
-  });&#13;
 &#13;
   // setup the editor toggle button&#13;
   $('#editor_toggle').on('click', function () {&#13;
@@ -1710,19 +1969,20 @@ $(function () {&#13;
 &#13;
   snd_xplore_editor.focus();&#13;
   $('#window_loader').removeClass('active');&#13;
-});</script><script_name/><sys_class_name>sys_ui_script</sys_class_name><sys_created_by>james@sndeveloper.com</sys_created_by><sys_created_on>2016-02-07 20:06:00</sys_created_on><sys_customer_update>true</sys_customer_update><sys_id>2d6d96b70f5d528094f3c09ce1050e85</sys_id><sys_mod_count>28</sys_mod_count><sys_name>snd_xplore_ui</sys_name><sys_package display_value="Xplore" source="0f6ab99a0f36060094f3c09ce1050ee8">0f6ab99a0f36060094f3c09ce1050ee8</sys_package><sys_policy/><sys_replace_on_upgrade>false</sys_replace_on_upgrade><sys_scope display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</sys_scope><sys_update_name>sys_ui_script_2d6d96b70f5d528094f3c09ce1050e85</sys_update_name><sys_updated_by>james@sndeveloper.com</sys_updated_by><sys_updated_on>2016-03-15 11:50:33</sys_updated_on><use_scoped_format>false</use_scoped_format></sys_ui_script></record_update>]]></payload>
-<remote_update_set display_value="Xplore - 3.5">9bf4d3670fc2d20094f3c09ce1050edc</remote_update_set>
+});&#13;
+</script><script_name/><sys_class_name>sys_ui_script</sys_class_name><sys_created_by>james@sndeveloper.com</sys_created_by><sys_created_on>2016-02-07 20:06:00</sys_created_on><sys_customer_update>true</sys_customer_update><sys_id>2d6d96b70f5d528094f3c09ce1050e85</sys_id><sys_mod_count>81</sys_mod_count><sys_name>snd_xplore_ui</sys_name><sys_package display_value="Xplore" source="0f6ab99a0f36060094f3c09ce1050ee8">0f6ab99a0f36060094f3c09ce1050ee8</sys_package><sys_policy/><sys_replace_on_upgrade>false</sys_replace_on_upgrade><sys_scope display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</sys_scope><sys_update_name>sys_ui_script_2d6d96b70f5d528094f3c09ce1050e85</sys_update_name><sys_updated_by>james@sndeveloper.com</sys_updated_by><sys_updated_on>2016-05-03 16:06:23</sys_updated_on><use_scoped_format>false</use_scoped_format></sys_ui_script></record_update>]]></payload>
+<remote_update_set display_value="Xplore - 3.6">836cf8e70f4b1a0094f3c09ce1050e14</remote_update_set>
 <replace_on_upgrade>false</replace_on_upgrade>
 <sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:15:15</sys_created_on>
-<sys_id>57f4d3670fc2d20094f3c09ce1050edd</sys_id>
+<sys_created_on>2016-05-03 18:11:29</sys_created_on>
+<sys_id>4f6cf8e70f4b1a0094f3c09ce1050e14</sys_id>
 <sys_mod_count>0</sys_mod_count>
 <sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
+<sys_updated_on>2016-05-03 18:11:29</sys_updated_on>
 <table/>
 <target_name>snd_xplore_ui</target_name>
 <type>UI Script</type>
-<update_domain>global</update_domain>
+<update_domain>global                          </update_domain>
 <update_set display_value=""/>
 <view/>
 </sys_update_xml>
@@ -1731,20 +1991,19 @@ $(function () {&#13;
 <application display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</application>
 <category>customer</category>
 <comments/>
-<name>sys_app_application_4eb000280f2a020094f3c09ce1050e23</name>
-<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_application"><sys_app_application action="INSERT_OR_UPDATE"><active>true</active><category display_value="Custom Applications">e0355b31ef303000a61d5a3615c0fb78</category><description>An application for linking Xplore to the ServiceNow UI.&#13;
-The Xplore module attempts to create a nice link in the navigation bar for easy access to Xplore.</description><device_type>browser</device_type><hint/><name/><order>100</order><roles>admin</roles><sys_class_name>sys_app_application</sys_class_name><sys_created_by>james@snd</sys_created_by><sys_created_on>2015-09-13 13:26:54</sys_created_on><sys_customer_update>true</sys_customer_update><sys_domain>global</sys_domain><sys_domain_path>/</sys_domain_path><sys_id>4eb000280f2a020094f3c09ce1050e23</sys_id><sys_mod_count>2</sys_mod_count><sys_name>Xplore</sys_name><sys_overrides/><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_replace_on_upgrade>false</sys_replace_on_upgrade><sys_scope display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</sys_scope><sys_update_name>sys_app_application_4eb000280f2a020094f3c09ce1050e23</sys_update_name><sys_updated_by>james@snd</sys_updated_by><sys_updated_on>2015-10-01 19:07:27</sys_updated_on><title>Xplore</title><view_name/></sys_app_application></record_update>]]></payload>
-<remote_update_set display_value="Xplore - 3.5">9bf4d3670fc2d20094f3c09ce1050edc</remote_update_set>
+<name>sys_app_module_02aff9e00f6a020094f3c09ce1050ece</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_module"><sys_app_module action="INSERT_OR_UPDATE"><active>true</active><application display_value="Xplore">4eb000280f2a020094f3c09ce1050e23</application><assessment/><content_page/><device_type/><filter/><hint>Xplore: the ServiceNow developer toolset</hint><homepage/><image/><link_type>DIRECT</link_type><map_page/><mobile_title>Xplore</mobile_title><mobile_view_name>Mobile</mobile_view_name><name/><order/><override_menu_roles>false</override_menu_roles><query>snd_xplore.do</query><report/><roles>admin</roles><survey/><survey_overwrite>true</survey_overwrite><sys_class_name>sys_app_module</sys_class_name><sys_created_by>james@snd</sys_created_by><sys_created_on>2015-09-13 22:42:06</sys_created_on><sys_customer_update>true</sys_customer_update><sys_domain>global</sys_domain><sys_domain_path>/</sys_domain_path><sys_id>02aff9e00f6a020094f3c09ce1050ece</sys_id><sys_mod_count>21</sys_mod_count><sys_name>Xplore</sys_name><sys_overrides/><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_replace_on_upgrade>false</sys_replace_on_upgrade><sys_scope display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</sys_scope><sys_update_name>sys_app_module_02aff9e00f6a020094f3c09ce1050ece</sys_update_name><sys_updated_by>james@snd</sys_updated_by><sys_updated_on>2015-12-16 14:25:21</sys_updated_on><timeline_page/><title>Xplore</title><uncancelable>false</uncancelable><view_name/><window_name>_blank</window_name></sys_app_module></record_update>]]></payload>
+<remote_update_set display_value="Xplore - 3.6">836cf8e70f4b1a0094f3c09ce1050e14</remote_update_set>
 <replace_on_upgrade>false</replace_on_upgrade>
 <sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:15:15</sys_created_on>
-<sys_id>5ff4d3670fc2d20094f3c09ce1050edc</sys_id>
+<sys_created_on>2016-05-03 18:11:29</sys_created_on>
+<sys_id>876cf8e70f4b1a0094f3c09ce1050e14</sys_id>
 <sys_mod_count>0</sys_mod_count>
 <sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
+<sys_updated_on>2016-05-03 18:11:29</sys_updated_on>
 <table/>
 <target_name>Xplore</target_name>
-<type>Application Menu</type>
+<type>Module</type>
 <update_domain>global</update_domain>
 <update_set display_value=""/>
 <view/>
@@ -1902,18 +2161,18 @@ snd_XploreReporter.prototype.getLogs = function () {
   return errors;
 };
 ]]&gt;&lt;/script&gt;&lt;sys_class_name&gt;sys_script_include&lt;/sys_class_name&gt;&lt;sys_created_by&gt;james@snd&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2015-12-03 02:15:50&lt;/sys_created_on&gt;&lt;sys_customer_update&gt;true&lt;/sys_customer_update&gt;&lt;sys_id&gt;1aefea960f44924094f3c09ce1050ed7&lt;/sys_id&gt;&lt;sys_mod_count&gt;1&lt;/sys_mod_count&gt;&lt;sys_name&gt;snd_XploreReporter&lt;/sys_name&gt;&lt;sys_package display_value="Xplore" source="0f6ab99a0f36060094f3c09ce1050ee8"&gt;0f6ab99a0f36060094f3c09ce1050ee8&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_replace_on_upgrade&gt;false&lt;/sys_replace_on_upgrade&gt;&lt;sys_scope display_value="Xplore"&gt;0f6ab99a0f36060094f3c09ce1050ee8&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_script_include_1aefea960f44924094f3c09ce1050ed7&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;james@snd&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2015-12-03 02:25:49&lt;/sys_updated_on&gt;&lt;/sys_script_include&gt;&lt;/record_update&gt;</payload>
-<remote_update_set display_value="Xplore - 3.5">9bf4d3670fc2d20094f3c09ce1050edc</remote_update_set>
+<remote_update_set display_value="Xplore - 3.6">836cf8e70f4b1a0094f3c09ce1050e14</remote_update_set>
 <replace_on_upgrade>false</replace_on_upgrade>
 <sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:15:15</sys_created_on>
-<sys_id>93f4d3670fc2d20094f3c09ce1050edd</sys_id>
+<sys_created_on>2016-05-03 18:11:29</sys_created_on>
+<sys_id>8b6cf8e70f4b1a0094f3c09ce1050e14</sys_id>
 <sys_mod_count>0</sys_mod_count>
 <sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
+<sys_updated_on>2016-05-03 18:11:29</sys_updated_on>
 <table/>
 <target_name>snd_XploreReporter</target_name>
 <type>Script Include</type>
-<update_domain>global</update_domain>
+<update_domain>global                          </update_domain>
 <update_set display_value=""/>
 <view/>
 </sys_update_xml>
@@ -2379,771 +2638,18 @@ snd_xplore.regex = (function () {&#13;
 &#13;
   return testRegex;&#13;
 })();</script><script_name/><sys_class_name>sys_ui_script</sys_class_name><sys_created_by>james@snd</sys_created_by><sys_created_on>2015-09-19 05:04:58</sys_created_on><sys_customer_update>true</sys_customer_update><sys_id>2f4741da0fa6420094f3c09ce1050e22</sys_id><sys_mod_count>132</sys_mod_count><sys_name>snd_xplore</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_replace_on_upgrade>false</sys_replace_on_upgrade><sys_scope display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</sys_scope><sys_update_name>sys_ui_script_2f4741da0fa6420094f3c09ce1050e22</sys_update_name><sys_updated_by>james@sndeveloper.com</sys_updated_by><sys_updated_on>2016-03-15 10:15:12</sys_updated_on><use_scoped_format>false</use_scoped_format></sys_ui_script></record_update>]]></payload>
-<remote_update_set display_value="Xplore - 3.5">9bf4d3670fc2d20094f3c09ce1050edc</remote_update_set>
+<remote_update_set display_value="Xplore - 3.6">836cf8e70f4b1a0094f3c09ce1050e14</remote_update_set>
 <replace_on_upgrade>false</replace_on_upgrade>
 <sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:15:15</sys_created_on>
-<sys_id>97f4d3670fc2d20094f3c09ce1050edd</sys_id>
+<sys_created_on>2016-05-03 18:11:29</sys_created_on>
+<sys_id>8f6cf8e70f4b1a0094f3c09ce1050e14</sys_id>
 <sys_mod_count>0</sys_mod_count>
 <sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
+<sys_updated_on>2016-05-03 18:11:29</sys_updated_on>
 <table/>
 <target_name>snd_xplore</target_name>
 <type>UI Script</type>
-<update_domain>global</update_domain>
-<update_set display_value=""/>
-<view/>
-</sys_update_xml>
-<sys_update_xml action="INSERT_OR_UPDATE">
-<action>INSERT_OR_UPDATE</action>
-<application display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</application>
-<category>customer</category>
-<comments/>
-<name>sys_app_module_02aff9e00f6a020094f3c09ce1050ece</name>
-<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_module"><sys_app_module action="INSERT_OR_UPDATE"><active>true</active><application display_value="Xplore">4eb000280f2a020094f3c09ce1050e23</application><assessment/><content_page/><device_type/><filter/><hint>Xplore: the ServiceNow developer toolset</hint><homepage/><image/><link_type>DIRECT</link_type><map_page/><mobile_title>Xplore</mobile_title><mobile_view_name>Mobile</mobile_view_name><name/><order/><override_menu_roles>false</override_menu_roles><query>snd_xplore.do</query><report/><roles>admin</roles><survey/><survey_overwrite>true</survey_overwrite><sys_class_name>sys_app_module</sys_class_name><sys_created_by>james@snd</sys_created_by><sys_created_on>2015-09-13 22:42:06</sys_created_on><sys_customer_update>true</sys_customer_update><sys_domain>global</sys_domain><sys_domain_path>/</sys_domain_path><sys_id>02aff9e00f6a020094f3c09ce1050ece</sys_id><sys_mod_count>21</sys_mod_count><sys_name>Xplore</sys_name><sys_overrides/><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_replace_on_upgrade>false</sys_replace_on_upgrade><sys_scope display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</sys_scope><sys_update_name>sys_app_module_02aff9e00f6a020094f3c09ce1050ece</sys_update_name><sys_updated_by>james@snd</sys_updated_by><sys_updated_on>2015-12-16 14:25:21</sys_updated_on><timeline_page/><title>Xplore</title><uncancelable>false</uncancelable><view_name/><window_name>_blank</window_name></sys_app_module></record_update>]]></payload>
-<remote_update_set display_value="Xplore - 3.5">9bf4d3670fc2d20094f3c09ce1050edc</remote_update_set>
-<replace_on_upgrade>false</replace_on_upgrade>
-<sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:15:15</sys_created_on>
-<sys_id>9ff4d3670fc2d20094f3c09ce1050edc</sys_id>
-<sys_mod_count>0</sys_mod_count>
-<sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
-<table/>
-<target_name>Xplore</target_name>
-<type>Module</type>
-<update_domain>global</update_domain>
-<update_set display_value=""/>
-<view/>
-</sys_update_xml>
-<sys_update_xml action="INSERT_OR_UPDATE">
-<action>INSERT_OR_UPDATE</action>
-<application display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</application>
-<category>customer</category>
-<comments/>
-<name>sys_ui_macro_b6e5deb30f5d528094f3c09ce1050e71</name>
-<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sys_ui_macro"&gt;&lt;sys_ui_macro action="INSERT_OR_UPDATE"&gt;&lt;active&gt;true&lt;/active&gt;&lt;category&gt;general&lt;/category&gt;&lt;description/&gt;&lt;media_type/&gt;&lt;name&gt;snd_xplore_info&lt;/name&gt;&lt;scoped_name/&gt;&lt;sys_class_name&gt;sys_ui_macro&lt;/sys_class_name&gt;&lt;sys_created_by&gt;james@sndeveloper.com&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2016-02-07 19:31:05&lt;/sys_created_on&gt;&lt;sys_customer_update&gt;true&lt;/sys_customer_update&gt;&lt;sys_id&gt;b6e5deb30f5d528094f3c09ce1050e71&lt;/sys_id&gt;&lt;sys_mod_count&gt;30&lt;/sys_mod_count&gt;&lt;sys_name&gt;snd_xplore_info&lt;/sys_name&gt;&lt;sys_package display_value="Xplore" source="0f6ab99a0f36060094f3c09ce1050ee8"&gt;0f6ab99a0f36060094f3c09ce1050ee8&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_replace_on_upgrade&gt;false&lt;/sys_replace_on_upgrade&gt;&lt;sys_scope display_value="Xplore"&gt;0f6ab99a0f36060094f3c09ce1050ee8&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_ui_macro_b6e5deb30f5d528094f3c09ce1050e71&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;james@sndeveloper.com&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2016-03-15 11:26:22&lt;/sys_updated_on&gt;&lt;xml&gt;&lt;![CDATA[&lt;?xml version="1.0" encoding="utf-8" ?&gt;
-&lt;j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null"&gt;
-&lt;div class="row" style="margin-top: 12px; font-size: 14px;"&gt;
-
-  &lt;div class="col-xs-12"&gt;
-
-    &lt;div class="alert alert-danger"&gt;
-      &lt;strong&gt;Warning:&lt;/strong&gt; This utility runs code in your
-      environment. Make sure you know what you are doing as it is
-      entirely possible for you to screw up your instance.
-    &lt;/div&gt;
-
-    &lt;div class="panel panel-default"&gt;
-      &lt;div class="panel-heading" role="tab"&gt;
-        &lt;h4 class="panel-title"&gt;
-          &lt;a href="#info_welcome" role="button" data-toggle="collapse"&gt;WELCOME!&lt;/a&gt;
-        &lt;/h4&gt;
-      &lt;/div&gt;
-      &lt;div id="info_welcome" class="panel-collapse collapse in" role="tabpanel"&gt;
-        &lt;div class="panel-body"&gt;
-          &lt;p&gt;Hey! Thanks for downloading Xplore.&lt;/p&gt;
-          &lt;p&gt;Xplore is a free, independently developed utility for ServiceNow that
-            has been built 'for developers, by developers'. We really appreciate
-            all the community input we get!&lt;/p&gt;
-
-          &lt;p&gt;&lt;strong&gt;Ways you can help!&lt;/strong&gt;
-            &lt;ul class="list-group list-example"&gt;
-              &lt;li class="list-group-item"&gt;
-                &lt;a href="https://share.servicenow.com/app.do#/detailV2/c42105f2e1581a007c390227ffa71e61/reviews"
-                  target="_blank"&gt;
-                  &lt;span class="glyphicon glyphicon-thumbs-up"&gt;&lt;/span&gt;
-                  Write a review&lt;/a&gt;
-              &lt;/li&gt;
-              &lt;li class="list-group-item"&gt;
-                &lt;a href="https://github.com/sn-developer/Xplore" target="_blank"&gt;
-                &lt;span class="glyphicon glyphicon-wrench"&gt;&lt;/span&gt;
-                Contribute on GitHub&lt;/a&gt;
-              &lt;/li&gt;
-              &lt;li class="list-group-item"&gt;
-                &lt;a href="mailto:info@sndeveloper.com?subject=Xplore Feedback"&gt;
-                  &lt;span class="glyphicon glyphicon-envelope"&gt;&lt;/span&gt;
-                  Say hello!&lt;/a&gt;
-              &lt;/li&gt;
-            &lt;/ul&gt;
-          &lt;/p&gt;
-
-          &lt;p&gt;Thanks!&lt;/p&gt;
-          &lt;p&gt;&lt;a href="https://twitter.com/James_Neale" target="_blank"&gt;James&lt;/a&gt;
-          and
-          &lt;a href="https://twitter.com/simthort" target="_blank"&gt;Tim&lt;/a&gt;
-          &lt;/p&gt;
-
-          &lt;p class="small"&gt;
-            &lt;a href="https://twitter.com/intent/tweet?button_hashtag=Xplore${AMP}text=My%20job%20as%20a%20%23servicenowdev%20just%20got%20a%20lot%20easier!%20%40sn_developer" class="twitter-hashtag-button" data-related="sn_developer" data-url="https://goo.gl/fAyYTA" target="_blank"&gt;Tweet #Xplore&lt;/a&gt;
-            |
-            &lt;a href="https://twitter.com/sn_developer" class="twitter-follow-button"
-            data-show-count="false" target="_blank"&gt;Follow @sn_developer&lt;/a&gt;
-            |
-            &lt;a href="https://www.linkedin.com/company/sn-developer" target="_blank"&gt;Find us on LinkedIn&lt;/a&gt;
-          &lt;/p&gt;
-
-        &lt;/div&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-
-    &lt;div class="panel-group" id="info_accordion" role="tablist"&gt;
-
-      &lt;div class="panel panel-default"&gt;
-        &lt;div class="panel-heading" role="tab"&gt;
-          &lt;h4 class="panel-title"&gt;
-            &lt;a href="#info_script_editor" role="button" data-toggle="collapse"
-              data-parent="#info_accordion"&gt;SCRIPT EDITOR&lt;/a&gt;
-          &lt;/h4&gt;
-        &lt;/div&gt;
-        &lt;div id="info_script_editor" class="panel-collapse collapse in" role="tabpanel"&gt;
-          &lt;div class="panel-body"&gt;
-            &lt;p&gt;Use the script editor on the left to write and run scripts
-              in ServiceNow, much like a background script, but
-              supercharged. The last object in the script will be shown
-              here in a detailed output tab.&lt;/p&gt;
-           &lt;p&gt;Use the choice list to choose where you want to run your
-              code, either server or client.&lt;/p&gt;
-            &lt;p&gt;Launching Xplore from within ServiceNow will give you
-              access to the various framesServiceNow uses.&lt;/p&gt;
-            &lt;p&gt;
-              Not sure what to do? Try one of these demos:
-              &lt;div class="list-group xplore_demo list-example"&gt;
-                &lt;a data-demo="GlideRecord" href="#demo"
-                  class="list-group-item list-group-item-info"&gt;Demo: GlideRecord&lt;/a&gt;
-                &lt;a data-demo="Array" href="#demo"
-                  class="list-group-item list-group-item-info"&gt;Demo: Array&lt;/a&gt;
-                &lt;a data-demo="GlideUser" href="#demo"
-                  class="list-group-item list-group-item-info"&gt;Demo: GlideUser&lt;/a&gt;
-                &lt;a data-demo="Logging" href="#demo"
-                  class="list-group-item list-group-item-info"&gt;Demo: Logging and Messages&lt;/a&gt;
-                &lt;a data-demo="scope" href="#demo"
-                  class="list-group-item list-group-item-info"&gt;Demo: Current scope&lt;/a&gt;
-              &lt;/div&gt;
-            &lt;/p&gt;
-            &lt;p class="alert alert-warning"&gt;Tip: Use the keyboard shortcut
-              &lt;kbd&gt;Ctrl + Enter&lt;/kbd&gt; to run.&lt;/p&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-
-      &lt;div class="panel panel-default"&gt;
-        &lt;div class="panel-heading" role="tab"&gt;
-          &lt;h4 class="panel-title"&gt;
-            &lt;a href="#info_user_data" role="button" data-toggle="collapse"
-              data-parent="#info_accordion"&gt;USER DATA&lt;/a&gt;
-          &lt;/h4&gt;
-        &lt;/div&gt;
-        &lt;div id="info_user_data" class="panel-collapse collapse" role="tabpanel"&gt;
-          &lt;div class="panel-body"&gt;
-            &lt;p&gt;Paste in large chunks of text like XML and work with
-              them in your script.&lt;/p&gt;
-            &lt;div class="list-group xplore_demo list-example"&gt;
-              &lt;a data-demo="user_data" href="#demo"
-                class="list-group-item list-group-item-info"&gt;Demo: Format XML&lt;/a&gt;
-            &lt;/div&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-
-      &lt;div class="panel panel-default"&gt;
-        &lt;div class="panel-heading" role="tab"&gt;
-          &lt;h4 class="panel-title"&gt;
-            &lt;a href="#info_regex" role="button" data-toggle="collapse"
-              data-parent="#info_accordion"&gt;REGEX&lt;/a&gt;
-          &lt;/h4&gt;
-        &lt;/div&gt;
-        &lt;div id="info_regex" class="panel-collapse collapse" role="tabpanel"&gt;
-          &lt;div class="panel-body"&gt;
-            &lt;p&gt;You can test out regular expressions natively in ServiceNow!&lt;/p&gt;
-            &lt;p&gt;If you've done any work with regular expressions then you will know
-              that sometimes regular expressions don't work the same way
-              in ServiceNow as they do in browsers or other languages.&lt;/p&gt;
-            &lt;p&gt;Simply type in your expression and a test string, give
-              it a second, and it will automatically test your expression
-              for you and show you the results - including the match groupings.&lt;/p&gt;
-            &lt;p class="alert alert-warning"&gt;Tip: Change to 'Client' to test an
-              expression in your browser.&lt;/p&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-
-      &lt;div class="panel panel-default"&gt;
-        &lt;div class="panel-heading" role="tab"&gt;
-          &lt;h4 class="panel-title"&gt;
-            &lt;a href="#info_table_hierarchy" role="button" data-toggle="collapse"
-              data-parent="#info_accordion"&gt;TABLE HIERARCHY&lt;/a&gt;
-          &lt;/h4&gt;
-        &lt;/div&gt;
-        &lt;div id="info_table_hierarchy" class="panel-collapse collapse"
-          role="tabpanel"&gt;
-          &lt;div class="panel-body"&gt;
-            &lt;p&gt;The table hierarchy tool allows you to view the hiearchy
-              of a table in an interactive view.&lt;/p&gt;
-            &lt;p&gt;Type in the name or label of a table you are interested
-              in and hit &lt;kbd&gt;Enter&lt;/kbd&gt;&lt;/p&gt;
-            &lt;p&gt;Navigate through the hierarchy (very useful for things
-              like cmdb_ci) and use handy links to open the list or
-              form view of any table.&lt;/p&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-
-      &lt;div class="panel panel-default"&gt;
-        &lt;div class="panel-heading" role="tab"&gt;
-          &lt;h4 class="panel-title"&gt;
-            &lt;a href="#info_logs" role="button" data-toggle="collapse"
-              data-parent="#info_accordion"&gt;SYSTEM LOGS&lt;/a&gt;
-          &lt;/h4&gt;
-        &lt;/div&gt;
-        &lt;div id="info_logs" class="panel-collapse collapse" role="tabpanel"&gt;
-          &lt;div class="panel-body"&gt;
-            &lt;p&gt;The system log is now embedded into Xplore for easy access.&lt;/p&gt;
-            &lt;p class="alert alert-warning"&gt;Tip: Double-clicking the 'Logs' tab
-            will automatically reset the log window.&lt;/p&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-
-      &lt;div class="panel panel-default"&gt;
-        &lt;div class="panel-heading" role="tab"&gt;
-          &lt;h4 class="panel-title"&gt;
-            &lt;a href="#info_tips" role="button" data-toggle="collapse"
-              data-parent="#info_accordion"&gt;TIPS&lt;/a&gt;
-          &lt;/h4&gt;
-        &lt;/div&gt;
-        &lt;div id="info_tips" class="panel-collapse collapse" role="tabpanel"&gt;
-          &lt;div class="panel-body"&gt;
-            &lt;h4&gt;Logging&lt;/h4&gt;
-            &lt;p&gt;Xplore supports capturing server messages using the
-              following native ServiceNow logging functions:&lt;/p&gt;
-            &lt;ul class="list-example"&gt;
-              &lt;li&gt;&lt;code&gt;gs.log("Hello world")&lt;/code&gt;&lt;/li&gt;
-              &lt;li&gt;&lt;code&gt;gs.print("Hello world")&lt;/code&gt;&lt;/li&gt;
-              &lt;li&gt;&lt;code&gt;gs.info("Hello world")&lt;/code&gt;&lt;/li&gt;
-              &lt;li&gt;&lt;code&gt;gs.warn("Hello world")&lt;/code&gt;&lt;/li&gt;
-              &lt;li&gt;&lt;code&gt;gs.error("Hello world")&lt;/code&gt;&lt;/li&gt;
-              &lt;li&gt;&lt;code&gt;gs.addInfoMessage("Hello world")&lt;/code&gt;&lt;/li&gt;
-              &lt;li&gt;&lt;code&gt;gs.addErrorMessage("Hello world")&lt;/code&gt;&lt;/li&gt;
-            &lt;/ul&gt;
-            &lt;p&gt;Some server exceptions result in the transaction being aborted by
-              ServiceNow which means you will have limited (if any) output.
-              Xplore helps with this by automatically retrieving
-              the session log statements that were generated up to the time of the error
-             (using the functions shown above) and showing them in the output pane.
-            &lt;/p&gt;
-
-            &lt;p&gt;Client side logs can be captured as well:&lt;/p&gt;
-            &lt;ul class="list-example"&gt;
-              &lt;li&gt;&lt;code&gt;jslog("Hello world")&lt;/code&gt;&lt;/li&gt;
-            &lt;/ul&gt;
-
-            &lt;h4&gt;Script Include&lt;/h4&gt;
-            &lt;p&gt;Xplore is based on a global Script Include that you can
-              run anywhere in ServiceNow.&lt;/p&gt;
-
-            &lt;h5&gt;snd_xplore(obj)&lt;/h5&gt;
-            &lt;p class="col-xs-12"&gt;Uses the default reporter to print everything using gs.print()&lt;/p&gt;
-
-            &lt;h5&gt;snd_xplore.lookAt(obj)&lt;/h5&gt;
-            &lt;p class="col-xs-12"&gt;Get an object containing the properties 'type' and
-              'value' of your object.&lt;/p&gt;
-
-            &lt;h5&gt;snd_xplore(obj, my_reporter)&lt;/h5&gt;
-            &lt;p class="col-xs-12"&gt;You can also write your own reporter to handle the output
-              of snd_xplore.
-              Check out the snd_xplore Script Include for the built in print_reporter
-              which works in both global and scoped apps. This page uses a custom
-              print reporter to generate JSON and package it all back to the client
-              over AJAX.&lt;/p&gt;
-
-            &lt;h5&gt;snd_xplore.test(obj)&lt;/h5&gt;
-            &lt;p class="col-xs-12"&gt;Sometimes when you are 'Xploring' an object, you
-              will come across properties that throw exceptions when you try to
-              read their value. You can bypass this property by updating the
-              Xplore Red List on the fly, or add the property to the
-              'redlist' array in the snd_xplore Script Include.&lt;/p&gt;
-
-            &lt;h5&gt;snd_xplore.blacklist('illegalProp')&lt;/h5&gt;
-            &lt;p class="col-xs-12"&gt;Blacklisted properties are those that throw illegal
-              access exceptions. ServiceNow don't even want you trying to access these,
-              let alone see their value. Xplore has a built in template to filter the
-              majority of these, but sometimes they will slip through. Bypass these
-              properties on the fly, or add the property to the 'blacklist' array
-              in the snd_xplore Script Include.&lt;/p&gt;
-
-          &lt;/div&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-
-    &lt;/div&gt;&lt;!-- /info_accordion --&gt;
-  &lt;/div&gt;
-&lt;/div&gt;
-
-&lt;div class="row"&gt;
-  &lt;pre style="font-size:10px; background: transparent; border: none; text-align: center;"&gt;
-                                                                77777
-                                                                7:::7
-                                                                7:::7
-                                                                7:::7
-  www.sndeveloper.com  777777777777777777           7777777777777:::7
- 7::::::::::::::::::7  7:::::::::::::::::77       7:::::::::::::::::7
-7::::7777777777777777  7:::777777777777::::7     7::::77777777777:::7
-7:::7                  7:::7            7:::7   7:::7           7:::7
-7::::77777777777777    7:::7            7:::7  7:::7            7:::7
- 7:::::::::::::::::7   7:::7            7:::7  7:::7            7:::7
-  77777777777777::::7  7:::7            7:::7  7:::7            7:::7
-                7:::7  7:::7            7:::7   7:::7           7:::7
-7777777777777777::::7  7:::7            7:::7    7::::77777777777:::7
-7::::::::::::::::::7   7:::7            7:::7     7:::::::::::::::::7
-7777777777777777777    77777            77777       77777777777777777
-  &lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;div class="row"&gt;
-  &lt;div class="col-xs-12"&gt;
-    &lt;p&gt;
-      Version: ${snd_xplore.version}. The UI client uses
-      &lt;a href="http://getbootstrap.com/" target="_blank"&gt;Bootstrap&lt;/a&gt;,
-      &lt;a href="https://jquery.com/" target="_blank"&gt;JQuery&lt;/a&gt;,
-      and &lt;a href="https://codemirror.net/" target="_blank"&gt;CodeMirror&lt;/a&gt;.
-    &lt;/p&gt;
-  &lt;/div&gt;
-&lt;/div&gt;
-&lt;/j:jelly&gt;]]&gt;&lt;/xml&gt;&lt;/sys_ui_macro&gt;&lt;/record_update&gt;</payload>
-<remote_update_set display_value="Xplore - 3.5">9bf4d3670fc2d20094f3c09ce1050edc</remote_update_set>
-<replace_on_upgrade>false</replace_on_upgrade>
-<sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:15:15</sys_created_on>
-<sys_id>d3f4d3670fc2d20094f3c09ce1050edd</sys_id>
-<sys_mod_count>0</sys_mod_count>
-<sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
-<table/>
-<target_name>snd_xplore_info</target_name>
-<type>Macro</type>
-<update_domain>global</update_domain>
-<update_set display_value=""/>
-<view/>
-</sys_update_xml>
-<sys_update_xml action="INSERT_OR_UPDATE">
-<action>INSERT_OR_UPDATE</action>
-<application display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</application>
-<category>customer</category>
-<comments/>
-<name>sys_ui_script_c9abed770f2a820094f3c09ce1050e7f</name>
-<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script"><sys_ui_script action="INSERT_OR_UPDATE"><active>true</active><description>The HTML Reporter for the Xplore UI</description><global>false</global><name>snd_xplore_reporter</name><script>var snd_xplore_reporter = (function () {&#13;
-&#13;
-  var showMoreButton = '&lt;button class="btn btn-xs btn-warning show-more" ' +&#13;
-      'data-show-more="false"&gt;Show&lt;/button&gt;';&#13;
-&#13;
-  function setDescription(table, result) {&#13;
-    var type = result.type ? result.type : '[UNKNOWN]';&#13;
-    table.empty().&#13;
-    append('&lt;tr&gt;&lt;th class="col-md-1"&gt;Type&lt;/th&gt;&lt;td class="col-md-11"&gt;' + type +&#13;
-        '&lt;/td&gt;&lt;/tr&gt;');&#13;
-    if (!result.string) result.string = "";&#13;
-    if (result.string.length &lt; 100) {&#13;
-      table.append('&lt;tr&gt;&lt;th class="col-md-1"&gt;String&lt;/th&gt;&lt;td class="col-md-11"&gt;' +&#13;
-          showAsString(lineBreaks(escapeHtml(result.string))) + '&lt;/td&gt;&lt;/tr&gt;');&#13;
-    } else {&#13;
-      table.append('&lt;tr&gt;&lt;th class="col-md-1"&gt;String&lt;/th&gt;&lt;td class="col-md-11"&gt;' +&#13;
-          showMoreButton + '&lt;/td&gt;&lt;/tr&gt;');&#13;
-      table.append('&lt;tr class="data-more hidden"&gt;&lt;td colspan="2"&gt;' +&#13;
-          '&lt;pre class="prettyprint linenums"&gt;' + escapeHtml(result.string) +&#13;
-          '&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;');&#13;
-    }&#13;
-  }&#13;
-&#13;
-  function setResults(table, result) {&#13;
-    table.prepend('&lt;tr&gt;' +&#13;
-        '&lt;th class="col-md-3"&gt;Name&lt;/th&gt;' +&#13;
-        '&lt;th class="col-md-3"&gt;Type&lt;/th&gt;' +&#13;
-        '&lt;th class="col-md-6"&gt;String&lt;/th&gt;&lt;/tr&gt;');&#13;
-    $.each(result, function (i, item) {&#13;
-      var prop = '&lt;a href="javascript:void(0)" class="interactive"&gt;' + item.name + '&lt;/a&gt;';&#13;
-      if (item.type.toLowerCase() === 'function') {&#13;
-        prop += ' &lt;a href="javascript:void(0)" class="interactive"&gt;&lt;span class="hidden"&gt;' +&#13;
-            item.name + '&lt;/span&gt;()&lt;/a&gt;';&#13;
-      }&#13;
-      if (!item.string) item.string = "";&#13;
-      if (item.string.length &lt; 100 &amp;&amp; (item.type.toLowerCase() != 'function' ||&#13;
-          !item.string.length ||&#13;
-          item.string.substr(0,8) != 'function')) {&#13;
-        table.append('&lt;tr class="data-row"&gt;' +&#13;
-          '&lt;td class="col-md-3 prop"&gt;' + prop + '&lt;/td&gt;' +&#13;
-          '&lt;td class="col-md-3 type"&gt;' + item.type + '&lt;/td&gt;' +&#13;
-          '&lt;td class="classol-md-6 str"&gt;' + showAsString(escapeHtml(item.string)) + '&lt;/td&gt;' +&#13;
-        '&lt;/tr&gt;');&#13;
-      } else {&#13;
-        table.append('&lt;tr class="data-row"&gt;' +&#13;
-          '&lt;td class="col-md-3 prop"&gt;' + prop + '&lt;/td&gt;' +&#13;
-          '&lt;td class="col-md-3 type"&gt;' + item.type + '&lt;/td&gt;' +&#13;
-          '&lt;td class="col-md-6"&gt;' + showMoreButton + '&lt;/td&gt;' +&#13;
-        '&lt;/tr&gt;');&#13;
-        table.append('&lt;tr class="data-more hidden"&gt;' +&#13;
-          '&lt;td colspan="3" class="str"&gt;&lt;pre class="prettyprint linenums"&gt;' + escapeHtml(item.string) + '&lt;/pre&gt;&lt;/td&gt;' +&#13;
-        '&lt;/tr&gt;');&#13;
-      }&#13;
-    });&#13;
-  }&#13;
-&#13;
-  function displayResults(result, options) {&#13;
-&#13;
-    displayOutputMessages(result.messages, options.html_messages);&#13;
-&#13;
-    displayLogs(result.logs);&#13;
-&#13;
-    setDescription($('#description_table'), result);&#13;
-&#13;
-    var resultTable = $('#results_table');&#13;
-    resultTable.empty().append('&lt;tr id="no_props" class="hidden"&gt;&lt;td colspan="3"&gt;' +&#13;
-        'No properties to display.&lt;/td&gt;&lt;/tr&gt;');&#13;
-&#13;
-    result.report.sort(function (a, b) {&#13;
-      var ai = parseInt(a.name, 10);&#13;
-      var bi = parseInt(b.name, 10);&#13;
-      if (ai &gt; bi) return 1;&#13;
-      if (bi &gt; ai) return -1;&#13;
-      if (a.name &gt; b.name) return 1;&#13;
-      if (b.name &gt; a.name) return -1;&#13;
-      return 0;&#13;
-    });&#13;
-&#13;
-    if (result.report.length) {&#13;
-      setResults(resultTable, result.report);&#13;
-    } else {&#13;
-      $('#no_props').removeClass('hidden');&#13;
-    }&#13;
-&#13;
-    showTypes();&#13;
-&#13;
-    $('#result_container').toggleClass('hidden', !(result.type || result.report.length));&#13;
-  }&#13;
-&#13;
-  function displayOutputMessages(messages, asHtml) {&#13;
-    var target = $('#message_table'),&#13;
-        classMap = {&#13;
-          'info': 'info',&#13;
-          'error': 'danger',&#13;
-          'access': 'warning',&#13;
-          'log': 'log',&#13;
-          '-1': 'log',&#13;
-          '0': 'info',&#13;
-          '1': 'warning',&#13;
-          '2': 'danger'&#13;
-        },&#13;
-        temp;&#13;
-&#13;
-    target.empty();&#13;
-    if (!messages) {&#13;
-      return;&#13;
-    }&#13;
-    for (var i = 0, m; i &lt; messages.length; i++) {&#13;
-      m = messages[i];&#13;
-      temp = m.v.toString();&#13;
-      if (!asHtml) {&#13;
-        temp = escapeHtml(temp);&#13;
-      }&#13;
-      target.append('&lt;tr&gt;&lt;td class="' + classMap[m.t] + '"&gt;' +&#13;
-          temp.replace('\n', '&lt;br&gt;') + '&lt;/td&gt;&lt;/tr&gt;');&#13;
-    }&#13;
-    $('#message_container').toggleClass('hidden', !i);&#13;
-  }&#13;
-&#13;
-  function htmlPre(text) {&#13;
-    return text.replace(/\n(\s*)/g, function (a, b) {&#13;
-      return '&lt;br /&gt;' + new Array(b.length + 1).join('&amp;nbsp;');&#13;
-    });&#13;
-  }&#13;
-&#13;
-  function displayLogs(logs) {&#13;
-    var table = $('#log_table');&#13;
-    var classMap = {&#13;
-      'Warning': 'warning',&#13;
-      'Error': 'danger'&#13;
-    };&#13;
-    table.empty();&#13;
-    if (!logs) {&#13;
-      return;&#13;
-    }&#13;
-&#13;
-    table.prepend('&lt;tr&gt;' +&#13;
-      '&lt;th class="col-md-2"&gt;Level&lt;/th&gt;' +&#13;
-      '&lt;th class="col-md-2"&gt;Date&lt;/th&gt;' +&#13;
-      '&lt;th class="col-md-6"&gt;Value&lt;/th&gt;' +&#13;
-      '&lt;th class="col-md-2"&gt;User&lt;/th&gt;&lt;/tr&gt;');&#13;
-&#13;
-    $.each(logs, function (i, log) {&#13;
-      var className = classMap[log.level];&#13;
-      table.append('&lt;tr class="data-row text' + className + '"&gt;' +&#13;
-          '&lt;td class="col-md-2 ' + className + '"&gt;' + log.level + '&lt;/td&gt;' +&#13;
-          '&lt;td class="col-md-2 ' + className + '"&gt;' + log.created + '&lt;/td&gt;' +&#13;
-          '&lt;td class="col-md-6 ' + className + '"&gt;' + htmlPre(escapeHtml(log.message)) + '&lt;/td&gt;' +&#13;
-          '&lt;td class="col-md-2 ' + className + '"&gt;' + log.source + '&lt;/td&gt;' +&#13;
-        '&lt;/tr&gt;');&#13;
-    });&#13;
-    $('#log_container').toggleClass('hidden', !logs.length);&#13;
-  }&#13;
-&#13;
-  function showTypes() {&#13;
-    var target = $('#type_control');&#13;
-    var show_types = {};&#13;
-    var show_all = false;&#13;
-&#13;
-    target.empty();&#13;
-&#13;
-    // find which checkboxes to display&#13;
-    $('#results_table tr')&#13;
-        .find('td.type')&#13;
-        .each(function () {&#13;
-          var type = $(this).text();&#13;
-          if (typeof display_types[type] === 'undefined') {&#13;
-            display_types[type] = true; // default to being checked&#13;
-          }&#13;
-          show_types[type] = display_types[type];&#13;
-          show_all = true;&#13;
-        });&#13;
-&#13;
-    if (show_all) {&#13;
-      target.append('&lt;label class="checkbox-inline no_indent"&gt;' +&#13;
-        '&lt;input type="checkbox" id="show_all" value="all" checked="checked" /&gt;' +&#13;
-        'All&lt;/label&gt;');&#13;
-    }&#13;
-&#13;
-    $.each(show_types, function (type) {&#13;
-      id = '' + type.replace(/\./g, '_');&#13;
-      target.append('&lt;label class="checkbox-inline no_indent"&gt;' +&#13;
-        '&lt;input type="checkbox" id="show_' + id + '" value="' + type + '" /&gt;' +&#13;
-        type + '&lt;/label&gt;');&#13;
-      $('#show_' + id).prop('checked', display_types[type]);&#13;
-    });&#13;
-&#13;
-    updateResultTypes();&#13;
-    updateResults();&#13;
-  }&#13;
-&#13;
-  function updateResultTypes(setAll) {&#13;
-    var isShowAllChecked = true;&#13;
-    var checkboxes = $('#type_control input[type=checkbox]');&#13;
-&#13;
-    if (typeof setAll === 'undefined') {&#13;
-      checkboxes.each(function (i) {&#13;
-        if (!i) return; // ignore show_all at 0&#13;
-        display_types[this.value] = this.checked;&#13;
-        isShowAllChecked = isShowAllChecked &amp;&amp; this.checked;&#13;
-      });&#13;
-      $('#show_all').prop('checked', isShowAllChecked);&#13;
-    } else {&#13;
-      checkboxes.each(function () {&#13;
-        $(this).prop('checked', setAll);&#13;
-        display_types[this.value] = setAll;&#13;
-      });&#13;
-    }&#13;
-&#13;
-    checkboxes.each(function (i) {&#13;
-      if (!i) return;&#13;
-      $(this).parent().&#13;
-        toggleClass('bg-success text-success', display_types[this.value]).&#13;
-        toggleClass('bg-danger text-danger', !display_types[this.value]);&#13;
-    });&#13;
-&#13;
-  }&#13;
-&#13;
-  function updateResults() {&#13;
-    var isShowingProps = false;&#13;
-    $('#results_table tr.data-row').each(function () {&#13;
-&#13;
-      $this = $(this);&#13;
-      var value = $this.find('td.type').text();&#13;
-      $this.toggleClass('hidden', !display_types[value]);&#13;
-&#13;
-      // show/hide the more info row&#13;
-      var next = $this.next();&#13;
-      if (next.hasClass('data-more')) {&#13;
-        var state = $this.find('button.show-more').attr('data-show-more');&#13;
-        next.toggleClass('hidden', !(display_types[value] &amp;&amp; state != 'false'));&#13;
-      }&#13;
-&#13;
-      isShowingProps = isShowingProps || display_types[value];&#13;
-    });&#13;
-    $('#no_props').toggleClass('hidden', isShowingProps);&#13;
-  }&#13;
-&#13;
-  function showAsString(str) {&#13;
-    return '&amp;quot;&lt;span class="text-danger"&gt;' + str + '&lt;/span&gt;&amp;quot;';&#13;
-  }&#13;
-&#13;
-  var escapeHtml = (function () {&#13;
-    var entityMap = {&#13;
-      "&amp;": "&amp;amp;",&#13;
-      "&lt;": "&amp;lt;",&#13;
-      "&gt;": "&amp;gt;",&#13;
-      '"': '&amp;quot;',&#13;
-      "'": '&amp;#39;',&#13;
-      "/": '&amp;#x2F;'&#13;
-    };&#13;
-    return function (string) {&#13;
-      return String(string).replace(/[&amp;&lt;&gt;"'\/]/g, function (s) {&#13;
-        return entityMap[s];&#13;
-      });&#13;
-    };&#13;
-  })();&#13;
-&#13;
-  function lineBreaks(text) {&#13;
-    return text.toString().trim().replace(/\n/g, '&lt;br /&gt;');&#13;
-  }&#13;
-&#13;
-  var breadcrumbs = [];&#13;
-  var display_types = {};&#13;
-  var events = {};&#13;
-&#13;
-  function SndXploreReporter() {&#13;
-&#13;
-    this.addEvent = function (name, fn) {&#13;
-      if (typeof events[name] !== 'object') {&#13;
-        events[name] = [];&#13;
-      }&#13;
-      events[name].push(fn);&#13;
-    };&#13;
-&#13;
-    this.fireEvent = function (name, scope, args) {&#13;
-      var eventArr = typeof events[name] === 'object' ? events[name] : null;&#13;
-      if (!eventArr) return;&#13;
-      for (var i = 0; i &lt; eventArr.length; i++) {&#13;
-        if (typeof eventArr[i] === 'function') {&#13;
-          eventArr[i].apply(scope || this, args);&#13;
-        }&#13;
-      }&#13;
-    };&#13;
-&#13;
-    this.initialize = function () {&#13;
-&#13;
-      var sxr = this;&#13;
-&#13;
-      $('#results_table,#description_table').on('click', '.show-more', function () {&#13;
-        // summary:&#13;
-        //   Handle the 'Show...' button click for a result&#13;
-&#13;
-        var $this = $(this);&#13;
-        var target = $this.parents('tr').next();&#13;
-        var doHide = $this.attr('data-show-more') != 'false';&#13;
-&#13;
-        target.toggleClass('hidden', doHide);&#13;
-        $this.text(doHide ? 'Show' : 'Hide');&#13;
-        $this.toggleClass('active', !doHide);&#13;
-        $this.attr('data-show-more', doHide ? 'false' : 'true');&#13;
-&#13;
-      });&#13;
-&#13;
-      $('#results_table').on('click', 'a.interactive', function () {&#13;
-        // summary:&#13;
-        //   Make property names interactive so we can dive into an object&#13;
-&#13;
-&#13;
-        var $breadcrumb = $('ul#breadcrumb');&#13;
-        var pos = breadcrumbs.length - 1;&#13;
-        var text = $(this).text();&#13;
-&#13;
-        // make the last breadcrumb active&#13;
-        if (breadcrumbs.length) {&#13;
-          $breadcrumb.children().remove(':last');&#13;
-          $breadcrumb.append('&lt;li&gt;&lt;a href="javascript:void(0)" id="breadcrumb_' +&#13;
-              pos + '"&gt;' + breadcrumbs[pos] + '&lt;/a&gt;&lt;/li&gt;');&#13;
-        }&#13;
-&#13;
-        // add the new last breadcrumb&#13;
-        $breadcrumb&#13;
-            .append('&lt;li&gt;' + text + '&lt;/li&gt;')&#13;
-            .removeClass('hidden');&#13;
-&#13;
-        breadcrumbs.push(text);&#13;
-&#13;
-        sxr.fireEvent('click.interactive-result', this);&#13;
-      });&#13;
-&#13;
-      $('ul#breadcrumb').on('click', 'a', function () {&#13;
-        // summary:&#13;
-        //   add the event handler for clicking on a breadcrumb to remove it&#13;
-&#13;
-        var $breadcrumb = $('ul#breadcrumb');&#13;
-&#13;
-        // remove unnecessary breadcrumb elements&#13;
-        var pos = parseInt(this.id.split('_')[1], 10);&#13;
-        var removeCount = breadcrumbs.length - 1 - pos;&#13;
-        if (removeCount) {&#13;
-&#13;
-          // remove all the nodes, including this one&#13;
-          $breadcrumb&#13;
-            .find('li:nth-last-child(-n+' + (removeCount + 1) + '):not(.permanent)')&#13;
-            .remove();&#13;
-&#13;
-          // update the breadcrumb array&#13;
-          breadcrumbs = breadcrumbs.&#13;
-              slice(0, $breadcrumb.children(':not(.permanent)').size() + 1);&#13;
-&#13;
-          // re-add this node as a non-anchored breadcrumb&#13;
-          if (breadcrumbs.length) {&#13;
-            $breadcrumb.append('&lt;li&gt;' + breadcrumbs[breadcrumbs.length - 1] + '&lt;/li&gt;');&#13;
-          }&#13;
-&#13;
-          $breadcrumb.toggleClass('hidden', !breadcrumbs.length);&#13;
-          sxr.fireEvent('click.breadcrumb', this);&#13;
-        }&#13;
-      });&#13;
-&#13;
-      $('#type_control').on('change', 'input[type=checkbox]', function () {&#13;
-        // summary:&#13;
-        //   restrict the results based on the type checkboxes that are checked&#13;
-&#13;
-        if (this.id == 'show_all') {&#13;
-          updateResultTypes(this.checked);&#13;
-        } else {&#13;
-          updateResultTypes();&#13;
-        }&#13;
-&#13;
-        updateResults();&#13;
-      });&#13;
-    };&#13;
-&#13;
-    this.start = function (params) {&#13;
-      this.options = params;&#13;
-      this.fireEvent('start', null, [params]);&#13;
-    };&#13;
-&#13;
-    this.done = function (result) {&#13;
-      var target = $('#results');&#13;
-      target.empty();&#13;
-      displayResults(result, this.options);&#13;
-      this.fireEvent('done', null, [result]);&#13;
-    };&#13;
-&#13;
-    this.getBreadcrumb = function () {&#13;
-      return breadcrumbs.join('.');&#13;
-    };&#13;
-&#13;
-    this.clearBreadcrumb = function () {&#13;
-      breadcrumbs.length = 0;&#13;
-      $('ul#breadcrumb').addClass('hidden').find('li:not(.permanent)').remove();&#13;
-    };&#13;
-&#13;
-  }&#13;
-&#13;
-  return new SndXploreReporter();&#13;
-}());&#13;
-</script><script_name/><sys_class_name>sys_ui_script</sys_class_name><sys_created_by>james@snd</sys_created_by><sys_created_on>2015-09-23 23:34:14</sys_created_on><sys_customer_update>true</sys_customer_update><sys_id>c9abed770f2a820094f3c09ce1050e7f</sys_id><sys_mod_count>120</sys_mod_count><sys_name>snd_xplore_reporter</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_replace_on_upgrade>false</sys_replace_on_upgrade><sys_scope display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</sys_scope><sys_update_name>sys_ui_script_c9abed770f2a820094f3c09ce1050e7f</sys_update_name><sys_updated_by>james@sndeveloper.com</sys_updated_by><sys_updated_on>2016-03-15 11:36:54</sys_updated_on><use_scoped_format>false</use_scoped_format></sys_ui_script></record_update>]]></payload>
-<remote_update_set display_value="Xplore - 3.5">9bf4d3670fc2d20094f3c09ce1050edc</remote_update_set>
-<replace_on_upgrade>false</replace_on_upgrade>
-<sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:15:15</sys_created_on>
-<sys_id>d7f4d3670fc2d20094f3c09ce1050edd</sys_id>
-<sys_mod_count>0</sys_mod_count>
-<sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
-<table/>
-<target_name>snd_xplore_reporter</target_name>
-<type>UI Script</type>
-<update_domain>global</update_domain>
+<update_domain>global                          </update_domain>
 <update_set display_value=""/>
 <view/>
 </sys_update_xml>
@@ -3225,6 +2731,15 @@ pre {&#13;
   font-size: 11px;&#13;
 }&#13;
 &#13;
+.wrap-pre pre {&#13;
+  /* Make Pre tags wrap nicely. Better than having to scroll right for 10000 chars */&#13;
+  white-space: pre-wrap;      /* CSS 3 */&#13;
+  white-space: -moz-pre-wrap; /* Mozilla, since 1999 */&#13;
+  white-space: -pre-wrap;     /* Opera 4-6 */&#13;
+  white-space: -o-pre-wrap;   /* Opera 7 */&#13;
+  word-wrap: break-word;      /* Internet Explorer 5.5+ */&#13;
+}&#13;
+&#13;
 h5 {&#13;
   font-weight: bold;&#13;
   margin-top: 18px;&#13;
@@ -3288,9 +2803,11 @@ sup .label-as-badge {&#13;
   display: block;&#13;
   position: relative;&#13;
   padding: 15px 0;&#13;
-  -webkit-transition: all .3s ease;&#13;
-  -moz-transition: all .3s ease;&#13;
-  transition: all .3s ease;&#13;
+  -webkit-transition: all ease-in 300ms;&#13;
+  -moz-transition: all ease-in 300ms;&#13;
+  -ms-transition: all ease-in 300ms;&#13;
+  -o-transition: all ease-in 300ms;&#13;
+  transition: all ease-in 300ms;&#13;
 }&#13;
 &#13;
 #side_controls ul &gt; li &gt; a.active {&#13;
@@ -3531,19 +3048,73 @@ sup .label-as-badge {&#13;
   margin-right: 0;&#13;
 }&#13;
 &#13;
-.glyphicon-refresh-animate {&#13;
-    -animation: spin .7s infinite linear;&#13;
-    -webkit-animation: spin2 .7s infinite linear;&#13;
+#script_pane_list {&#13;
+  list-style: none;&#13;
+  padding: 0;&#13;
+  margin: 0;&#13;
+}&#13;
+#script_pane_list li {&#13;
+  border-top: 1px solid #e9e9e9;&#13;
+  padding: 2px 4px;&#13;
+}&#13;
+#script_pane_list li:hover {&#13;
+  background-color: #e9e9e9;&#13;
+  padding-left: 6px;&#13;
+}&#13;
+#script_pane_list li .script-link:hover {&#13;
+  cursor: pointer;&#13;
+  text-decoration: underline;&#13;
+}&#13;
+#script_pane_list li .script-replace {&#13;
+  opacity: 0;&#13;
+  -webkit-transition:all linear 200ms;&#13;
+  -moz-transition:all linear 200ms;&#13;
+  -ms-transition:all linear 200ms;&#13;
+  -o-transition:all linear 200ms;&#13;
+  transition: all linear 200ms;&#13;
+}&#13;
+#script_pane_list li:hover .script-replace {&#13;
+  opacity: 1;&#13;
+}&#13;
+#script_pane_search {&#13;
+  margin-bottom: 20px;&#13;
 }&#13;
 &#13;
-@-webkit-keyframes spin2 {&#13;
-    from { -webkit-transform: rotate(0deg);}&#13;
-    to { -webkit-transform: rotate(360deg);}&#13;
+.spin {&#13;
+  animation: spin 900ms infinite linear;&#13;
+  -o-animation: spin 900ms infinite linear;&#13;
+  -ms-animation: spin 900ms infinite linear;&#13;
+  -webkit-animation: spin 900ms infinite linear;&#13;
+  -moz-animation: spin 900ms infinite linear;&#13;
 }&#13;
-&#13;
 @keyframes spin {&#13;
-    from { transform: scale(1) rotate(0deg);}&#13;
-    to { transform: scale(1) rotate(360deg);}&#13;
+  100%{ transform: rotate(360deg); transform: rotate(360deg); }&#13;
+}&#13;
+@-o-keyframes spin {&#13;
+  100%{ -o-transform: rotate(360deg); transform: rotate(360deg); }&#13;
+}&#13;
+@-ms-keyframes spin {&#13;
+  100%{ -ms-transform: rotate(360deg); transform: rotate(360deg); }&#13;
+}&#13;
+@-webkit-keyframes spin {&#13;
+  100%{ -webkit-transform: rotate(360deg); transform: rotate(360deg); }&#13;
+}&#13;
+@-moz-keyframes load-spin {&#13;
+  100%{ -moz-transform: rotate(360deg); transform: rotate(360deg); }&#13;
+}&#13;
+&#13;
+/* Fix spin offset */&#13;
+.glyphicon-refresh.spin {&#13;
+  padding-top: 1px;&#13;
+}&#13;
+.loading&gt;.glyphicon-refresh.spin {&#13;
+  padding-left: 1px;&#13;
+}&#13;
+&#13;
+/* Adjust for BootstrapToggle */&#13;
+.checkbox, .radio {&#13;
+  margin-top: 15px;&#13;
+  margin-bottom: 15px;&#13;
 }&#13;
 &#13;
 /* fix IE select */&#13;
@@ -3554,19 +3125,19 @@ select::-ms-expand {&#13;
 /* Google Code-Prettify Fix */&#13;
 li.L0, li.L1, li.L2, li.L3,&#13;
 li.L5, li.L6, li.L7, li.L8&#13;
-{ list-style-type: decimal !important }</style><sys_class_name>content_css</sys_class_name><sys_created_by>james@snd</sys_created_by><sys_created_on>2015-09-13 14:58:52</sys_created_on><sys_customer_update>true</sys_customer_update><sys_id>efd550a80f2a020094f3c09ce1050ecf</sys_id><sys_mod_count>62</sys_mod_count><sys_name>snd_xplore</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_replace_on_upgrade>false</sys_replace_on_upgrade><sys_scope display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</sys_scope><sys_update_name>content_css_efd550a80f2a020094f3c09ce1050ecf</sys_update_name><sys_updated_by>james@sndeveloper.com</sys_updated_by><sys_updated_on>2016-03-15 11:49:59</sys_updated_on><type>local</type><url/></content_css></record_update>]]></payload>
-<remote_update_set display_value="Xplore - 3.5">9bf4d3670fc2d20094f3c09ce1050edc</remote_update_set>
+{ list-style-type: decimal !important }</style><sys_class_name>content_css</sys_class_name><sys_created_by>james@snd</sys_created_by><sys_created_on>2015-09-13 14:58:52</sys_created_on><sys_customer_update>true</sys_customer_update><sys_id>efd550a80f2a020094f3c09ce1050ecf</sys_id><sys_mod_count>81</sys_mod_count><sys_name>snd_xplore</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_replace_on_upgrade>false</sys_replace_on_upgrade><sys_scope display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</sys_scope><sys_update_name>content_css_efd550a80f2a020094f3c09ce1050ecf</sys_update_name><sys_updated_by>james@sndeveloper.com</sys_updated_by><sys_updated_on>2016-05-03 17:18:49</sys_updated_on><type>local</type><url/></content_css></record_update>]]></payload>
+<remote_update_set display_value="Xplore - 3.6">836cf8e70f4b1a0094f3c09ce1050e14</remote_update_set>
 <replace_on_upgrade>false</replace_on_upgrade>
 <sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:15:15</sys_created_on>
-<sys_id>dbf4d3670fc2d20094f3c09ce1050edc</sys_id>
+<sys_created_on>2016-05-03 18:11:29</sys_created_on>
+<sys_id>c36cf8e70f4b1a0094f3c09ce1050e14</sys_id>
 <sys_mod_count>0</sys_mod_count>
 <sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
+<sys_updated_on>2016-05-03 18:11:29</sys_updated_on>
 <table/>
 <target_name>snd_xplore</target_name>
 <type>Style Sheet</type>
-<update_domain>global</update_domain>
+<update_domain>global                          </update_domain>
 <update_set display_value=""/>
 <view/>
 </sys_update_xml>
@@ -3733,6 +3304,51 @@ function ActionProcessor() {
     return tables;
   }
 
+  /**
+    summary:
+      Get records from a table.
+    param: table [String]
+      The table to search.
+    param: fields [Array]
+      An array of field names to return.
+    param: query [String] Optional
+      An encoded query to use to restrict the records.
+    param: limit [Integer] Optional
+      Limit the number of records returned.
+    returns: Array
+      An array of record objects containing the requested fields.
+  **/
+  function getRecordValues(table, fields, query, limit) {
+    var records = [],
+        gr;
+
+    function mapFields(gr) {
+      var o = {};
+      for (var i = 0; i &lt; fields.length; i++) {
+        var f = fields[i];
+        if (f.indexOf('$') == '0') {
+          o[f] = gr[f.substr(1)].getDisplayValue();
+        } else {
+          o[f] = gr.getValue(f);
+        }
+      }
+      return o;
+    }
+
+    gr = new GlideRecord(table);
+    if (gr.isValid()) {
+      gr.addEncodedQuery(query);
+      if (limit) {
+        gr.setLimit(limit);
+      }
+      gr._query();
+      while (gr._next()) {
+        records.push(mapFields(gr));
+      }
+    }
+    return records;
+  }
+
   /*--- End Processor Specific Functions ---*/
 
   /**
@@ -3786,6 +3402,24 @@ function ActionProcessor() {
           };
           data.search_label = data.search_label == '1' || data.search_label == 'true';
           response = responseFactory(true, XploreTableHierarchy(getParam('table'), data));
+          break;
+        case 'getScripts':
+          response = responseFactory(true, getRecordValues(
+            'sys_script_include', ['sys_id', 'name', 'api_name', '$sys_scope'], 'ORDERBYname^EQ'));
+          break;
+        case 'getScript':
+          data = getParam('sys_id');
+          if (data.length == 32) {
+            var records = getRecordValues(
+              'sys_script_include', ['name', 'api_name', 'script'], 'sys_id=' + data, 1);
+            if (records.length) {
+              response = responseFactory(true, records[0]);
+            } else {
+              throw 'Not found.';
+            }
+          } else {
+            throw 'Expected sys_id not valid.';
+          }
           break;
         default:
           throw 'Invalid request.';
@@ -4283,6 +3917,7 @@ function XploreRunner() {
     var gse = new GlideScopedEvaluator();
     gse.putVariable('reporter', reporter);
     gse.putVariable('script', script);
+    gse.putVariable('user_data', options.user_data);
     gse.evaluateScript(gr, 'script');
   }
 
@@ -4575,19 +4210,752 @@ function XploreTableHierarchy(table, options) {
   }
 
   return getHierarchy(table);
-}]]&gt;&lt;/script&gt;&lt;sys_class_name&gt;sys_processor&lt;/sys_class_name&gt;&lt;sys_created_by&gt;james@snd&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2015-09-18 20:32:13&lt;/sys_created_on&gt;&lt;sys_customer_update&gt;true&lt;/sys_customer_update&gt;&lt;sys_id&gt;39225f460f66420094f3c09ce1050e91&lt;/sys_id&gt;&lt;sys_mod_count&gt;310&lt;/sys_mod_count&gt;&lt;sys_name&gt;snd_xplore&lt;/sys_name&gt;&lt;sys_package display_value="Global" source="global"&gt;global&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_replace_on_upgrade&gt;false&lt;/sys_replace_on_upgrade&gt;&lt;sys_scope display_value="Xplore"&gt;0f6ab99a0f36060094f3c09ce1050ee8&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_processor_39225f460f66420094f3c09ce1050e91&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;james@sndeveloper.com&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2016-03-15 10:30:43&lt;/sys_updated_on&gt;&lt;type&gt;script&lt;/type&gt;&lt;/sys_processor&gt;&lt;/record_update&gt;</payload>
-<remote_update_set display_value="Xplore - 3.5">9bf4d3670fc2d20094f3c09ce1050edc</remote_update_set>
+}]]&gt;&lt;/script&gt;&lt;sys_class_name&gt;sys_processor&lt;/sys_class_name&gt;&lt;sys_created_by&gt;james@snd&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2015-09-18 20:32:13&lt;/sys_created_on&gt;&lt;sys_customer_update&gt;true&lt;/sys_customer_update&gt;&lt;sys_id&gt;39225f460f66420094f3c09ce1050e91&lt;/sys_id&gt;&lt;sys_mod_count&gt;320&lt;/sys_mod_count&gt;&lt;sys_name&gt;snd_xplore&lt;/sys_name&gt;&lt;sys_package display_value="Global" source="global"&gt;global&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_replace_on_upgrade&gt;false&lt;/sys_replace_on_upgrade&gt;&lt;sys_scope display_value="Xplore"&gt;0f6ab99a0f36060094f3c09ce1050ee8&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_processor_39225f460f66420094f3c09ce1050e91&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;james@sndeveloper.com&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2016-05-03 17:36:48&lt;/sys_updated_on&gt;&lt;type&gt;script&lt;/type&gt;&lt;/sys_processor&gt;&lt;/record_update&gt;</payload>
+<remote_update_set display_value="Xplore - 3.6">836cf8e70f4b1a0094f3c09ce1050e14</remote_update_set>
 <replace_on_upgrade>false</replace_on_upgrade>
 <sys_created_by>james@sndeveloper.com</sys_created_by>
-<sys_created_on>2016-03-15 12:15:15</sys_created_on>
-<sys_id>dff4d3670fc2d20094f3c09ce1050edc</sys_id>
+<sys_created_on>2016-05-03 18:11:29</sys_created_on>
+<sys_id>c76cf8e70f4b1a0094f3c09ce1050e14</sys_id>
 <sys_mod_count>0</sys_mod_count>
 <sys_updated_by>james@sndeveloper.com</sys_updated_by>
-<sys_updated_on>2016-03-15 12:15:15</sys_updated_on>
+<sys_updated_on>2016-05-03 18:11:29</sys_updated_on>
 <table/>
 <target_name>snd_xplore</target_name>
 <type>Processor</type>
-<update_domain>global</update_domain>
+<update_domain>global                          </update_domain>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</application>
+<category>customer</category>
+<comments/>
+<name>sys_ui_macro_b6e5deb30f5d528094f3c09ce1050e71</name>
+<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sys_ui_macro"&gt;&lt;sys_ui_macro action="INSERT_OR_UPDATE"&gt;&lt;active&gt;true&lt;/active&gt;&lt;category&gt;general&lt;/category&gt;&lt;description/&gt;&lt;media_type/&gt;&lt;name&gt;snd_xplore_info&lt;/name&gt;&lt;scoped_name/&gt;&lt;sys_class_name&gt;sys_ui_macro&lt;/sys_class_name&gt;&lt;sys_created_by&gt;james@sndeveloper.com&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2016-02-07 19:31:05&lt;/sys_created_on&gt;&lt;sys_customer_update&gt;true&lt;/sys_customer_update&gt;&lt;sys_id&gt;b6e5deb30f5d528094f3c09ce1050e71&lt;/sys_id&gt;&lt;sys_mod_count&gt;34&lt;/sys_mod_count&gt;&lt;sys_name&gt;snd_xplore_info&lt;/sys_name&gt;&lt;sys_package display_value="Xplore" source="0f6ab99a0f36060094f3c09ce1050ee8"&gt;0f6ab99a0f36060094f3c09ce1050ee8&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_replace_on_upgrade&gt;false&lt;/sys_replace_on_upgrade&gt;&lt;sys_scope display_value="Xplore"&gt;0f6ab99a0f36060094f3c09ce1050ee8&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_ui_macro_b6e5deb30f5d528094f3c09ce1050e71&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;james@sndeveloper.com&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2016-05-03 10:47:38&lt;/sys_updated_on&gt;&lt;xml&gt;&lt;![CDATA[&lt;?xml version="1.0" encoding="utf-8" ?&gt;
+&lt;j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null"&gt;
+&lt;div class="row" style="margin-top: 12px; font-size: 14px;"&gt;
+
+  &lt;div class="col-xs-12"&gt;
+
+    &lt;div class="alert alert-danger"&gt;
+      &lt;strong&gt;Warning:&lt;/strong&gt; This utility runs code in your
+      environment. Make sure you know what you are doing as it is
+      entirely possible for you to screw up your instance.
+    &lt;/div&gt;
+
+    &lt;div class="panel panel-default"&gt;
+      &lt;div class="panel-heading" role="tab"&gt;
+        &lt;h4 class="panel-title"&gt;
+          &lt;a href="#info_welcome" role="button" data-toggle="collapse"&gt;WELCOME!&lt;/a&gt;
+        &lt;/h4&gt;
+      &lt;/div&gt;
+      &lt;div id="info_welcome" class="panel-collapse collapse in" role="tabpanel"&gt;
+        &lt;div class="panel-body"&gt;
+          &lt;p&gt;Hey! Thanks for downloading Xplore.&lt;/p&gt;
+          &lt;p&gt;Xplore is a free, independently developed utility for ServiceNow that
+            has been built 'for developers, by developers'. We really appreciate
+            all the community input we get!&lt;/p&gt;
+
+          &lt;p&gt;&lt;strong&gt;Ways you can help!&lt;/strong&gt;
+            &lt;ul class="list-group list-example"&gt;
+              &lt;li class="list-group-item"&gt;
+                &lt;a href="https://share.servicenow.com/app.do#/search-result?search_query=sndeveloper${AMP}startRow=NaN${AMP}sort_parameter=title"
+                  target="_blank"&gt;
+                  &lt;span class="glyphicon glyphicon-thumbs-up"&gt;&lt;/span&gt;
+                  Write a review or download our other apps&lt;/a&gt;
+              &lt;/li&gt;
+              &lt;li class="list-group-item"&gt;
+                &lt;a href="https://github.com/sn-developer/Xplore" target="_blank"&gt;
+                &lt;span class="glyphicon glyphicon-wrench"&gt;&lt;/span&gt;
+                Contribute on GitHub&lt;/a&gt;
+              &lt;/li&gt;
+              &lt;li class="list-group-item"&gt;
+                &lt;a href="mailto:info@sndeveloper.com?subject=Xplore Feedback"&gt;
+                  &lt;span class="glyphicon glyphicon-envelope"&gt;&lt;/span&gt;
+                  Say hello!&lt;/a&gt;
+              &lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/p&gt;
+
+          &lt;p&gt;Thanks!&lt;/p&gt;
+          &lt;p&gt;&lt;a href="https://twitter.com/James_Neale" target="_blank"&gt;James&lt;/a&gt;
+          and
+          &lt;a href="https://twitter.com/simthort" target="_blank"&gt;Tim&lt;/a&gt;
+          &lt;/p&gt;
+
+          &lt;p class="small"&gt;
+            &lt;a href="https://twitter.com/intent/tweet?button_hashtag=Xplore${AMP}text=My%20job%20as%20a%20%23servicenowdev%20just%20got%20a%20lot%20easier!%20%40sn_developer" class="twitter-hashtag-button" data-related="sn_developer" data-url="https://goo.gl/fAyYTA" target="_blank"&gt;Tweet #Xplore&lt;/a&gt;
+            |
+            &lt;a href="https://twitter.com/sn_developer" class="twitter-follow-button"
+            data-show-count="false" target="_blank"&gt;Follow @sn_developer&lt;/a&gt;
+            |
+            &lt;a href="https://www.linkedin.com/company/sn-developer" target="_blank"&gt;Find us on LinkedIn&lt;/a&gt;
+          &lt;/p&gt;
+
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class="panel-group" id="info_accordion" role="tablist"&gt;
+
+      &lt;div class="panel panel-default"&gt;
+        &lt;div class="panel-heading" role="tab"&gt;
+          &lt;h4 class="panel-title"&gt;
+            &lt;a href="#info_script_editor" role="button" data-toggle="collapse"
+              data-parent="#info_accordion"&gt;SCRIPT EDITOR&lt;/a&gt;
+          &lt;/h4&gt;
+        &lt;/div&gt;
+        &lt;div id="info_script_editor" class="panel-collapse collapse in" role="tabpanel"&gt;
+          &lt;div class="panel-body"&gt;
+            &lt;p&gt;Use the script editor on the left to write and run scripts
+              in ServiceNow, much like a background script, but
+              supercharged. The last object in the script will be shown
+              here in a detailed output tab.&lt;/p&gt;
+           &lt;p&gt;Use the choice list to choose where you want to run your
+              code, either server or client.&lt;/p&gt;
+            &lt;p&gt;Launching Xplore from within ServiceNow will give you
+              access to the various frames ServiceNow uses.&lt;/p&gt;
+            &lt;p&gt;
+              Not sure what to do? Try one of these demos:
+              &lt;div class="list-group xplore_demo list-example"&gt;
+                &lt;a data-demo="GlideRecord" href="#demo"
+                  class="list-group-item list-group-item-info"&gt;Demo: GlideRecord&lt;/a&gt;
+                &lt;a data-demo="Array" href="#demo"
+                  class="list-group-item list-group-item-info"&gt;Demo: Array&lt;/a&gt;
+                &lt;a data-demo="GlideUser" href="#demo"
+                  class="list-group-item list-group-item-info"&gt;Demo: GlideUser&lt;/a&gt;
+                &lt;a data-demo="Logging" href="#demo"
+                  class="list-group-item list-group-item-info"&gt;Demo: Logging and Messages&lt;/a&gt;
+                &lt;a data-demo="scope" href="#demo"
+                  class="list-group-item list-group-item-info"&gt;Demo: Current scope&lt;/a&gt;
+              &lt;/div&gt;
+            &lt;/p&gt;
+            &lt;p class="alert alert-warning"&gt;Tip: Use the keyboard shortcut
+              &lt;kbd&gt;Ctrl + Enter&lt;/kbd&gt; to run.&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;div class="panel panel-default"&gt;
+        &lt;div class="panel-heading" role="tab"&gt;
+          &lt;h4 class="panel-title"&gt;
+            &lt;a href="#info_user_data" role="button" data-toggle="collapse"
+              data-parent="#info_accordion"&gt;USER DATA&lt;/a&gt;
+          &lt;/h4&gt;
+        &lt;/div&gt;
+        &lt;div id="info_user_data" class="panel-collapse collapse" role="tabpanel"&gt;
+          &lt;div class="panel-body"&gt;
+            &lt;p&gt;Paste in large chunks of text like XML and work with
+              them in your script.&lt;/p&gt;
+            &lt;div class="list-group xplore_demo list-example"&gt;
+              &lt;a data-demo="user_data" href="#demo"
+                class="list-group-item list-group-item-info"&gt;Demo: Format XML&lt;/a&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;div class="panel panel-default"&gt;
+        &lt;div class="panel-heading" role="tab"&gt;
+          &lt;h4 class="panel-title"&gt;
+            &lt;a href="#info_regex" role="button" data-toggle="collapse"
+              data-parent="#info_accordion"&gt;REGEX&lt;/a&gt;
+          &lt;/h4&gt;
+        &lt;/div&gt;
+        &lt;div id="info_regex" class="panel-collapse collapse" role="tabpanel"&gt;
+          &lt;div class="panel-body"&gt;
+            &lt;p&gt;You can test out regular expressions natively in ServiceNow!&lt;/p&gt;
+            &lt;p&gt;If you've done any work with regular expressions then you will know
+              that sometimes regular expressions don't work the same way
+              in ServiceNow as they do in browsers or other languages.&lt;/p&gt;
+            &lt;p&gt;Simply type in your expression and a test string, give
+              it a second, and it will automatically test your expression
+              for you and show you the results - including the match groupings.&lt;/p&gt;
+            &lt;p class="alert alert-warning"&gt;Tip: Change to 'Client' to test an
+              expression in your browser.&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;div class="panel panel-default"&gt;
+        &lt;div class="panel-heading" role="tab"&gt;
+          &lt;h4 class="panel-title"&gt;
+            &lt;a href="#info_table_hierarchy" role="button" data-toggle="collapse"
+              data-parent="#info_accordion"&gt;TABLE HIERARCHY&lt;/a&gt;
+          &lt;/h4&gt;
+        &lt;/div&gt;
+        &lt;div id="info_table_hierarchy" class="panel-collapse collapse"
+          role="tabpanel"&gt;
+          &lt;div class="panel-body"&gt;
+            &lt;p&gt;The table hierarchy tool allows you to view the hiearchy
+              of a table in an interactive view.&lt;/p&gt;
+            &lt;p&gt;Type in the name or label of a table you are interested
+              in and hit &lt;kbd&gt;Enter&lt;/kbd&gt;&lt;/p&gt;
+            &lt;p&gt;Navigate through the hierarchy (very useful for things
+              like cmdb_ci) and use handy links to open the list or
+              form view of any table.&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;div class="panel panel-default"&gt;
+        &lt;div class="panel-heading" role="tab"&gt;
+          &lt;h4 class="panel-title"&gt;
+            &lt;a href="#info_logs" role="button" data-toggle="collapse"
+              data-parent="#info_accordion"&gt;SYSTEM LOGS&lt;/a&gt;
+          &lt;/h4&gt;
+        &lt;/div&gt;
+        &lt;div id="info_logs" class="panel-collapse collapse" role="tabpanel"&gt;
+          &lt;div class="panel-body"&gt;
+            &lt;p&gt;The system log is now embedded into Xplore for easy access.&lt;/p&gt;
+            &lt;p class="alert alert-warning"&gt;Tip: Double-clicking the 'Logs' tab
+            will automatically reset the log window.&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;div class="panel panel-default"&gt;
+        &lt;div class="panel-heading" role="tab"&gt;
+          &lt;h4 class="panel-title"&gt;
+            &lt;a href="#info_tips" role="button" data-toggle="collapse"
+              data-parent="#info_accordion"&gt;TIPS&lt;/a&gt;
+          &lt;/h4&gt;
+        &lt;/div&gt;
+        &lt;div id="info_tips" class="panel-collapse collapse" role="tabpanel"&gt;
+          &lt;div class="panel-body"&gt;
+            &lt;h4&gt;Logging&lt;/h4&gt;
+            &lt;p&gt;Xplore supports capturing server messages using the
+              following native ServiceNow logging functions:&lt;/p&gt;
+            &lt;ul class="list-example"&gt;
+              &lt;li&gt;&lt;code&gt;gs.log("Hello world")&lt;/code&gt;&lt;/li&gt;
+              &lt;li&gt;&lt;code&gt;gs.print("Hello world")&lt;/code&gt;&lt;/li&gt;
+              &lt;li&gt;&lt;code&gt;gs.info("Hello world")&lt;/code&gt;&lt;/li&gt;
+              &lt;li&gt;&lt;code&gt;gs.warn("Hello world")&lt;/code&gt;&lt;/li&gt;
+              &lt;li&gt;&lt;code&gt;gs.error("Hello world")&lt;/code&gt;&lt;/li&gt;
+              &lt;li&gt;&lt;code&gt;gs.addInfoMessage("Hello world")&lt;/code&gt;&lt;/li&gt;
+              &lt;li&gt;&lt;code&gt;gs.addErrorMessage("Hello world")&lt;/code&gt;&lt;/li&gt;
+            &lt;/ul&gt;
+            &lt;p&gt;Some server exceptions result in the transaction being aborted by
+              ServiceNow which means you will have limited (if any) output.
+              Xplore helps with this by automatically retrieving
+              the session log statements that were generated up to the time of the error
+             (using the functions shown above) and showing them in the output pane.
+            &lt;/p&gt;
+
+            &lt;p&gt;Client side logs can be captured as well:&lt;/p&gt;
+            &lt;ul class="list-example"&gt;
+              &lt;li&gt;&lt;code&gt;jslog("Hello world")&lt;/code&gt;&lt;/li&gt;
+            &lt;/ul&gt;
+
+            &lt;h4&gt;Script Include&lt;/h4&gt;
+            &lt;p&gt;Xplore is based on a global Script Include that you can
+              run anywhere in ServiceNow.&lt;/p&gt;
+
+            &lt;h5&gt;snd_xplore(obj)&lt;/h5&gt;
+            &lt;p class="col-xs-12"&gt;Uses the default reporter to print everything using gs.print()&lt;/p&gt;
+
+            &lt;h5&gt;snd_xplore.lookAt(obj)&lt;/h5&gt;
+            &lt;p class="col-xs-12"&gt;Get an object containing the properties 'type' and
+              'value' of your object.&lt;/p&gt;
+
+            &lt;h5&gt;snd_xplore(obj, my_reporter)&lt;/h5&gt;
+            &lt;p class="col-xs-12"&gt;You can also write your own reporter to handle the output
+              of snd_xplore.
+              Check out the snd_xplore Script Include for the built in print_reporter
+              which works in both global and scoped apps. This page uses a custom
+              print reporter to generate JSON and package it all back to the client
+              over AJAX.&lt;/p&gt;
+
+            &lt;h5&gt;snd_xplore.test(obj)&lt;/h5&gt;
+            &lt;p class="col-xs-12"&gt;Sometimes when you are 'Xploring' an object, you
+              will come across properties that throw exceptions when you try to
+              read their value. You can bypass this property by updating the
+              Xplore Red List on the fly, or add the property to the
+              'redlist' array in the snd_xplore Script Include.&lt;/p&gt;
+
+            &lt;h5&gt;snd_xplore.blacklist('illegalProp')&lt;/h5&gt;
+            &lt;p class="col-xs-12"&gt;Blacklisted properties are those that throw illegal
+              access exceptions. ServiceNow don't even want you trying to access these,
+              let alone see their value. Xplore has a built in template to filter the
+              majority of these, but sometimes they will slip through. Bypass these
+              properties on the fly, or add the property to the 'blacklist' array
+              in the snd_xplore Script Include.&lt;/p&gt;
+
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+    &lt;/div&gt;&lt;!-- /info_accordion --&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="row"&gt;
+  &lt;pre style="font-size:10px; background: transparent; border: none; text-align: center;"&gt;
+                                                                77777
+                                                                7:::7
+                                                                7:::7
+                                                                7:::7
+  www.sndeveloper.com  777777777777777777           7777777777777:::7
+ 7::::::::::::::::::7  7:::::::::::::::::77       7:::::::::::::::::7
+7::::7777777777777777  7:::777777777777::::7     7::::77777777777:::7
+7:::7                  7:::7            7:::7   7:::7           7:::7
+7::::77777777777777    7:::7            7:::7  7:::7            7:::7
+ 7:::::::::::::::::7   7:::7            7:::7  7:::7            7:::7
+  77777777777777::::7  7:::7            7:::7  7:::7            7:::7
+                7:::7  7:::7            7:::7   7:::7           7:::7
+7777777777777777::::7  7:::7            7:::7    7::::77777777777:::7
+7::::::::::::::::::7   7:::7            7:::7     7:::::::::::::::::7
+7777777777777777777    77777            77777       77777777777777777
+  &lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;div class="row"&gt;
+  &lt;div class="col-xs-12"&gt;
+    &lt;p&gt;
+      Version: ${snd_xplore.version}. The UI client uses
+      &lt;a href="http://getbootstrap.com/" target="_blank"&gt;Bootstrap&lt;/a&gt;,
+      &lt;a href="http://jquery.com/" target="_blank"&gt;JQuery&lt;/a&gt;,
+      &lt;a href="http://codemirror.net/" target="_blank"&gt;CodeMirror&lt;/a&gt;,
+      &lt;a href="http://www.bootstraptoggle.com/"&gt;Bootstrap Toggle&lt;/a&gt;
+      and &lt;a href="http://github.com/google/code-prettify"&gt;Google Code-Prettify&lt;/a&gt;.
+    &lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;/j:jelly&gt;]]&gt;&lt;/xml&gt;&lt;/sys_ui_macro&gt;&lt;/record_update&gt;</payload>
+<remote_update_set display_value="Xplore - 3.6">836cf8e70f4b1a0094f3c09ce1050e14</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>james@sndeveloper.com</sys_created_by>
+<sys_created_on>2016-05-03 18:11:29</sys_created_on>
+<sys_id>cb6cf8e70f4b1a0094f3c09ce1050e14</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>james@sndeveloper.com</sys_updated_by>
+<sys_updated_on>2016-05-03 18:11:29</sys_updated_on>
+<table/>
+<target_name>snd_xplore_info</target_name>
+<type>Macro</type>
+<update_domain>global                          </update_domain>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</application>
+<category>customer</category>
+<comments/>
+<name>sys_ui_script_c9abed770f2a820094f3c09ce1050e7f</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script"><sys_ui_script action="INSERT_OR_UPDATE"><active>true</active><description>The HTML Reporter for the Xplore UI</description><global>false</global><name>snd_xplore_reporter</name><script>var snd_xplore_reporter = (function () {&#13;
+&#13;
+  var showMoreButton = '&lt;button class="btn btn-xs btn-warning show-more" ' +&#13;
+      'data-show-more="false"&gt;Show&lt;/button&gt;';&#13;
+&#13;
+  function setDescription(table, result) {&#13;
+    var type = result.type ? result.type : '[UNKNOWN]';&#13;
+    table.empty().&#13;
+    append('&lt;tr&gt;&lt;th class="col-md-1"&gt;Type&lt;/th&gt;&lt;td class="col-md-11"&gt;' + type +&#13;
+        '&lt;/td&gt;&lt;/tr&gt;');&#13;
+    if (!result.string) result.string = "";&#13;
+    if (result.string.length &lt; 100) {&#13;
+      table.append('&lt;tr&gt;&lt;th class="col-md-1"&gt;String&lt;/th&gt;&lt;td class="col-md-11"&gt;' +&#13;
+          showAsString(lineBreaks(escapeHtml(result.string))) + '&lt;/td&gt;&lt;/tr&gt;');&#13;
+    } else {&#13;
+      table.append('&lt;tr&gt;&lt;th class="col-md-1"&gt;String&lt;/th&gt;&lt;td class="col-md-11"&gt;' +&#13;
+          showMoreButton + '&lt;/td&gt;&lt;/tr&gt;');&#13;
+      table.append('&lt;tr class="data-more hidden"&gt;&lt;td colspan="2"&gt;' +&#13;
+          '&lt;pre class="prettyprint linenums"&gt;' + escapeHtml(result.string) +&#13;
+          '&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;');&#13;
+    }&#13;
+  }&#13;
+&#13;
+  function setResults(table, result) {&#13;
+    table.prepend('&lt;tr&gt;' +&#13;
+        '&lt;th class="col-md-3"&gt;Name&lt;/th&gt;' +&#13;
+        '&lt;th class="col-md-3"&gt;Type&lt;/th&gt;' +&#13;
+        '&lt;th class="col-md-6"&gt;String&lt;/th&gt;&lt;/tr&gt;');&#13;
+    $.each(result, function (i, item) {&#13;
+      var prop = '&lt;a href="javascript:void(0)" class="interactive"&gt;' + item.name + '&lt;/a&gt;';&#13;
+      if (item.type.toLowerCase() === 'function') {&#13;
+        prop += ' &lt;a href="javascript:void(0)" class="interactive"&gt;&lt;span class="hidden"&gt;' +&#13;
+            item.name + '&lt;/span&gt;()&lt;/a&gt;';&#13;
+      }&#13;
+      if (!item.string) item.string = "";&#13;
+      if (item.string.length &lt; 100 &amp;&amp; (item.type.toLowerCase() != 'function' ||&#13;
+          !item.string.length ||&#13;
+          item.string.substr(0,8) != 'function')) {&#13;
+        table.append('&lt;tr class="data-row"&gt;' +&#13;
+          '&lt;td class="col-md-3 prop"&gt;' + prop + '&lt;/td&gt;' +&#13;
+          '&lt;td class="col-md-3 type"&gt;' + item.type + '&lt;/td&gt;' +&#13;
+          '&lt;td class="classol-md-6 str"&gt;' + showAsString(escapeHtml(item.string)) + '&lt;/td&gt;' +&#13;
+        '&lt;/tr&gt;');&#13;
+      } else {&#13;
+        table.append('&lt;tr class="data-row"&gt;' +&#13;
+          '&lt;td class="col-md-3 prop"&gt;' + prop + '&lt;/td&gt;' +&#13;
+          '&lt;td class="col-md-3 type"&gt;' + item.type + '&lt;/td&gt;' +&#13;
+          '&lt;td class="col-md-6"&gt;' + showMoreButton + '&lt;/td&gt;' +&#13;
+        '&lt;/tr&gt;');&#13;
+        table.append('&lt;tr class="data-more hidden"&gt;' +&#13;
+          '&lt;td colspan="3" class="str"&gt;&lt;pre class="prettyprint linenums"&gt;' + escapeHtml(item.string) + '&lt;/pre&gt;&lt;/td&gt;' +&#13;
+        '&lt;/tr&gt;');&#13;
+      }&#13;
+    });&#13;
+  }&#13;
+&#13;
+  function displayResults(result, options) {&#13;
+&#13;
+    displayOutputMessages(result.messages, options.html_messages);&#13;
+&#13;
+    displayLogs(result.logs);&#13;
+&#13;
+    setDescription($('#description_table'), result);&#13;
+&#13;
+    var resultTable = $('#results_table');&#13;
+    resultTable.empty().append('&lt;tr id="no_props" class="hidden"&gt;&lt;td colspan="3"&gt;' +&#13;
+        'No properties to display.&lt;/td&gt;&lt;/tr&gt;');&#13;
+&#13;
+    result.report.sort(function (a, b) {&#13;
+      var ai = parseInt(a.name, 10);&#13;
+      var bi = parseInt(b.name, 10);&#13;
+      if (ai &gt; bi) return 1;&#13;
+      if (bi &gt; ai) return -1;&#13;
+      if (a.name &gt; b.name) return 1;&#13;
+      if (b.name &gt; a.name) return -1;&#13;
+      return 0;&#13;
+    });&#13;
+&#13;
+    if (result.report.length) {&#13;
+      setResults(resultTable, result.report);&#13;
+    } else {&#13;
+      $('#no_props').removeClass('hidden');&#13;
+    }&#13;
+&#13;
+    showTypes();&#13;
+&#13;
+    $('#result_container').toggleClass('hidden', !(result.type || result.report.length));&#13;
+  }&#13;
+&#13;
+  function displayOutputMessages(messages, asHtml) {&#13;
+    var target = $('#message_table'),&#13;
+        classMap = {&#13;
+          'info': 'info',&#13;
+          'error': 'danger',&#13;
+          'access': 'warning',&#13;
+          'log': 'log',&#13;
+          '-1': 'log',&#13;
+          '0': 'info',&#13;
+          '1': 'warning',&#13;
+          '2': 'danger'&#13;
+        },&#13;
+        temp;&#13;
+&#13;
+    target.empty();&#13;
+    if (!messages) {&#13;
+      return;&#13;
+    }&#13;
+    for (var i = 0, m; i &lt; messages.length; i++) {&#13;
+      m = messages[i];&#13;
+      temp = m.v.toString();&#13;
+      if (!asHtml) {&#13;
+        temp = escapeHtml(temp);&#13;
+      }&#13;
+      target.append('&lt;tr&gt;&lt;td class="' + classMap[m.t] + '"&gt;' +&#13;
+          temp.replace('\n', '&lt;br&gt;') + '&lt;/td&gt;&lt;/tr&gt;');&#13;
+    }&#13;
+    $('#message_container').toggleClass('hidden', !i);&#13;
+  }&#13;
+&#13;
+  function htmlPre(text) {&#13;
+    return text.replace(/\n(\s*)/g, function (a, b) {&#13;
+      return '&lt;br /&gt;' + new Array(b.length + 1).join('&amp;nbsp;');&#13;
+    });&#13;
+  }&#13;
+&#13;
+  function displayLogs(logs) {&#13;
+    var table = $('#log_table');&#13;
+    var classMap = {&#13;
+      'Warning': 'warning',&#13;
+      'Error': 'danger'&#13;
+    };&#13;
+    table.empty();&#13;
+    if (!logs) {&#13;
+      return;&#13;
+    }&#13;
+&#13;
+    table.prepend('&lt;tr&gt;' +&#13;
+      '&lt;th class="col-md-2"&gt;Level&lt;/th&gt;' +&#13;
+      '&lt;th class="col-md-2"&gt;Date&lt;/th&gt;' +&#13;
+      '&lt;th class="col-md-6"&gt;Value&lt;/th&gt;' +&#13;
+      '&lt;th class="col-md-2"&gt;User&lt;/th&gt;&lt;/tr&gt;');&#13;
+&#13;
+    $.each(logs, function (i, log) {&#13;
+      var className = classMap[log.level];&#13;
+      table.append('&lt;tr class="data-row text' + className + '"&gt;' +&#13;
+          '&lt;td class="col-md-2 ' + className + '"&gt;' + log.level + '&lt;/td&gt;' +&#13;
+          '&lt;td class="col-md-2 ' + className + '"&gt;' + log.created + '&lt;/td&gt;' +&#13;
+          '&lt;td class="col-md-6 ' + className + '"&gt;' + htmlPre(escapeHtml(log.message)) + '&lt;/td&gt;' +&#13;
+          '&lt;td class="col-md-2 ' + className + '"&gt;' + log.source + '&lt;/td&gt;' +&#13;
+        '&lt;/tr&gt;');&#13;
+    });&#13;
+    $('#log_container').toggleClass('hidden', !logs.length);&#13;
+  }&#13;
+&#13;
+  function showTypes() {&#13;
+    var target = $('#type_control');&#13;
+    var show_types = {};&#13;
+    var show_all = false;&#13;
+&#13;
+    target.empty();&#13;
+&#13;
+    // find which checkboxes to display&#13;
+    $('#results_table tr')&#13;
+        .find('td.type')&#13;
+        .each(function () {&#13;
+          var type = $(this).text();&#13;
+          if (typeof display_types[type] === 'undefined') {&#13;
+            display_types[type] = true; // default to being checked&#13;
+          }&#13;
+          show_types[type] = display_types[type];&#13;
+          show_all = true;&#13;
+        });&#13;
+&#13;
+    if (show_all) {&#13;
+      target.append('&lt;label class="checkbox-inline no_indent"&gt;' +&#13;
+        '&lt;input type="checkbox" id="show_all" value="all" checked="checked" /&gt;' +&#13;
+        'All&lt;/label&gt;');&#13;
+    }&#13;
+&#13;
+    $.each(show_types, function (type) {&#13;
+      id = '' + type.replace(/\./g, '_');&#13;
+      target.append('&lt;label class="checkbox-inline no_indent"&gt;' +&#13;
+        '&lt;input type="checkbox" id="show_' + id + '" value="' + type + '" /&gt;' +&#13;
+        type + '&lt;/label&gt;');&#13;
+      $('#show_' + id).prop('checked', display_types[type]);&#13;
+    });&#13;
+&#13;
+    updateResultTypes();&#13;
+    updateResults();&#13;
+  }&#13;
+&#13;
+  function updateResultTypes(setAll) {&#13;
+    var isShowAllChecked = true;&#13;
+    var checkboxes = $('#type_control input[type=checkbox]');&#13;
+&#13;
+    if (typeof setAll === 'undefined') {&#13;
+      checkboxes.each(function (i) {&#13;
+        if (!i) return; // ignore show_all at 0&#13;
+        display_types[this.value] = this.checked;&#13;
+        isShowAllChecked = isShowAllChecked &amp;&amp; this.checked;&#13;
+      });&#13;
+      $('#show_all').prop('checked', isShowAllChecked);&#13;
+    } else {&#13;
+      checkboxes.each(function () {&#13;
+        $(this).prop('checked', setAll);&#13;
+        display_types[this.value] = setAll;&#13;
+      });&#13;
+    }&#13;
+&#13;
+    checkboxes.each(function (i) {&#13;
+      if (!i) return;&#13;
+      $(this).parent().&#13;
+        toggleClass('bg-success text-success', display_types[this.value]).&#13;
+        toggleClass('bg-danger text-danger', !display_types[this.value]);&#13;
+    });&#13;
+&#13;
+  }&#13;
+&#13;
+  function updateResults() {&#13;
+    var isShowingProps = false;&#13;
+    $('#results_table tr.data-row').each(function () {&#13;
+&#13;
+      $this = $(this);&#13;
+      var value = $this.find('td.type').text();&#13;
+      $this.toggleClass('hidden', !display_types[value]);&#13;
+&#13;
+      // show/hide the more info row&#13;
+      var next = $this.next();&#13;
+      if (next.hasClass('data-more')) {&#13;
+        var state = $this.find('button.show-more').attr('data-show-more');&#13;
+        next.toggleClass('hidden', !(display_types[value] &amp;&amp; state != 'false'));&#13;
+      }&#13;
+&#13;
+      isShowingProps = isShowingProps || display_types[value];&#13;
+    });&#13;
+    $('#no_props').toggleClass('hidden', isShowingProps);&#13;
+  }&#13;
+&#13;
+  function showAsString(str) {&#13;
+    return '&amp;quot;&lt;span class="text-danger"&gt;' + str + '&lt;/span&gt;&amp;quot;';&#13;
+  }&#13;
+&#13;
+  var escapeHtml = (function () {&#13;
+    var entityMap = {&#13;
+      "&amp;": "&amp;amp;",&#13;
+      "&lt;": "&amp;lt;",&#13;
+      "&gt;": "&amp;gt;",&#13;
+      '"': '&amp;quot;',&#13;
+      "'": '&amp;#39;',&#13;
+      "/": '&amp;#x2F;'&#13;
+    };&#13;
+    return function (string) {&#13;
+      return String(string).replace(/[&amp;&lt;&gt;"'\/]/g, function (s) {&#13;
+        return entityMap[s];&#13;
+      });&#13;
+    };&#13;
+  })();&#13;
+&#13;
+  function lineBreaks(text) {&#13;
+    return text.toString().trim().replace(/\n/g, '&lt;br /&gt;');&#13;
+  }&#13;
+&#13;
+  var breadcrumbs = [];&#13;
+  var display_types = {};&#13;
+  var events = {};&#13;
+&#13;
+  function SndXploreReporter() {&#13;
+&#13;
+    this.addEvent = function (name, fn) {&#13;
+      if (typeof events[name] !== 'object') {&#13;
+        events[name] = [];&#13;
+      }&#13;
+      events[name].push(fn);&#13;
+    };&#13;
+&#13;
+    this.fireEvent = function (name, scope, args) {&#13;
+      var eventArr = typeof events[name] === 'object' ? events[name] : null;&#13;
+      if (!eventArr) return;&#13;
+      for (var i = 0; i &lt; eventArr.length; i++) {&#13;
+        if (typeof eventArr[i] === 'function') {&#13;
+          eventArr[i].apply(scope || this, args);&#13;
+        }&#13;
+      }&#13;
+    };&#13;
+&#13;
+    this.initialize = function () {&#13;
+&#13;
+      var sxr = this;&#13;
+&#13;
+      $('#results_table,#description_table').on('click', '.show-more', function () {&#13;
+        // summary:&#13;
+        //   Handle the 'Show...' button click for a result&#13;
+&#13;
+        var $this = $(this);&#13;
+        var target = $this.parents('tr').next();&#13;
+        var doHide = $this.attr('data-show-more') != 'false';&#13;
+&#13;
+        target.toggleClass('hidden', doHide);&#13;
+        $this.text(doHide ? 'Show' : 'Hide');&#13;
+        $this.toggleClass('active', !doHide);&#13;
+        $this.attr('data-show-more', doHide ? 'false' : 'true');&#13;
+&#13;
+      });&#13;
+&#13;
+      $('#results_table').on('click', 'a.interactive', function () {&#13;
+        // summary:&#13;
+        //   Make property names interactive so we can dive into an object&#13;
+&#13;
+&#13;
+        var $breadcrumb = $('ul#breadcrumb');&#13;
+        var pos = breadcrumbs.length - 1;&#13;
+        var text = $(this).text();&#13;
+&#13;
+        // make the last breadcrumb active&#13;
+        if (breadcrumbs.length) {&#13;
+          $breadcrumb.children().remove(':last');&#13;
+          $breadcrumb.append('&lt;li&gt;&lt;a href="javascript:void(0)" id="breadcrumb_' +&#13;
+              pos + '"&gt;' + breadcrumbs[pos] + '&lt;/a&gt;&lt;/li&gt;');&#13;
+        }&#13;
+&#13;
+        // add the new last breadcrumb&#13;
+        $breadcrumb&#13;
+            .append('&lt;li&gt;' + text + '&lt;/li&gt;')&#13;
+            .removeClass('hidden');&#13;
+&#13;
+        breadcrumbs.push(text);&#13;
+&#13;
+        sxr.fireEvent('click.interactive-result', this);&#13;
+      });&#13;
+&#13;
+      $('ul#breadcrumb').on('click', 'a', function () {&#13;
+        // summary:&#13;
+        //   add the event handler for clicking on a breadcrumb to remove it&#13;
+&#13;
+        var $breadcrumb = $('ul#breadcrumb');&#13;
+&#13;
+        // remove unnecessary breadcrumb elements&#13;
+        var pos = parseInt(this.id.split('_')[1], 10);&#13;
+        var removeCount = breadcrumbs.length - 1 - pos;&#13;
+        if (removeCount) {&#13;
+&#13;
+          // remove all the nodes, including this one&#13;
+          $breadcrumb&#13;
+            .find('li:nth-last-child(-n+' + (removeCount + 1) + '):not(.permanent)')&#13;
+            .remove();&#13;
+&#13;
+          // update the breadcrumb array&#13;
+          breadcrumbs = breadcrumbs.&#13;
+              slice(0, $breadcrumb.children(':not(.permanent)').size() + 1);&#13;
+&#13;
+          // re-add this node as a non-anchored breadcrumb&#13;
+          if (breadcrumbs.length) {&#13;
+            $breadcrumb.append('&lt;li&gt;' + breadcrumbs[breadcrumbs.length - 1] + '&lt;/li&gt;');&#13;
+          }&#13;
+&#13;
+          $breadcrumb.toggleClass('hidden', !breadcrumbs.length);&#13;
+          sxr.fireEvent('click.breadcrumb', this);&#13;
+        }&#13;
+      });&#13;
+&#13;
+      $('#type_control').on('change', 'input[type=checkbox]', function () {&#13;
+        // summary:&#13;
+        //   restrict the results based on the type checkboxes that are checked&#13;
+&#13;
+        if (this.id == 'show_all') {&#13;
+          updateResultTypes(this.checked);&#13;
+        } else {&#13;
+          updateResultTypes();&#13;
+        }&#13;
+&#13;
+        updateResults();&#13;
+      });&#13;
+    };&#13;
+&#13;
+    this.start = function (params) {&#13;
+      this.options = params;&#13;
+      this.fireEvent('start', null, [params]);&#13;
+    };&#13;
+&#13;
+    this.done = function (result) {&#13;
+      var target = $('#results');&#13;
+      target.empty();&#13;
+      displayResults(result, this.options);&#13;
+      this.fireEvent('done', null, [result]);&#13;
+    };&#13;
+&#13;
+    this.getBreadcrumb = function () {&#13;
+      return breadcrumbs.join('.');&#13;
+    };&#13;
+&#13;
+    this.clearBreadcrumb = function () {&#13;
+      breadcrumbs.length = 0;&#13;
+      $('ul#breadcrumb').addClass('hidden').find('li:not(.permanent)').remove();&#13;
+    };&#13;
+&#13;
+  }&#13;
+&#13;
+  return new SndXploreReporter();&#13;
+}());&#13;
+</script><script_name/><sys_class_name>sys_ui_script</sys_class_name><sys_created_by>james@snd</sys_created_by><sys_created_on>2015-09-23 23:34:14</sys_created_on><sys_customer_update>true</sys_customer_update><sys_id>c9abed770f2a820094f3c09ce1050e7f</sys_id><sys_mod_count>120</sys_mod_count><sys_name>snd_xplore_reporter</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_replace_on_upgrade>false</sys_replace_on_upgrade><sys_scope display_value="Xplore">0f6ab99a0f36060094f3c09ce1050ee8</sys_scope><sys_update_name>sys_ui_script_c9abed770f2a820094f3c09ce1050e7f</sys_update_name><sys_updated_by>james@sndeveloper.com</sys_updated_by><sys_updated_on>2016-03-15 11:36:54</sys_updated_on><use_scoped_format>false</use_scoped_format></sys_ui_script></record_update>]]></payload>
+<remote_update_set display_value="Xplore - 3.6">836cf8e70f4b1a0094f3c09ce1050e14</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>james@sndeveloper.com</sys_created_by>
+<sys_created_on>2016-05-03 18:11:29</sys_created_on>
+<sys_id>cf6cf8e70f4b1a0094f3c09ce1050e14</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>james@sndeveloper.com</sys_updated_by>
+<sys_updated_on>2016-05-03 18:11:29</sys_updated_on>
+<table/>
+<target_name>snd_xplore_reporter</target_name>
+<type>UI Script</type>
+<update_domain>global                          </update_domain>
 <update_set display_value=""/>
 <view/>
 </sys_update_xml>

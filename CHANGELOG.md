@@ -4,7 +4,15 @@ Created by @James_Neale <james@sndeveloper.com>
 
 ### Version 3.6 (G3.0.4)
 - Feature: Output wrapping controlled by setting. Defaulted to wrap.
-- Change: Improved Settings pane.
+- Feature: New side pane: Script Include importer.
+- UI: Improved Settings pane.
+- UI: Made setting panes overlay script editor instead of shrink it.
+- UI: Updated Share link so it doesn't point to an old version.
+- UI: Added additional Table Hierarchy link.
+- Fix: Set default wrapping for long text to match the checkbox setting.
+- Fix: user_data object now works in scoped scripts on the source instance.
+- Tested in Helsinki.
+
 
 ### Version 3.5 (G3.0.3)
 - Feature: Prettify code in output pane.
