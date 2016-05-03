@@ -4,7 +4,7 @@ Created by [@James_Neale](https://twitter.com/@James_Neale) <james@sndeveloper.c
 
 ## Install Notes:
 Download the update set from
- [Share](https://share.servicenow.com/app.do#/detailV2/c42105f2e1581a007c390227ffa71e61/overview)
+ [Share](https://share.servicenow.com/app.do#/search-result?search_query=sndeveloper&startRow=NaN&sort_parameter=title)
  and install to your instance.
 
 _Downloading from Share should mean you receive notifications when an update is made._
