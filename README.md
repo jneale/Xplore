@@ -1,5 +1,5 @@
-# ![Xplore logo](readme-assets/xplore-icon-48.png) *Xplore*
-A toolkit for every ServiceNow developer. Find more at [www.sndeveloper.com](www.sndeveloper.com).
+# ![Xplore logo](readme-assets/xplore-icon-48.png) Xplore
+A toolkit for every ServiceNow developer.
 
 ## Install Notes:
 Download the update set from
@@ -40,7 +40,7 @@ capturing log messages and showing them to you.
 
 ## Regular Expressions
 
-Everyone loves regular expressions. What do you mean, you don't?  \
+Everyone loves regular expressions. What do you mean, you don't?
 Regardless, the utility built in *Xplore* will help you out and make it much easier
 to do string matching and replacement without falling back on using substring methods.
 
