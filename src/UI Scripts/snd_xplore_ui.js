@@ -321,8 +321,8 @@ var snd_xplore_table_util = (function () {
       url: '/snd_xplore.do?action=getTables',
       dataType: 'json'
     }).
-    done(function (result) {
-      api.tables = result;
+    done(function (data) {
+      api.tables = data.result;
     }).
     fail(function () {
       snd_log('Error: loadTables failed.');
@@ -340,7 +340,8 @@ var snd_xplore_table_util = (function () {
             '&search_labels=' + (search_labels ? '1' : '0'),
       dataType: 'json'
     }).
-    done(function (result) {
+    done(function (data) {
+      var result = data.result;
       var $target = $('#table_hierarchy_result').empty();
 
       if ('success' in result && result.success === false) {
@@ -474,7 +475,8 @@ var snd_script_search_util = (function () {
       url: '/snd_xplore.do?action=getScript&sys_id=' + sys_id,
       dataType: 'json'
     }).
-    done(function (result) {
+    done(function (data) {
+      var result = data.result;
       var old = snd_xplore_editor.getValue();
 
       if (old) {
@@ -511,10 +513,10 @@ var snd_script_search_util = (function () {
       url: '/snd_xplore.do?action=getScripts',
       dataType: 'json'
     }).
-    done(function (result) {
-      api.records = result;
+    done(function (data) {
+      api.records = data.result;
       $list.empty();
-      $.each(result, function (i, item) {
+      $.each(api.records, function (i, item) {
         var scope = item.$sys_scope == 'Global' ? '' : ' (' + item.$sys_scope + ')';
         $list.append($('<li>' +
           '<span class="script-link script-name" data-sys-id="' + item.sys_id + '">' +
@@ -649,9 +651,9 @@ $(function () {
       url: '/snd_xplore.do?action=getScopes',
       dataType: 'json'
     }).
-    done(function (result) {
+    done(function (data) {
         $scope.empty();
-        $.each(result, function (i, item) {
+        $.each(data.result, function (i, item) {
           $scope.append($('<option value="' + item.scope + '">' + item.name + '</option>'));
         });
     }).

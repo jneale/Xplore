@@ -3,6 +3,9 @@
 ------------------------------------------------------*/
 var snd_xplore = (function () {
 
+  // load the snd_Xplore script include in the browser - it works in both
+  $.getScript('?ui_script');
+
   function run(params) {
     // summary:
     //   Run some code and send the results to the reporter
@@ -33,7 +36,7 @@ var snd_xplore = (function () {
     // params: Object
     //   An instruction object
 
-    var result = psuedoResult();
+    var report = psuedoResult();
     var target = findTarget(params.runAt);
 
     // spoof ServiceNow's jslog function
@@ -50,63 +53,25 @@ var snd_xplore = (function () {
       } else {
         msg = timestamp + ': ' + msg;
       }
-      message(result, 'log', msg);
+      message(report, 'log', msg);
     };
-
-    var getType = (function () {
-      var toStr = Object.prototype.toString;
-      return function (o) {
-        var type = toStr.call(o).split(' ').pop();
-        return type.substr(0, type.length - 1);
-      };
-    }());
 
     if (target) {
       try {
         window.user_data = params.user_data;
         var eResult = target.eval(params.code);
 
-        if (params.breadcrumb) {
-          eResult = dotwalk(eResult, params.breadcrumb);
-        }
-
-        result.type = getType(eResult);
-        result.string = '' + eResult;
-
-        if (params.show_props) {
-          for (var x in eResult) {
-            result.report.push({
-              name: x,
-              type: getType(eResult[x]),
-              string: params.show_strings ? '' + eResult[x] : '[user ignored]'
-            });
-          }
-        }
-
+        params.dotwalk = params.breadcrumb;
+        var x = new snd_Xplore();
+        x.xplore(eResult, 'snd_Xplore.ObjectReporter', params);
+        report = x.reporter.getReport();
       } catch (e) {
-        message(result, 'error', e);
+        message(report, 'error', e);
       }
     }
 
     target.jslog = _jslog;
-    params.reporter.done(result);
-
-    function dotwalk(obj, path) {
-      // summary:
-      //   Dotwalk a path on an object
-
-      var pathArr = path.split('.');
-      var o = obj;
-      for (var i = 0; i < pathArr.length; i++) {
-        path = pathArr[i];
-        if (path.indexOf('()') > 0) {
-          o = o[path.substr(0, path.length - 2)]();
-        } else {
-          o = o[path];
-        }
-      }
-      return o;
-    }
+    params.reporter.done(report);
 
     function findTarget(runAt) {
       // summary:
@@ -157,15 +122,16 @@ var snd_xplore = (function () {
       },
       dataType: "json"
     })
-    .done(function (result) {
-      if (!result) {
+    .done(function (data) {
+      var result;
+      if (!data || !data.result) {
         result = psuedoResult();
         message(result, 'error', 'The server did not return a result. This is likely because' +
             ' of an uncatchable error. Please check the node logs for the possibility' +
             ' of further information if you are unsure of the cause.');
         enrichWithLogs(result);
       } else {
-        params.reporter.done(result);
+        params.reporter.done(data.result);
       }
     })
     .fail(function (xhr) {
@@ -174,7 +140,8 @@ var snd_xplore = (function () {
         url: '/snd_xplore.do?action=logs',
         dataType: 'json'
       })
-      .done(function (result) {
+      .done(function (data) {
+        var result = data.result;
         if (xhr.responseText) {
           message(result, '1', xhr.responseText); // 1 = warning
         } else {
@@ -198,7 +165,7 @@ var snd_xplore = (function () {
     return {
       type: '',
       string: '',
-      report: [],
+      results: [],
       messages: []
     };
   }
@@ -210,8 +177,8 @@ var snd_xplore = (function () {
     // value: string
 
     result.messages.push({
-      t: '' + type,
-      v: '' + value
+      type: '' + type,
+      message: '' + value
     });
   }
 
@@ -422,8 +389,8 @@ snd_xplore.regex = (function () {
         },
         dataType: "json"
       }).
-      done(function (result) {
-        displayRegexResult(result);
+      done(function (data) {
+        displayRegexResult(data.result);
       }).
       fail(function (xhr, status) {
         if (status != 'abort') {

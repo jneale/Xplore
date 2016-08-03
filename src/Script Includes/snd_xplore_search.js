@@ -167,7 +167,7 @@ function snd_xploreSearch(search, options) {
         result += '    - `' + m[0].trim() + '`\n';
       }
       return result;
-    };
+    }
 
     var str = '# Search results for "' + search + '"\n\n';
     forEach(results, function (result) {

@@ -1,21 +1,20 @@
 var snd_xplore_reporter = (function () {
 
-  var showMoreButton = '<button class="btn btn-xs btn-warning show-more" ' +
-      'data-show-more="false">Show</button>';
+  var showMoreButton = '<button class="btn btn-xs btn-link show-more" ' +
+      'data-show-more="false"><span class="glyphicon glyphicon-expand"></span> Show</button>';
 
   function setDescription(table, result) {
-    var type = result.type ? result.type : '[UNKNOWN]';
+    var type = result.type ? result.type : '*UNKNOWN*';
     table.empty().
     append('<tr><th class="col-md-1">Type</th><td class="col-md-11">' + type +
         '</td></tr>');
     if (!result.string) result.string = "";
-    if (result.string.length < 100) {
-      table.append('<tr><th class="col-md-1">String</th><td class="col-md-11">' +
-          showAsString(lineBreaks(escapeHtml(result.string))) + '</td></tr>');
+    if (result.string.length < 100 && result.string.indexOf('\n') == '-1') {
+      table.append('<tr><th class="col-md-1">Value</th><td class="col-md-11">' +
+          lineBreaks(prettyPrint(escapeHtml(result.string))) + '</td></tr>');
     } else {
-      table.append('<tr><th class="col-md-1">String</th><td class="col-md-11">' +
-          showMoreButton + '</td></tr>');
-      table.append('<tr class="data-more hidden"><td colspan="2">' +
+      //table.append('<tr><th class="col-md-1">Value</th><td class="col-md-11">&nbsp;</td></tr>');
+      table.append('<tr class="data-more"><td colspan="2">' +
           '<pre class="prettyprint linenums">' + escapeHtml(result.string) +
           '</pre></td></tr>');
     }
@@ -25,7 +24,7 @@ var snd_xplore_reporter = (function () {
     table.prepend('<tr>' +
         '<th class="col-md-3">Name</th>' +
         '<th class="col-md-3">Type</th>' +
-        '<th class="col-md-6">String</th></tr>');
+        '<th class="col-md-6">Value</th></tr>');
     $.each(result, function (i, item) {
       var prop = '<a href="javascript:void(0)" class="interactive">' + item.name + '</a>';
       if (item.type.toLowerCase() === 'function') {
@@ -33,22 +32,22 @@ var snd_xplore_reporter = (function () {
             item.name + '</span>()</a>';
       }
       if (!item.string) item.string = "";
-      if (item.string.length < 100 && (item.type.toLowerCase() != 'function' ||
-          !item.string.length ||
-          item.string.substr(0,8) != 'function')) {
-        table.append('<tr class="data-row">' +
-          '<td class="col-md-3 prop">' + prop + '</td>' +
-          '<td class="col-md-3 type">' + item.type + '</td>' +
-          '<td class="classol-md-6 str">' + showAsString(escapeHtml(item.string)) + '</td>' +
-        '</tr>');
-      } else {
+      if (item.string.length && (item.string.length >= 100 ||
+          item.type.toLowerCase() == 'function' ||
+          item.string.substr(0,8) == 'function')) {
         table.append('<tr class="data-row">' +
           '<td class="col-md-3 prop">' + prop + '</td>' +
           '<td class="col-md-3 type">' + item.type + '</td>' +
           '<td class="col-md-6">' + showMoreButton + '</td>' +
         '</tr>');
         table.append('<tr class="data-more hidden">' +
-          '<td colspan="3" class="str"><pre class="prettyprint linenums">' + escapeHtml(item.string) + '</pre></td>' +
+          '<td colspan="3" class="val"><pre class="prettyprint linenums">' + escapeHtml(item.string) + '</pre></td>' +
+        '</tr>');
+      } else {
+        table.append('<tr class="data-row">' +
+          '<td class="col-md-3 prop">' + prop + '</td>' +
+          '<td class="col-md-3 type">' + item.type + '</td>' +
+          '<td class="classol-md-6 val">' + prettyPrint(escapeHtml(item.string)) + '</td>' +
         '</tr>');
       }
     });
@@ -66,7 +65,7 @@ var snd_xplore_reporter = (function () {
     resultTable.empty().append('<tr id="no_props" class="hidden"><td colspan="3">' +
         'No properties to display.</td></tr>');
 
-    result.report.sort(function (a, b) {
+    result.results.sort(function (a, b) {
       var ai = parseInt(a.name, 10);
       var bi = parseInt(b.name, 10);
       if (ai > bi) return 1;
@@ -76,15 +75,15 @@ var snd_xplore_reporter = (function () {
       return 0;
     });
 
-    if (result.report.length) {
-      setResults(resultTable, result.report);
+    if (result.results.length) {
+      setResults(resultTable, result.results);
     } else {
       $('#no_props').removeClass('hidden');
     }
 
     showTypes();
 
-    $('#result_container').toggleClass('hidden', !(result.type || result.report.length));
+    $('#result_container').toggleClass('hidden', !(result.type || result.results.length));
   }
 
   function displayOutputMessages(messages, asHtml) {
@@ -107,11 +106,11 @@ var snd_xplore_reporter = (function () {
     }
     for (var i = 0, m; i < messages.length; i++) {
       m = messages[i];
-      temp = m.v.toString();
+      temp = m.message;
       if (!asHtml) {
         temp = escapeHtml(temp);
       }
-      target.append('<tr><td class="' + classMap[m.t] + '">' +
+      target.append('<tr><td class="' + classMap[m.type] + '">' +
           temp.replace('\n', '<br>') + '</td></tr>');
     }
     $('#message_container').toggleClass('hidden', !i);
@@ -236,8 +235,28 @@ var snd_xplore_reporter = (function () {
     $('#no_props').toggleClass('hidden', isShowingProps);
   }
 
-  function showAsString(str) {
-    return '&quot;<span class="text-danger">' + str + '</span>&quot;';
+  // use the same class names as Google Code-Prettify
+  var pretty_str_match = /^&#39;.+&#39;$|^&quot;.+&quot;$/g;
+  var pretty_str_match2 = /&#39;.+?&#39;|&quot;.+?&quot;/g;
+  function prettyPrint(str) {
+    // handle strings and string with additional info
+    if (str.match(pretty_str_match)) {
+      return str.replace(pretty_str_match, function (m) {
+        return '<span class="str">' + m + '</span>';
+      });
+    }
+    if (str.match(pretty_str_match2)) {
+      return str.replace(pretty_str_match2, function (m) {
+        return '<span class="str">' + m + '</span>';
+      });
+    }
+    if (str.match(/^[0-9.]+$/)) {
+      return '<span class="lit">' + str + '</span>';
+    }
+    if ('null,undefined,true,false'.indexOf(str) > -1) {
+      return '<span class="kwd">' + str + '</span>';
+    }
+    return str;
   }
 
   var escapeHtml = (function () {
@@ -295,8 +314,11 @@ var snd_xplore_reporter = (function () {
         var target = $this.parents('tr').next();
         var doHide = $this.attr('data-show-more') != 'false';
 
+        var show = '<span class="glyphicon glyphicon-expand"></span> Show';
+        var hide = '<span class="glyphicon glyphicon-collapse-up"></span> Hide';
+
         target.toggleClass('hidden', doHide);
-        $this.text(doHide ? 'Show' : 'Hide');
+        $this.html(doHide ? show : hide);
         $this.toggleClass('active', !doHide);
         $this.attr('data-show-more', doHide ? 'false' : 'true');
 
