@@ -10,8 +10,6 @@ A toolkit for every ServiceNow developer. Find more at www.sndeveloper.com.
   GlideElement types.
 * Minor UI modifications.
 * Added icon.
-* Better pretty printing - including intelligent printing for GlideRecord and
-  GlideElements.
 
 ### Version 3.6 (G5.0.1)
 * Feature: Output wrapping controlled by setting. Defaulted to wrap.
