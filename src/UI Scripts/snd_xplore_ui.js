@@ -634,8 +634,12 @@ $(function () {
       var target = $('#target');
       target.append('<option value="opener">Opener</option>');
       for (var i = 0; frames.length > i; i++) {
-        if (!frames[i].name) continue;
-        target.append('<option value="frame_' + i + '">Opener: ' + frames[i].name + '</option>');
+        var name;
+        try {
+          name = frames[i].name;
+        } catch (e) {} // ignore cross-origin frame SecurityErrors
+        if (!name) continue;
+        target.append('<option value="frame_' + i + '">Opener: ' + name + '</option>');
       }
     }
   })();
