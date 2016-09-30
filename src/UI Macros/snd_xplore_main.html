@@ -66,6 +66,7 @@
             <button id="cancel_btn" class="btn btn-danger navbar-control"
               title="Cancel Transaction" style="display:none">Cancel</button>
           </li>
+          <li id="timer" class="navbar-brand"></li>
         </ul>
       </div>
     </nav>
@@ -154,7 +155,6 @@
           <div id="output_loader" class="page_loader">
             <div class="loading">
               <i class="glyphicon glyphicon-refresh spin"></i>
-              <div id="countup"></div>
             </div>
           </div>
 
@@ -188,10 +188,16 @@
                   role="tab" data-toggle="tab"
                   title="View the hierarchy of a table">Table Hierarchy</a>
               </li>
-              <li role="presentation">
-                <a href="#system_log_pane" aria-controls="system_log_pane"
-                  id="system_log_tab" role="tab" data-toggle="tab"
-                  title="System Logs - double click to reload">Logs</a>
+              <li class="dropdown" role="presentation">
+                <a href="javascript:void(0)" class="dropdown-toggle"
+                  data-toggle="dropdown">Logs <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="#system_log_pane" id="system_log_tab" aria-controls="system_log_pane"
+                    role="tab" data-toggle="tab">System Logs</a></li>
+                  <li><a href="#node_log_pane" id="node_log_tab" aria-controls="node_log_pane"
+                    role="tab" data-toggle="tab">Node Logs</a></li>
+                  <li><a href="javascript:void(0)" id="log_reset">Reset</a></li>
+                </ul>
               </li>
             </ul>
 
@@ -239,6 +245,7 @@
                 <div class="wrap row">
                   <div class="col-xs-12">
                     <h4 class="monospace">User Data</h4>
+                    <button class="pull-right btn btn-xs btn-default" id="user_data_format_btn">Format</button>
                     <p>Easily add large strings to the variable <code>user_data</code>.</p>
                     <textarea id="user_data_input" class="form-control monospace">
                     </textarea>
@@ -267,6 +274,7 @@
                             class="form-control" tabindex="1" />
                       </div>
                     </div>
+                    <p><code>user_data.match(<span id="regex_code"></span>)</code></p>
                   </div>
                   <div class="col-sm-6 col-xs-12">
                     <h4>Test String</h4>
@@ -406,6 +414,11 @@
 
               <div id="system_log_pane" role="tabpanel" class="tab-pane fade">
                 <iframe id="system_log_frame" style="border: 0; width: 100%"></iframe>
+              </div>
+
+              <div id="node_log_pane" role="tabpanel" class="tab-pane fade">
+                <input type="hidden" id="node_log_url" />
+                <iframe id="node_log_frame" style="border: 0; width: 100%"></iframe>
               </div>
 
             </div><!--/.tab-content-->

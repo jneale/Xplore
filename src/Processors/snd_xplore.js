@@ -10,6 +10,21 @@ function ActionList() {}
 
 /**
   summary:
+    Format a string e.g. XML
+  returns: String
+**/
+ActionList.prototype.formatString = function (params) {
+  var str = params.string,
+      doc;
+  try {
+    doc = new XMLDocument(str);
+    return doc.toIndentedString().trim();
+  } catch (e) {}
+  return str;
+};
+
+/**
+  summary:
     Get the available scopes
   returns: Array
     Array of ordered scopes, except for global which is the first entry.

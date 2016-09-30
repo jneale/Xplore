@@ -1,6 +1,20 @@
 # Xplore: Developer Toolkit
 A toolkit for every ServiceNow developer. Find more at www.sndeveloper.com.
 
+### Version 4.1
+* Automatically blacklist illegal fields.
+* Add prototype property to function explanations.
+* Fix cross-origin target frame access issue.
+* Add support for property driven default blacklist and redlist.
+* Update info page.
+* Prevent strings containing XML from being quoted so it formats better.
+* Move timer to the header for better visibility and reference.
+* Add code example to regular expression tester.
+* Added format button to user_data for formatting XML.
+* Fix submit button spinner.
+* Add support for function prototypes.
+* Added node log support.
+
 ### Version 4.0
 * Fixed issue with running scoped code in Helsinki.
 * Full refactor for script include and processor.

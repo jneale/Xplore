@@ -31,18 +31,20 @@ var snd_xplore_ui = {};
 
 var snd_xplore_util = {
   countup_interval: null,
+  node_log_url: '',
   loading: function () {
+    $timer = $('#timer');
     $('#xplore_btn')
         .prop('disabled', true)
-        .html('Loading... <i class="glyphicon glyphicon-refresh ' +
-              'glyphicon-refresh-animate"></i>');
+        .html('Loading... <i class="glyphicon glyphicon-refresh spin"></i>');
 
     $('#cancel_btn').prop('disabled', false).text('Cancel').show();
     $('#output_loader').addClass('active');
 
+    $timer.text('');
     var start = new Date().getTime();
     snd_xplore_util.countup_interval = setInterval(function () {
-      $('#countup').text(getMinutesSince(start));
+      $timer.text(getMinutesSince(start));
     }, 100);
   },
   loadingComplete: function () {
@@ -105,6 +107,22 @@ var snd_xplore_util = {
           $user_data_input.val(user_data);
         }
       }
+    });
+  },
+  formatString: function () {
+    var $user_data_input = $('#user_data_input');
+    $.ajax({
+      type: "POST",
+      url: "/snd_xplore.do?action=formatString",
+      data: {
+        string: $user_data_input.val()
+      }
+    }).
+    done(function (data) {
+      $user_data_input.val(data.result);
+    }).
+    fail(function () {
+      snd_log('Error: could not format string.');
     });
   },
   toggleEditor: (function () {
@@ -271,6 +289,10 @@ var snd_xplore_regex_util = (function () {
     $('#regex_loading').hide();
   });
 
+  function updateExample() {
+
+  }
+
   // setup the handler to run the regex when the user edits something
   var run = (function () {
     var cache = '';
@@ -278,8 +300,10 @@ var snd_xplore_regex_util = (function () {
       var expression = $('#regex').val();
       var input = $('#regex_input').val();
       var options = $('#regex_options').val();
+      var $code = $('#regex_code');
 
       if (!expression || !input) {
+        $code.hide();
         showIntro();
         return;
       }
@@ -288,6 +312,8 @@ var snd_xplore_regex_util = (function () {
         return;
       }
       cache = input + expression + options;
+
+      $code.text('/' + expression + '/' + options).show();
 
       snd_xplore.regex({
         expression: expression,
@@ -629,12 +655,15 @@ $(function () {
 
   // update the selector for the frames
   (function () {
+    var frames,
+        target,
+        name,
+        i;
     if (window.opener) {
-      var frames = window.opener.frames;
-      var target = $('#target');
+      frames = window.opener.frames;
+      target = $('#target');
       target.append('<option value="opener">Opener</option>');
-      for (var i = 0; frames.length > i; i++) {
-        var name;
+      for (i = 0; frames.length > i; i++) {
         try {
           name = frames[i].name;
         } catch (e) {} // ignore cross-origin frame SecurityErrors
@@ -843,26 +872,42 @@ $(function () {
     $(this).tab('show');
   });
 
-  // make system log iframe load on tab click
-  $('#system_log_tab').one('click', function () {
-    $('#system_log_frame').attr('src', '/syslog_list.do?sysparm_query=sys_created_onONToday%40javascript%3Ags.daysAgoStart(0)%40javascript%3Ags.daysAgoEnd(0)');
-
-    // now make it reload every time the tab is double clicked
-    $('#system_log_tab').dblclick(function () {
-      var $frame = $('#system_log_frame');
-      $frame.attr('src', $frame.attr('src'));
-    });
-
+  $('#user_data_format_btn').click(function () {
+    snd_xplore_util.formatString();
   });
 
-  $output_tabs_pane = $('#output_tabs_pane');
+  var $output_tabs_pane = $('#output_tabs_pane');
+  var active_log_frame = '';
+  var node_log_url = '/ui_page_process.do?name=log_file_browser&max_rows=2000';
+
+  $('#system_log_tab').one('click', function () {
+    $('#system_log_frame').attr('src', '/syslog_list.do?sysparm_query=sys_created_onONToday%40javascript%3Ags.daysAgoStart(0)%40javascript%3Ags.daysAgoEnd(0)');
+  }).click(function () {
+    active_log_frame = 'system';
+  });
+  $('#node_log_tab').click(function () {
+    var new_url;
+    active_log_frame = 'node';
+    new_url = $('#node_log_url').val();
+    if (node_log_url !== new_url) {
+      node_log_url = new_url || '/ui_page_process.do?name=log_file_browser&max_rows=2000';
+      $('#node_log_frame').attr('src', node_log_url);
+    }
+  })
+  $('#log_reset').click(function () {
+    var $frame = $('#' + active_log_frame + '_log_frame');
+    if ($frame.length) {
+      $frame.attr('src', $frame.attr('src'));
+    }
+    $('#' + active_log_frame + '_log_tab').click(); // select the tab
+  });
 
   // facilitate system log frame resizing
   function resizeLogPane() {
     var $output_content = $('#output_content');
     var $output_tabs = $('#output_tabs');
-    var $el = $('#system_log_frame');
-    $el.css('height', $output_content.height() - $output_tabs.height() - 10);
+    var h = $output_content.height() - $output_tabs.height() - 10;
+    $('#system_log_frame,#node_log_frame').css('height', h);
   }
   resizeLogPane();
 

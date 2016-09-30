@@ -78,7 +78,7 @@
               in ServiceNow, much like a background script, but
               supercharged. The last object in the script will be shown
               here in a detailed output tab.</p>
-           <p>Use the choice list to choose where you want to run your
+            <p>Use the choice list to choose where you want to run your
               code, either server or client.</p>
             <p>Launching Xplore from within ServiceNow will give you
               access to the various frames ServiceNow uses.</p>
@@ -218,35 +218,29 @@
             <p>Xplore is based on a global Script Include that you can
               run anywhere in ServiceNow.</p>
 
-            <h5>snd_xplore(obj)</h5>
-            <p class="col-xs-12">Uses the default reporter to print everything using gs.print()</p>
-
-            <h5>snd_xplore.lookAt(obj)</h5>
-            <p class="col-xs-12">Get an object containing the properties 'type' and
-              'value' of your object.</p>
-
-            <h5>snd_xplore(obj, my_reporter)</h5>
-            <p class="col-xs-12">You can also write your own reporter to handle the output
-              of snd_xplore.
-              Check out the snd_xplore Script Include for the built in print_reporter
-              which works in both global and scoped apps. This page uses a custom
-              print reporter to generate JSON and package it all back to the client
+            <p><code>new snd_Xplore().xplore(obj /*, reporter, options */)</code></p>
+            <p class="col-xs-12">Iterate over any object to retrieve its contents.
+              Optionally provide a reporter and options. The default reporter will
+              print everything using gs.print(). This page uses a custom print
+              reporter to generate JSON and package it all back to the client
               over AJAX.</p>
 
-            <h5>snd_xplore.test(obj)</h5>
-            <p class="col-xs-12">Sometimes when you are 'Xploring' an object, you
-              will come across properties that throw exceptions when you try to
-              read their value. You can bypass this property by updating the
-              Xplore Red List on the fly, or add the property to the
-              'redlist' array in the snd_xplore Script Include.</p>
+            <p><code>new snd_Xplore().lookAt(obj /*, name, show_strings */)</code></p>
+            <p class="col-xs-12">The magic method that works out what any object
+              is and even attempts to find it's contents.</p>
 
-            <h5>snd_xplore.blacklist('illegalProp')</h5>
+            <p><code>snd_Xplore.blacklist('illegalProp')</code></p>
             <p class="col-xs-12">Blacklisted properties are those that throw illegal
               access exceptions. ServiceNow don't even want you trying to access these,
               let alone see their value. Xplore has a built in template to filter the
               majority of these, but sometimes they will slip through. Bypass these
               properties on the fly, or add the property to the 'blacklist' array
               in the snd_xplore Script Include.</p>
+
+            <p><code>snd_Xplore.redlist('illegalProp')</code></p>
+            <p class="col-xs-12">Redlisted properties are those that don't have a
+              toString function associated. These can throw errors, so you might not
+              want to show them.</p>
 
           </div>
         </div>
@@ -279,7 +273,7 @@
 <div class="row">
   <div class="col-xs-12">
     <p>
-      Version: ${snd_Xplore.prototype.version}. The UI client uses
+      Version: ${snd_Xplore.getVersion()}. The UI client uses
       <a href="http://getbootstrap.com/" target="_blank">Bootstrap</a>,
       <a href="http://jquery.com/" target="_blank">JQuery</a>,
       <a href="http://codemirror.net/" target="_blank">CodeMirror</a>,

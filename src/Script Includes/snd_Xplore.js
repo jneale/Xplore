@@ -34,6 +34,7 @@ snd_Xplore.prototype.setReporter = function (name) {
  * @return {Boolean}
  */
 snd_Xplore.prototype.isInScope = function () {
+  if (typeof window !== 'undefined') return false;
   return !('print' in gs);
 };
 
@@ -62,14 +63,14 @@ snd_Xplore.prototype.debugMsg = function (msg) {
  *
  * description:
  *   The snd_xplore function here allows exploratory programming to take place
- *   in ServiceNow. Simply call snd_xplore(my_obj) in a background script
- *   and watch all the objects get printed out on screen.
- * @summary: Evaluate any object and getting its contents.
+ *   in ServiceNow. Simply call new snd_Xplore().xplore(my_obj) in a background
+ *   script and watch all the objects get printed out on screen.
+ * @summary: Iterate over any object to retrieve its contents.
  *
  * param: obj [Any]
  *   The object you want to explore!
- * param: reporter [Object] Optional
- *   A custom reporter object so you can customise where the output gets sent.
+ * param: reporter [String] Optional
+ *   The name of the custom reporter object so you can customise where the output gets sent.
  * param: options [Object] Optional
  *   Customise what happens using this options object.
  *   -show_props: [Boolean]
@@ -120,6 +121,10 @@ snd_Xplore.prototype.xploreProps = function (obj, reporter, options) {
 
   reporter = reporter || {};
   reporter.result = reporter.result || function () {};
+
+  if (type == '[object Function]' && obj.prototype) {
+    reporter.result(this.lookAt(obj.prototype, 'prototype', options));
+  }
 
   for (name in obj) {
 
@@ -233,7 +238,10 @@ snd_Xplore.prototype.lookAt = function (obj, name, show_strings) {
     return result;
   }
 
-  if (show_strings === false) {
+  if (name == 'prototype') {
+    result.string = '[object ' + result.type + ']';
+    result.type = 'Object';
+  } else if (show_strings === false) {
     result.string = '*IGNORED*';
   } else {
     result.string = this.prettyPrinter.format(obj);
@@ -242,6 +250,16 @@ snd_Xplore.prototype.lookAt = function (obj, name, show_strings) {
   return result;
 };
 
+snd_Xplore._getPropertyArray = function (name) {
+  var result;
+  if (typeof window !== 'undefined') {
+    result = [];
+  } else {
+    result = gs.getProperty(name, '').toString();
+    result = result ? result.split(',') : []
+  }
+  return result;
+}
 
 /**
  * Add elements for the black List not captured by RegExp.
@@ -250,7 +268,7 @@ snd_Xplore.prototype.lookAt = function (obj, name, show_strings) {
  * @param {String} item The name of a property name to completely ignore.
  * @arguments Add further item names.
  */
-snd_Xplore._blacklist = [];
+snd_Xplore._blacklist = snd_Xplore._getPropertyArray('snd_xplore.blacklist');
 snd_Xplore.blacklist = function (item) {
   if (arguments.length) {
     snd_Xplore._blacklist = snd_Xplore._blacklist.concat(Array.prototype.slice.apply(arguments));
@@ -266,7 +284,7 @@ snd_Xplore.blacklist = function (item) {
  * @param {String} item The name of a property name to completely ignore.
  * @arguments Add further item names.
  */
-snd_Xplore._redlist = [];
+snd_Xplore._redlist = snd_Xplore._getPropertyArray('snd_xplore.redlist');
 snd_Xplore.redlist = function (item) {
   if (arguments.length) {
     snd_Xplore._redlist = snd_Xplore._redlist.concat(Array.prototype.slice.apply(arguments));
@@ -331,9 +349,6 @@ snd_Xplore.PrettyPrinter = function () {
   this.global = this.is_browser ? window : global;
   this.scope =  (function () { return this; })();
   this.not_str_regex = /^\[[a-zA-Z0-9_$. ]+\]$|^[a-zA-Z0-9.$]+@[a-z0-9]+$/;
-};
-snd_Xplore.PrettyPrinter.prototype.toString = function () {
-  return '[object ' + this.type + ']';
 };
 snd_Xplore.PrettyPrinter.prototype = {
 
@@ -461,6 +476,10 @@ snd_Xplore.PrettyPrinter.prototype = {
     } catch (e) {
       return '[object ' + type + ']';
     }
+  },
+
+  toString: function () {
+    return '[object ' + this.type + ']';
   }
 
 };
@@ -481,7 +500,7 @@ snd_Xplore.PrintReporter = function () {
     this._fn = 'print' in gs ? 'debug' : 'print';
   }
 };
-snd_Xplore.prototype.type = 'PrintReporter';
+snd_Xplore.PrintReporter.prototype.type = 'PrintReporter';
 snd_Xplore.PrintReporter.prototype.toString = function () {
   return '[object ' + this.type + ']';
 };
@@ -622,6 +641,8 @@ snd_Xplore.getLogs = function () {
  * in the UI.
  */
 snd_Xplore.ObjectReporter = function () {
+  this.is_browser = typeof window !== 'undefined';
+  this.start_time = this.is_browser ? new Date() : new GlideDateTime().getDisplayValue();
   this.report = {
     // The type of object that is being evaluated
     type: '',
@@ -636,7 +657,9 @@ snd_Xplore.ObjectReporter = function () {
     // a list of logs that occured very recently
     logs: [],
     // self explanatory really!
-    status: ''
+    status: '',
+    // the url to access the node logs
+    node_log_url: ''
   };
 };
 snd_Xplore.ObjectReporter.prototype.type = 'ObjectReporter';
@@ -661,6 +684,31 @@ snd_Xplore.ObjectReporter.prototype.result = function (obj) {
 
 snd_Xplore.ObjectReporter.prototype.complete = function () {
   this.report.status = 'finished';
+  this.report.node_log_url = this.generateNodeLogUrl();
 };
 
-snd_Xplore.prototype.version = "4.0";
+snd_Xplore.ObjectReporter.prototype.generateNodeLogUrl = function () {
+  // create the URL for the ui_page to display the log data
+  var maxRows = 2000;
+  var url = "ui_page_process.do?name=log_file_browser";
+
+  if (this.is_browser) return '';
+
+  url += "&end_time=" + (new GlideDateTime().getDisplayValue());
+  url += "&start_time=" + this.start_time;
+  url += "&max_rows=" + maxRows;
+  try {
+    url += '&filter_thread=' + GlideWorkerThread.currentThread().name;
+  } catch (e) {
+    gs.addErrorMessage('Cannot get current thread name for node log url. Original exception: ' + e);
+  }
+  return url;
+};
+
+snd_Xplore.getVersion = function () {
+  var gr = new GlideRecord('sys_app');
+  gr.addQuery('name', '=', 'SND Xplore');
+  gr.setLimit(1);
+  gr.query();
+  return gr.next() ? gr.getValue('version') : 'Unknown';
+};

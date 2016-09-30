@@ -15,7 +15,7 @@ var snd_xplore_reporter = (function () {
     } else {
       //table.append('<tr><th class="col-md-1">Value</th><td class="col-md-11">&nbsp;</td></tr>');
       table.append('<tr class="data-more"><td colspan="2">' +
-          '<pre class="prettyprint linenums">' + escapeHtml(result.string) +
+          '<pre class="prettyprint linenums">' + escapeHtml(formatForPre(result.string)) +
           '</pre></td></tr>');
     }
   }
@@ -41,7 +41,8 @@ var snd_xplore_reporter = (function () {
           '<td class="col-md-6">' + showMoreButton + '</td>' +
         '</tr>');
         table.append('<tr class="data-more hidden">' +
-          '<td colspan="3" class="val"><pre class="prettyprint linenums">' + escapeHtml(item.string) + '</pre></td>' +
+          '<td colspan="3" class="val"><pre class="prettyprint linenums">' +
+          escapeHtml(formatForPre(item.string)) + '</pre></td>' +
         '</tr>');
       } else {
         table.append('<tr class="data-row">' +
@@ -98,6 +99,7 @@ var snd_xplore_reporter = (function () {
           '1': 'warning',
           '2': 'danger'
         },
+        script_update = false,
         temp;
 
     target.empty();
@@ -107,19 +109,50 @@ var snd_xplore_reporter = (function () {
     for (var i = 0, m; i < messages.length; i++) {
       m = messages[i];
       temp = m.message;
+      if (classMap[m.type] == 'danger') {
+        script_update = tryBlacklist(temp) || script_update;
+      }
       if (!asHtml) {
         temp = escapeHtml(temp);
       }
       target.append('<tr><td class="' + classMap[m.type] + '">' +
           temp.replace('\n', '<br>') + '</td></tr>');
     }
+
+    if (script_update) {
+      target.append('<tr><td class="info">Illegal property has been blacklisted. ' +
+                    'Please try again.</td></tr>');
+    }
+
     $('#message_container').toggleClass('hidden', !i);
+  }
+
+  function tryBlacklist(text) {
+    // text = 'Illegal access to field fInternalTZ in class com.glide.glideobject.GlideDateTime';
+    var word = text.match(/Illegal access to field (\w+)/),
+        current;
+    if (word) {
+      current = snd_xplore_editor.getValue();
+      current = 'snd_Xplore.blacklist(\'' + word[1] + '\');\n' + current;
+      snd_xplore_editor.setValue(current);
+    }
+    return !!word;
   }
 
   function htmlPre(text) {
     return text.replace(/\n(\s*)/g, function (a, b) {
       return '<br />' + new Array(b.length + 1).join('&nbsp;');
     });
+  }
+
+  function formatForPre(text) {
+    var has_new_line = text.match(/\n"$/);
+    // manage XML/HTML output slightly differently
+    if (text.match(/^"</) && text.match(/>\n?"$/)) {
+      text = text.replace(/^"/, '').replace(/"$/, '');
+      if (has_new_line) text += '\n';
+    }
+    return text;
   }
 
   function displayLogs(logs) {
@@ -401,6 +434,7 @@ var snd_xplore_reporter = (function () {
 
     this.done = function (result) {
       var target = $('#results');
+      $('#node_log_url').val(result.node_log_url);
       target.empty();
       displayResults(result, this.options);
       this.fireEvent('done', null, [result]);
