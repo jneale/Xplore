@@ -107,6 +107,29 @@ var snd_xplore = (function () {
     // code: string
     // breadcrumb: array
 
+    function enrichWithLogs(xhr, result) {
+      $.ajax({
+        type: 'GET',
+        url: '/snd_xplore.do?action=logs',
+        dataType: 'json'
+      })
+      .done(function (data) {
+        var result = data.result;
+        if (xhr.responseText) {
+          message(result, '1', xhr.responseText); // 1 = warning
+        } else {
+          message(result, 'error', 'Request failed.');
+        }
+        params.reporter.done(result);
+      })
+      .fail(function () {
+        var result = result || psuedoResult();
+        message(result, 'error', 'Automatic log retrieval failed.');
+        if (xhr.responseText) message(result, '1', xhr.responseText); // 1 = warning
+        params.reporter.done(result);
+      });
+    }
+
     $.ajax({
       type: "POST",
       url: "/snd_xplore.do?action=run",
@@ -124,38 +147,31 @@ var snd_xplore = (function () {
     })
     .done(function (data) {
       var result;
-      if (!data || !data.result) {
+      if (!data || (!data.result && !data.$error)) {
         result = psuedoResult();
-        message(result, 'error', 'The server did not return a result. This is likely because' +
+        message(result, 'error', 'The server did not return anything. This is likely because' +
             ' of an uncatchable error. Please check the node logs for the possibility' +
             ' of further information if you are unsure of the cause.');
-        enrichWithLogs(result);
-      } else {
-        params.reporter.done(data.result);
+        enrichWithLogs({}, result);
+        return;
       }
-    })
-    .fail(function (xhr) {
-      $.ajax({
-        type: 'GET',
-        url: '/snd_xplore.do?action=logs',
-        dataType: 'json'
-      })
-      .done(function (data) {
-        var result = data.result;
-        if (xhr.responseText) {
-          message(result, '1', xhr.responseText); // 1 = warning
+
+      result = data.result || psuedoResult();
+      if (data.$error) {
+        message(result, 'error', data.$error);
+      } else if (!data.result) {
+        message(result, 'error', 'Request processing failed without an error. Please check the logs.');
+        enrichWithLogs({}, result);
+      }
+      if (!data.result) {
+        if (data.$error) {
         } else {
-          message(result, 'error', 'Request failed.');
         }
-        params.reporter.done(result);
-      })
-      .fail(function () {
-        var result = psuedoResult();
-        message(result, 'error', 'Server execution failed. The node logs may or may not be helpful.');
-        if (xhr.responseText) message(result, '1', xhr.responseText); // 1 = warning
-        params.reporter.done(result);
-      });
-    });
+      }
+
+      params.reporter.done(result);
+    })
+    .fail(enrichWithLogs);
   }
 
   function psuedoResult() {

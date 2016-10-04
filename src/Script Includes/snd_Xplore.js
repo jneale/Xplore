@@ -122,7 +122,7 @@ snd_Xplore.prototype.xploreProps = function (obj, reporter, options) {
   reporter = reporter || {};
   reporter.result = reporter.result || function () {};
 
-  if (type == '[object Function]' && obj.prototype) {
+  if (type == '[object Function]' && typeof obj.prototype == 'object') {
     reporter.result(this.lookAt(obj.prototype, 'prototype', options));
   }
 
