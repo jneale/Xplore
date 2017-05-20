@@ -1,5 +1,5 @@
 # Xplore: Developer Toolkit
-A toolkit for every ServiceNow developer. Find more at www.sndeveloper.com.
+A toolkit for every ServiceNow developer. Find more at https://thewhitespace.io.
 
 ### Version 4.3
 * Tested in Jakarta early-access.
