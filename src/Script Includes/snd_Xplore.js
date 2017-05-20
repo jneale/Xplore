@@ -76,6 +76,9 @@ snd_Xplore.prototype.debugMsg = function (msg) {
  *   -show_props: [Boolean]
  *     Set false to disable attempting to parse through the objects' properties.
  *     Defaults to true.
+ *   -no_quotes: [Boolean]
+ *     Set true to prevent quotes from being added to strings.
+ *     Defaults to false.
  *   see: lookAt
  */
 snd_Xplore.prototype.xplore = function (obj, reporter, options) {
@@ -84,6 +87,7 @@ snd_Xplore.prototype.xplore = function (obj, reporter, options) {
       x;
 
   options = options || {};
+  this.prettyPrinter.noQuotes(options.no_quotes);
 
   if (options.dotwalk) obj = snd_Xplore.dotwalk(obj, options.dotwalk);
 
@@ -95,7 +99,7 @@ snd_Xplore.prototype.xplore = function (obj, reporter, options) {
 
   this.debugMsg('Running xplore in debug mode...');
 
-  target = this.lookAt(obj, '[Target]', options.show_strings);
+  target = this.lookAt(obj, '[Target]', options);
   reporter.begin(target);
 
   this.debugMsg('Exploring object ' + target.name);
@@ -185,21 +189,22 @@ snd_Xplore.prototype.xploreProps = function (obj, reporter, options) {
     Any object that needs to be looked at.
   param: name [String] Optional
     The name of the object to populate the result with.
+  param: options [Object] Optional
+    An options object.
 
   returns: Object
     An object containing the following properties:
       -name [String]
         The name of the object if it was provided, otherwise an empty string.
       -type [String]
-        The class name of the object.=
-      -show_strings: Boolean
-        Set false to disable attempting to locate the string value.
-        Defaults to true.
+        The class name of the object.
 **/
-snd_Xplore.prototype.lookAt = function (obj, name, show_strings) {
+snd_Xplore.prototype.lookAt = function (obj, name, options) {
   var result = {},
       main_type,
       lists = snd_Xplore.getLists();
+
+  this.prettyPrinter.noQuotes(options.no_quotes);
 
   result.name = name || undefined;
   result.type = '';
@@ -241,7 +246,7 @@ snd_Xplore.prototype.lookAt = function (obj, name, show_strings) {
   if (name == 'prototype') {
     result.string = '[object ' + result.type + ']';
     result.type = 'Object';
-  } else if (show_strings === false) {
+  } else if (options.show_strings === false) {
     result.string = '*IGNORED*';
   } else {
     result.string = this.prettyPrinter.format(obj);
@@ -256,10 +261,10 @@ snd_Xplore._getPropertyArray = function (name) {
     result = [];
   } else {
     result = gs.getProperty(name, '').toString();
-    result = result ? result.split(',') : []
+    result = result ? result.split(',') : [];
   }
   return result;
-}
+};
 
 /**
  * Add elements for the black List not captured by RegExp.
@@ -354,6 +359,10 @@ snd_Xplore.PrettyPrinter.prototype = {
 
   type: 'PrettyPrinter',
 
+  noQuotes: function (b) {
+    this.no_quotes = !!b;
+  },
+
   getClassType: function (obj) {
     return Object.prototype.toString.call(obj).slice(8, -1);
   },
@@ -362,7 +371,7 @@ snd_Xplore.PrettyPrinter.prototype = {
     obj = obj + '';
 
     // handle object types and memory references
-    if (obj.match(this.not_str_regex)) {
+    if (this.no_quotes || obj.match(this.not_str_regex)) {
       return obj;
     }
 
@@ -436,7 +445,8 @@ snd_Xplore.PrettyPrinter.prototype = {
   },
 
   format: function (obj) {
-    var type = this.getClassType(obj);
+    var real_type = this.getClassType(obj),
+        type = real_type.replace('GlideScoped', 'Glide');
 
     if (this.is_browser) {
       return type in this ? this[type](obj) : '' + obj;
@@ -474,7 +484,7 @@ snd_Xplore.PrettyPrinter.prototype = {
     try {
       return this.String(obj);
     } catch (e) {
-      return '[object ' + type + ']';
+      return '[object ' + real_type + ']';
     }
   },
 
@@ -697,17 +707,24 @@ snd_Xplore.ObjectReporter.prototype.generateNodeLogUrl = function () {
   url += "&end_time=" + (new GlideDateTime().getDisplayValue());
   url += "&start_time=" + this.start_time;
   url += "&max_rows=" + maxRows;
-  try {
-    url += '&filter_thread=' + GlideWorkerThread.currentThread().name;
-  } catch (e) {
-    gs.addErrorMessage('Cannot get current thread name for node log url. Original exception: ' + e);
-  }
+  url += '&filter_thread=' + this.getThreadName();
   return url;
+};
+snd_Xplore.ObjectReporter.prototype.getThreadName = function () {
+  // this works around the exceptions thrown by calling getName() or using .name
+  // Those are totally broken in Jakarta.
+  var value = '' + Object.prototype.valueOf.call(GlideWorkerThread.currentThread());
+  var m = value.match(/(?:\[)([^,]+)/);
+  if (!m) {
+    gs.warn('Cannot get current thread name.', 'snd_Xplore');
+    return '';
+  }
+  return m[1];
 };
 
 snd_Xplore.getVersion = function () {
   var gr = new GlideRecord('sys_app');
-  gr.addQuery('name', '=', 'SND Xplore');
+  gr.addQuery('sys_id', '=', '0f6ab99a0f36060094f3c09ce1050ee8');
   gr.setLimit(1);
   gr.query();
   return gr.next() ? gr.getValue('version') : 'Unknown';

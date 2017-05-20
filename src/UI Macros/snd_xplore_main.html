@@ -36,10 +36,11 @@
     </div>
 
     <nav class="navbar navbar-default navbar-fixed-top">
-      <a class="navbar-header" href="http://sndeveloper.com/our-applications/xplore" target="_blank">
-         <img class="navbar-brand" src="/snd-xplore-icon-48.pngx" width="48" height="48"
+      <a class="navbar-header" href="http://thewhitespace.io" target="_blank">
+         <img class="navbar-brand" src="/ws_logo_Xplore_48.pngx" width="48" height="48"
               title="Xplore" alt="Xplore logo" style="padding: 2px; margin-left: 2px; height: auto" />
-         <span class="navbar-brand" style="padding: 15px 8px 15px 4px">Xplore</span>
+         <span class="navbar-brand" style="padding: 15px 8px 15px 4px">
+          <span class="text-primary">Xplore</span> <sub>${snd_Xplore.getVersion()}</sub></span>
       </a>
       <div id="navbar">
         <ul class="nav navbar-nav">
@@ -96,6 +97,12 @@
 
       <div id="settings_pane" class="side_pane" style="display: none;">
         <p class="lead">Settings</p>
+        <div class="checkbox">
+          <input type="checkbox" id="setting_quotes" checked="checked" />
+          <strong>Quotes*</strong>
+          <p>By default, the Xplore Pretty Printer adds double quotes around
+          strings. Use this option to turn them off (useful for HTML/JSON strings).</p>
+        </div>
         <div class="checkbox">
           <input type="checkbox" id="show_props" checked="checked" />
           <strong>Show Object Properties*</strong>
@@ -179,13 +186,13 @@
                   title="Test your code with large strings">User Data</a>
               </li>
               <li role="presentation">
-                <a href="#regex_pane" aria-controls="regex_pane" role="tab"
-                  data-toggle="tab"
+                <a href="#regex_pane" aria-controls="regex_pane"
+                  id="regex_tab" role="tab" data-toggle="tab"
                   title="Run regular expressions in ServiceNow">Regex</a>
               </li>
               <li role="presentation">
                 <a href="#table_hierarchy_pane" aria-controls="table_hierarchy_pane"
-                  role="tab" data-toggle="tab"
+                  id="table_hierarchy_tab" role="tab" data-toggle="tab"
                   title="View the hierarchy of a table">Table Hierarchy</a>
               </li>
               <li class="dropdown" role="presentation">
@@ -244,11 +251,26 @@
 
                 <div class="wrap row">
                   <div class="col-xs-12">
-                    <h4 class="monospace">User Data</h4>
-                    <button class="pull-right btn btn-xs btn-default" id="user_data_format_btn">Format</button>
-                    <p>Easily add large strings to the variable <code>user_data</code>.</p>
-                    <textarea id="user_data_input" class="form-control monospace">
-                    </textarea>
+                    <div style="margin-bottom: 10px;">
+                      <h4 class="monospace">User Data</h4>
+                      <p>Easily add large strings to the variable <code>user_data</code>.</p>
+                      <p>Choose a format to automatically parse the data for the script
+                        and use the 'Format' button to prettify the data.</p>
+                      <div class="form-inline">
+                        <div class="input-group input-group-sm">
+                          <select class="form-control" id="user_data_type_select">
+                            <option>Plain (String)</option>
+                            <option>JSON (Object)</option>
+                            <option>XML (XMLDocument)</option>
+                            <option>XML (XMLDocument2)</option>
+                          </select>
+                          <span class="input-group-btn">
+                            <button class="btn btn-danger" id="user_data_format_btn">Prettify</button>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <textarea id="user_data_input" class="form-control monospace"></textarea>
                   </div>
                 </div>
 
@@ -383,8 +405,8 @@
                       <p>Hit <kbd>Enter</kbd> to run.</p>
 
                       <table class="table table-condensed">
-                        <tr><td><code>incident</code></td><td>Find all tables with names starting with 'incident'</td></tr>
-                        <tr><td><code>*incident</code></td><td>Find all tables with names containing 'incident'</td></tr>
+                        <tr><td><code>incident</code></td><td>Find all tables with names containing 'incident'</td></tr>
+                        <tr><td><code>&gt;incident</code></td><td>Find all tables with names starting with 'incident'</td></tr>
                         <tr><td><code>=incident</code></td><td>Show only the 'incident' table</td></tr>
                         <tr><td><code>*</code></td><td>Show all tables</td></tr>
                       </table>
@@ -398,7 +420,7 @@
                         </div>
                         <div class="checkbox">
                           <label>
-                            <input type="checkbox" id="table_hierarchy_table_do_label" /> Search table labels
+                            <input type="checkbox" id="table_hierarchy_table_do_label" checked="checked" /> Search table labels
                           </label>
                         </div>
                       </form>

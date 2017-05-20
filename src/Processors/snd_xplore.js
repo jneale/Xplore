@@ -14,11 +14,20 @@ function ActionList() {}
   returns: String
 **/
 ActionList.prototype.formatString = function (params) {
-  var str = params.string,
-      doc;
+  var type = params.type,
+      str = params.string,
+      isXML = str.trim().substr(0,1) == '<',
+      tmp;
   try {
-    doc = new XMLDocument(str);
-    return doc.toIndentedString().trim();
+    if (type.indexOf('XMLDocument') > -1 || isXML) {
+      tmp = new XMLDocument(str);
+      return tmp.toIndentedString().trim();
+    } else {
+      tmp = new JSON();
+      tmp.prettify();
+      str = tmp.decode(str);
+      return tmp.encode(str);
+    }
   } catch (e) {}
   return str;
 };
@@ -199,7 +208,7 @@ ActionList.prototype.run = function run(params) {
 
 ActionList.prototype.getTableHierarchy = function getTableHierarchy(params) {
   var options = {};
-  options.search_label = params.search_label == '1' || params.search_label == 'true';
+  options.search_labels = params.search_labels == '1' || params.search_labels == 'true';
   return XploreTableHierarchy(params.table, options);
 };
 
@@ -239,6 +248,9 @@ function XploreRunner() {
 
   this.reporter_name = 'snd_Xplore.ObjectReporter';
 }
+
+// global scope is implied in this name
+XploreRunner.C_TEMP_SCRIPT_NAME = 'snd_Xplore_code';
 
 /**
   summary:
@@ -281,7 +293,7 @@ XploreRunner.prototype.run = function run(options) {
     this.logRequest(script, options.scope);
 
     // not ideal doing this
-    global.user_data = options.user_data;
+    global.user_data = this.formatUserData(options.user_data, options.user_data_type);
     options.dotwalk = options.breadcrumb;
 
     if (options.scope && options.scope != 'global') {
@@ -296,6 +308,37 @@ XploreRunner.prototype.run = function run(options) {
   }
 
   return end(report);
+};
+
+/**
+ * Format the user data payload as the object it should be.
+ *
+ */
+XploreRunner.prototype.formatUserData = function (str, type) {
+  var err = 'Unable to parse User Data as ',
+      tmp;
+  if (type.indexOf('XMLDocument2') > -1) {
+    tmp = new XMLDocument2();
+    if (tmp.parseXML(str)) {
+      return tmp;
+    }
+    throw new Error(err + 'XMLDocument2');
+  } else if (type.indexOf('XMLDocument') > -1) {
+    try {
+      tmp = new XMLDocument(str);
+      return tmp.toIndentedString().trim();
+    } catch (e) {
+      throw new Error(err + 'XMLDocument. ' + e);
+    }
+  } else if (type.indexOf('JSON') > -1) {
+    try {
+      tmp = new JSON();
+      return tmp.decode(str);
+    } catch (e) {
+      throw new Error(err + 'JSON. ' + e);
+    }
+  }
+  return str;
 };
 
 /**
@@ -400,8 +443,8 @@ XploreRunner.prototype.runScopedScript = function runScopedScript(script, option
   var tryScript = '"try {" + $$script + "; } catch (e) { e; }"';
   var scopedScript = '';
   scopedScript += 'var gr = new GlideRecord("sys_script_include");\n';
-  scopedScript += 'gr.name = "XploreTempScopedScript";\n';
-  scopedScript += 'gr.api_name = "' + options.scope + '.XploreTempScopedScript";\n';
+  scopedScript += 'gr.get("api_name", "global.' + XploreRunner.C_TEMP_SCRIPT_NAME + '");\n';
+  scopedScript += 'gr.api_name = "' + options.scope + '." + gr.name;\n';
   scopedScript += 'gr.sys_scope = "' + scopeId + '";\n';
   scopedScript += 'gr.script = ' + tryScript + ';\n';
   scopedScript += 'var gse = new GlideScopedEvaluator();\n';
@@ -420,8 +463,12 @@ XploreRunner.prototype.runScopedScript = function runScopedScript(script, option
   }
 
   var gr = new GlideRecord('sys_script_include');
-  gr.name = 'XploreTempScopedScriptRunner';
-  gr.api_name = gr.name;
+  if (!gr.get('api_name', 'global.' + XploreRunner.C_TEMP_SCRIPT_NAME)) {
+    gr.name = XploreRunner.C_TEMP_SCRIPT_NAME;
+    gr.api_name = 'global.' + gr.name;
+    gr.script = '/* This script is deliberately empty. */';
+    gr.insert();
+  }
   gr.script = scopedScript;
 
   var gse = new GlideScopedEvaluator();
@@ -502,7 +549,7 @@ function XploreTableHierarchy(table, options) {
   // The maximum number of table extensions we will handle
   var MAX_DEPTH = 25;
 
-  var SEARCH_LABEL =  options ? !!options.search_label : false;
+  var SEARCH_LABELS =  options ? !!options.search_labels : false;
 
   /**
     summary:
@@ -522,9 +569,9 @@ function XploreTableHierarchy(table, options) {
       hierarchy,
       data = {};
 
-    if (!table) throw 'Invalid table.';
+    if (!table) throw new Error('Invalid table.');
 
-    info = getTableInfo(table, SEARCH_LABEL);
+    info = getTableInfo(table, SEARCH_LABELS);
     hierarchy = [];
     hierarchyLookup = {};
     data.names = getSortedKeys(info);
@@ -569,24 +616,11 @@ function XploreTableHierarchy(table, options) {
       An 2D object where each key is the name of the table and the
       value is an object containing a copy of the sys_db_object data.
   **/
-  function getTableInfo(table, searchLabel) {
+  function getTableInfo(table, searchLabels) {
     var required, matchTable, matcher;
 
-    matchTable = (function (t) {
-      var c = t.substr(0,1);
-      if (c === '*') {
-        t = t.substr(1); // contains
-      } else if (c === '=') {
-        t = '^' + t.substr(1) + '$'; // equals
-      } else {
-        t = '^' + t; // starts with
-      }
-      return t;
-    })(table);
-    matcher = new RegExp(matchTable, 'i');
-
     // Is the user looking for all tables?
-    if (table == '*' || table == 'ALL') table = '';
+    if (table == '*') table = '';
 
     // Looking for all tables or a specific one
     if (!table || table.substr(0,1) === '=') {
@@ -594,22 +628,37 @@ function XploreTableHierarchy(table, options) {
       // remove the prefixed equal sign
       if (table) table = table.substr(1);
 
-      if (searchLabel) {
-
+      if (table && searchLabels) {
         // Get the table object from its label
         required = getDbObjectByLabel(table);
       } else {
-
         // Get the table object from its name, or ALL table objects if table = ''
         required = getDbObject(table);
       }
 
     } else {
 
+      matchTable = (function (t) {
+        var c = t.substr(0,1);
+        if (c === '>') {
+          t = '^' + t.substr(1); // starts with
+        } else if (c === '=') {
+          t = '^' + t.substr(1) + '$'; // equals
+        } else if (c === '*') {
+          t = '';
+        }
+        // default is 'contains'
+        return t;
+      })(table);
+      matcher = new RegExp(matchTable, 'i');
+
       // match on table is required, so get all tables and match
       required = {};
       eachObj(getDbObject(), function (name, obj) {
-        var match = searchLabel ? obj.label.match(matcher) : name.match(matcher);
+        var match = obj.name.match(matcher);
+        if (!match && searchLabels) {
+          match = obj.label.match(matcher);
+        }
         if (match) {
           eachObj(getDbObject(name), function (name, obj) {
             required[name] = required[name] || obj;
@@ -761,7 +810,9 @@ function XploreTableHierarchy(table, options) {
       return max + 'MB';
     })(),
 
-    'AMP': '&'
+    'AMP': '&',
+
+    'BUILD_DATE': gs.getProperty('glide.builddate')
   };
 
   // prevent the CSRF token from being required for these actions
@@ -790,7 +841,7 @@ function XploreTableHierarchy(table, options) {
   })();
 
   function hasAccess() {
-    if (gs.getSession().impersonatingUserName) {
+    if (gs.getImpersonatingUserName()) {
       var gr = new GlideRecord('sys_user_has_role');
       gr.addQuery('user.user_name', gs.getImpersonatingUserName());
       gr.addQuery('role.name', 'admin');

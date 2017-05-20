@@ -64,23 +64,26 @@ var snd_xplore_util = {
     // Google Code-Prettify
     window.PR.prettyPrint();
   },
-  execute: function () {
-    // summary:
-    //   Gather the data from the client and run Xplore
-
+  getCode: function () {
     var code = '';
     if (typeof snd_xplore_editor === 'object') {
       code = snd_xplore_editor.getValue();
     } else {
       code = document.getElementById('snd_xplore').value;
     }
-
+    return code;
+  },
+  execute: function () {
+    // summary:
+    //   Gather the data from the client and run Xplore
     var params = {
-      code: code,
+      code: snd_xplore_util.getCode(),
       user_data: document.getElementById('user_data_input').value,
+      user_data_type: document.getElementById('user_data_type_select').value,
       runAt: document.getElementById('target').value,
       breadcrumb: snd_xplore_reporter.getBreadcrumb(),
       reporter: snd_xplore_reporter,
+      no_quotes: !$('#setting_quotes').is(':checked'),
       show_props: $('#show_props').is(':checked'),
       show_strings: $('#show_strings').is(':checked'),
       html_messages: $('#show_html_messages').is(':checked')
@@ -96,24 +99,36 @@ var snd_xplore_util = {
     var $user_data_input;
 
     snd_xplore_util.toggleEditor(true, function () {
+
+      if (snd_xplore_editor.getValue()) {
+        if (!confirm('Replace code with demo?')) {
+          return;
+        }
+      }
+
+      if (user_data) {
+        $('#user_data_tab').tab('show');
+        $user_data_input = $('#user_data_input');
+        if ($user_data_input.val()) {
+          if (!confirm('Replace user data with demo user data?')) {
+            return;
+          }
+        }
+        $user_data_input.val(user_data);
+      }
+
       $('#target').val('server');
       $('#scope').val('global');
       snd_xplore_editor.setValue(code);
       snd_xplore_editor.focus();
-
-      if (user_data) {
-        $user_data_input = $('#user_data_input');
-        if (!$user_data_input.val()) {
-          $user_data_input.val(user_data);
-        }
-      }
     });
   },
   formatString: function () {
-    var $user_data_input = $('#user_data_input');
+    var $user_data_input = $('#user_data_input'),
+        $user_data_type = $('#user_data_type_select');
     $.ajax({
       type: "POST",
-      url: "/snd_xplore.do?action=formatString",
+      url: "/snd_xplore.do?action=formatString&type=" + $user_data_type.val(),
       data: {
         string: $user_data_input.val()
       }
@@ -167,31 +182,51 @@ var snd_xplore_util = {
 $('.xplore_demo').on('click', 'a', function (e) {
   e.preventDefault();
   $this = $(this);
-  var code, user_data;
+  var code = [],
+      user_data;
   switch ($this.attr('data-demo')) {
     case 'GlideRecord':
-      code = 'var gr = new GlideRecord(\'incident\');\n//gr.addQuery(\'\');\ngr.setLimit(1);\ngr.query();\ngr.next();\ngr';
+      code.push('var gr = new GlideRecord("incident");');
+      code.push('//gr.addQuery("");');
+      code.push('gr.setLimit(1);');
+      code.push('gr.query();');
+      code.push('gr.next();');
+      code.push('gr');
+      break;
+    case 'GlideRecord.get':
+      code.push('var gr = new GlideRecord("incident");');
+      code.push('gr.get("sys_id", "foo");');
+      code.push('gr');
       break;
     case 'Array':
-      code = "var a = [];\na.push(['a', 'b', 'c']);\na.push(['x', 'y', 'z']);\na";
+      code.push("var a = [];");
+      code.push("a.push(['a', 'b', 'c']);");
+      code.push("a.push(['x', 'y', 'z']);");
+      code.push("a");
       break;
     case 'GlideUser':
-      code = "gs.getUser();";
+      code.push("gs.getUser();");
       break;
     case 'Logging':
-      code = "gs.debug('Do you like to debug?');\ngs.addInfoMessage('You are using Xplore');";
+      code.push('gs.log("Hello world from gs.log")');
+      code.push('gs.print("Hello world from gs.print (not compatible with scopes)")');
+      code.push('gs.info("Hello world from gs.info")');
+      code.push('gs.warn("Hello world from gs.warn")');
+      code.push('gs.error("Hello world from gs.error")');
+      code.push('gs.addInfoMessage("Hello world from.gs.addInfoMessage")');
+      code.push('gs.addErrorMessage("Hello world from gs.addErrorMessage")');
       break;
     case 'scope':
-      code = "this";
+      code.push("this");
       break;
     case 'user_data':
-      code = 'var doc = new XMLDocument(user_data);\ndoc.toIndentedString();';
+      code.push('var doc = new XMLDocument(user_data);');
+      code.push('doc.toIndentedString();');
       user_data = '<?xml version="1.0" encoding="UTF-8" ?><xml><incident><active>true</active></incident></xml>';
-      $('#user_data_tab').tab('show');
       break;
   }
   if (code) {
-    snd_xplore_util.demo(code, user_data);
+    snd_xplore_util.demo(code.join('\n'), user_data);
   }
 });
 
@@ -359,6 +394,8 @@ var snd_xplore_table_util = (function () {
   function getTableHierarchy(table, search_labels) {
     loading(true);
     api.current = table;
+    api.term = ((table.indexOf('>') === 0 || table.indexOf('=') === 0) ? table.substr(1) : table).toLowerCase();
+
     $.ajax({
       type: 'GET',
       url: '/snd_xplore.do?action=getTableHierarchy' +
@@ -370,26 +407,55 @@ var snd_xplore_table_util = (function () {
       var result = data.result;
       var $target = $('#table_hierarchy_result').empty();
 
-      if ('success' in result && result.success === false) {
-        $target.append('<div class="alert alert-danger"><strong>' + result.message + '</strong></div>');
+      if (data.$success === false) {
+        $target.append('<div class="alert alert-danger"><strong>' + data.$error + '</strong></div>');
         loading(false);
         return;
       }
 
+      function isMatch(text) {
+        return text ? text.toLowerCase().indexOf(api.term) > -1 : false;
+      }
+
+      function sortByLabel(dbo) {
+        dbo.sort(function (a, b) {
+          if (a.label > b.label) return 1;
+          if (b.label > a.label) return -1;
+          return 0;
+        });
+      }
+
       function generateHtml(dbo) {
-        var html = '<li>';
-        if (api.current == dbo.name) {
-          html += '<span class="bg-success text-success">' + dbo.label + '</span>';
+        var match_label = isMatch(dbo.label),
+            match_name  = isMatch(dbo.name),
+            text_class = match_label || match_name ? 'primary' : 'muted',
+            anchor,
+            html;
+
+        if (api.term != '*') {
+          html = '<li class="text-' + text_class + '">';
+          if (match_label) {
+            html += dbo.label.replace(new RegExp('(' + api.term + ')', 'i'), '<span class="bg-success">$1</span>');
+          } else {
+            html += dbo.label;
+          }
         } else {
-          html += dbo.label;
+          html = '<li>' + dbo.label;
         }
-        html += ' [<a href="#show" data-show="' + dbo.name + '">' +
-            dbo.name + '</a>]';
+
+        if (match_name) {
+          anchor = dbo.name.replace(api.term, '<span class="bg-success">' + api.term + '</span>');
+        } else {
+          anchor = dbo.name;
+        }
+        html += ' [<a href="#show" data-show="=' + dbo.name + '" class="text-' + text_class + '">' + anchor + '</a>]';
+
         html += ' <a href="' + dbo.name + '_list.do" target="_blank" title="Open list"><i class="glyphicon glyphicon-list-alt" /></a>';
         html += ' <a href="' + dbo.name + '.do" target="_blank" title="Open form"><i class="glyphicon glyphicon-open-file" /></a>';
         html += ' <a href="sys_db_object.do?sys_id=' + dbo.sys_id + '" target="_blank" title="Open table definition"><i class="glyphicon glyphicon-cog" /></a>';
         if (dbo.children.length) {
           html += '<ul>';
+          sortByLabel(dbo.children);
           $.each(dbo.children, function (i, childDbo) {
             html += generateHtml(childDbo);
           });
@@ -398,7 +464,9 @@ var snd_xplore_table_util = (function () {
         html += '</li>';
         return html;
       }
+
       if (result.length) {
+        sortByLabel(result);
         $.each(result, function (i, dbo) {
           $target.append('<ul>' + generateHtml(dbo) + '</ul>');
         });
@@ -724,7 +792,7 @@ $(function () {
   });
 
   // Setup property toggles
-  $('#show_props,#show_strings').
+  $('#setting_quotes,#show_props,#show_strings').
     bootstrapToggle({
       on: 'Show',
       off: 'Hide',
@@ -771,7 +839,8 @@ $(function () {
   // table input trigger
   $('#table_hierarchy_form').on('submit', function (e) {
     e.preventDefault();
-    var table = $('#table_hierarchy_table').val();
+
+    var table = $('#table_hierarchy_table').blur().val();
     var search_labels = $('#table_hierarchy_table_do_label').is(':checked');
     //if (!table) return;
     //delay('tableHierarchy', function () {
@@ -810,6 +879,14 @@ $(function () {
         event.preventDefault();
         snd_xplore_util.executeNew();
       }
+    }
+  });
+
+  // Dirty form detection
+  $(window).bind('beforeunload', function() {
+    var code = snd_xplore_util.getCode();
+    if (code.length) {
+      return 'Do you want to leave?';
     }
   });
 
@@ -893,7 +970,7 @@ $(function () {
       node_log_url = new_url || '/ui_page_process.do?name=log_file_browser&max_rows=2000';
       $('#node_log_frame').attr('src', node_log_url);
     }
-  })
+  });
   $('#log_reset').click(function () {
     var $frame = $('#' + active_log_frame + '_log_frame');
     if ($frame.length) {
@@ -948,6 +1025,7 @@ $(function () {
     resizeOutputContent();
     resizeUserData();
   });
+
 
   snd_xplore_editor.focus();
   $('#window_loader').removeClass('active');

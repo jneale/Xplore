@@ -58,7 +58,7 @@ var snd_xplore = (function () {
 
     if (target) {
       try {
-        window.user_data = params.user_data;
+        window.user_data = formatUserData(params.user_data, params.user_data_type);
         var eResult = target.eval(params.code);
 
         params.dotwalk = params.breadcrumb;
@@ -72,6 +72,25 @@ var snd_xplore = (function () {
 
     target.jslog = _jslog;
     params.reporter.done(report);
+
+    function formatUserData(str, type) {
+      var err = 'Unable to parse User Data as ',
+          tmp;
+      if (type.indexOf('XMLDocument') > -1) {
+        try {
+          return jQuery.parseXML(str);
+        } catch (e) {
+          throw new Error(err + 'XMLDocument. ' + e);
+        }
+      } else if (type.indexOf('JSON') > -1) {
+        try {
+          return JSON.parse(str);
+        } catch (e) {
+          throw new Error(err + 'JSON. ' + e);
+        }
+      }
+      return str;
+    }
 
     function findTarget(runAt) {
       // summary:
@@ -137,8 +156,10 @@ var snd_xplore = (function () {
         data: JSON.stringify({
           code: params.code,
           user_data: params.user_data,
+          user_data_type: params.user_data_type,
           breadcrumb: params.breadcrumb,
           scope: $('#scope').val(),
+          no_quotes: params.no_quotes,
           show_props: params.show_props,
           show_strings: params.show_strings
         })

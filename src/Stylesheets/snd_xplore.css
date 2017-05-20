@@ -455,6 +455,9 @@ sup .label-as-badge {
   margin-top: 15px;
   margin-bottom: 15px;
 }
+#settings_pane .checkbox label {
+  padding-left: 12px;
+}
 
 /* fix IE select */
 select::-ms-expand {
