@@ -1,7 +1,22 @@
 # Xplore: Developer Toolkit
 A toolkit for every ServiceNow developer. Find more at www.sndeveloper.com.
 
-### Version 4.1
+### Version 4.3
+* Tested in Jakarta early-access.
+* Fix issue using GlideScopedEvaluator in Helsinki patch 9a and Istanbul patch 4.
+* Fix impersonation issue in Istanbul.
+* Fix table search by label.
+* Improve table search functionality and display.
+* Dirty form alert! Reduces likelihood of accidental data loss.
+* Added JSON prettify to User Data.
+* User data can be automatically pre-processed so you don't need to convert from JSON/XML.
+* Added new 'Quotes' setting to prevent strings from being wrapped with quotes. Means that prettify will work properly.
+* Removed panels from info page and added contents links.
+* Fixed illegal access to thread name (used for automatic node log parameter population) (H,I,J).
+* Fixed illegal access to impersonating user name (H,I,J).
+
+### Version 4.2
+* Fix prototype error when looking at Java functions.
 * Automatically blacklist illegal fields.
 * Add prototype property to function explanations.
 * Fix cross-origin target frame access issue.
@@ -14,6 +29,9 @@ A toolkit for every ServiceNow developer. Find more at www.sndeveloper.com.
 * Fix submit button spinner.
 * Add support for function prototypes.
 * Added node log support.
+
+### Version 4.1
+* Released under version 4.2
 
 ### Version 4.0
 * Fixed issue with running scoped code in Helsinki.
