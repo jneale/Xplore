@@ -655,9 +655,9 @@ function XploreTableHierarchy(table, options) {
       // match on table is required, so get all tables and match
       required = {};
       eachObj(getDbObject(), function (name, obj) {
-        var match = obj.name.match(matcher);
+        var match = obj.name ? obj.name.match(matcher) : null;
         if (!match && searchLabels) {
-          match = obj.label.match(matcher);
+          match = obj.label ? obj.label.match(matcher) : null;
         }
         if (match) {
           eachObj(getDbObject(name), function (name, obj) {

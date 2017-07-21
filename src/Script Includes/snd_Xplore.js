@@ -589,12 +589,28 @@ snd_Xplore.getOutputMessages = function () {
 
   // gs.print
   tmp = GlideSessionDebug.getOutputMessages().toArray();
-  for (i = 0; i < tmp.length; i++) {
-    ret.push({type: 'log', message: ('' + tmp[i].line).replace(' : ', ' ')}); // remove unnecessary colon
+  try {
+    for (i = 0; i < tmp.length; i++) {
+      ret.push({type: 'log', message: ('' + tmp[i].line).replace(' : ', ' ')}); // remove unnecessary colon
+    }
+  } catch (e) {
+    if (tmp.length) {
+      ret.unshift({type: 'access', message: '<p>Hey!<p>' +
+        '<p>It looks like you\'re using <code>gs.print</code>, <code>gs.info</code>, ' +
+        '<code>gs.warn</code> or <code>gs.error</code> in your script.</p>' +
+        '<p>Unfortunately ServiceNow have locked down the API and we no longer have access to read ' +
+        'those messages. You can see them by going to Logs > Node Logs; the time and thread name ' +
+        'should be pre-populated for this thread. Alternatively you can replace those methods with ' +
+        '<code>gs.addInfoMessage</code> although I appreciate this doesn\'t work for Script Includes, etc.</p>' +
+        '<p>If you have any insight or can help fix this, please get in touch!</p>' +
+        '<p>Thanks! James</p>' +
+        '<p><small>Original exception: ' + e.toString() + '</small></p>'});
+    }
+  } finally {
+    // remove all the messages we just retrieved
+    GlideSessionDebug.clearOutputMessages();
   }
 
-  // remove all the messages we just retrieved
-  GlideSessionDebug.clearOutputMessages();
   gs.flushAccessMessages();
   gs.flushMessages();
 

@@ -17,9 +17,11 @@ function getMinutesSince(startTime) {
   var ds = Math.floor((t/100) % 10);
   var seconds = Math.floor((t/1000) % 60);
   var minutes = Math.floor((t/1000/60) % 60);
+  var hours   = Math.floor(t/1000/60/60);
   if (minutes < 10) minutes = '0' + minutes;
   if (seconds < 10) seconds = '0' + seconds;
-  return minutes + ':' + seconds + '.' + ds;
+  if (hours   < 10) hours   = '0' + hours;
+  return hours + ':' + minutes + ':' + seconds + '.' + ds;
 }
 
 // main UI object

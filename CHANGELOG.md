@@ -1,6 +1,13 @@
 # Xplore: Developer Toolkit
 A toolkit for every ServiceNow developer. Find more at https://thewhitespace.io.
 
+### Version 4.4
+* Prevented 'getLine' exception from causing fatal error.
+* Increased timer scope to include hours.
+* Added ServiceNow build tag to the Xplore icon title.
+* Fixed possibility of table hierarchy from failing because of matcher error.
+* Updated application icon.
+
 ### Version 4.3
 * Tested in Jakarta early-access.
 * Fix issue using GlideScopedEvaluator in Helsinki patch 9a and Istanbul patch 4.
