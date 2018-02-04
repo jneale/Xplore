@@ -413,7 +413,7 @@ snd_Xplore.PrettyPrinter.prototype = {
 
   'GlideElement': function (obj, type) {
     if (type.indexOf('GlideElementBoolean') > -1) {
-      return !obj ? 'true' : 'false';
+      return obj ? 'true' : 'false';
     }
     if (type.indexOf('GlideElementNumeric') > -1) {
       return '' + obj;

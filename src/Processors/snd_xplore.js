@@ -784,7 +784,7 @@ function XploreTableHierarchy(table, options) {
 
 (function () {
 
-  snd_console = typeof snd_console === 'object' ? snd_console : {};
+  snd_console = typeof snd_console === 'object' ? snd_console : {toString: function(){return 'not installed';}};
 
   // the initial UI file to serve
   var UI_MAIN = 'snd_xplore_main';

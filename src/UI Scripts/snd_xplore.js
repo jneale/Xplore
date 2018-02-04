@@ -39,38 +39,42 @@ var snd_xplore = (function () {
     var report = psuedoResult();
     var target = findTarget(params.runAt);
 
-    // spoof ServiceNow's jslog function
-    var _jslog = target.jslog;
-    target.jslog = function(msg, src) {
-      var d = new Date();
-      var timestamp =
-        ('0' + d.getHours()).substr(-2) + ':' +
-        ('0' + d.getMinutes()).substr(-2) + ':' +
-        ('0' + d.getSeconds()).substr(-2) + '.' +
-        d.getMilliseconds();
-      if (src) {
-        msg = timestamp + ': [' + src + '] ' + msg;
-      } else {
-        msg = timestamp + ': ' + msg;
-      }
-      message(report, 'log', msg);
-    };
-
     if (target) {
       try {
-        window.user_data = formatUserData(params.user_data, params.user_data_type);
-        var eResult = target.eval(params.code);
+       
+        // spoof ServiceNow's jslog function
+        var _jslog = target.jslog;
+        target.jslog = function(msg, src) {
+          var d = new Date();
+          var timestamp =
+            ('0' + d.getHours()).substr(-2) + ':' +
+            ('0' + d.getMinutes()).substr(-2) + ':' +
+            ('0' + d.getSeconds()).substr(-2) + '.' +
+            ('00' + d.getMilliseconds()).substr(-3);
+          if (src) {
+            msg = timestamp + ': [' + src + '] ' + msg;
+          } else {
+            msg = timestamp + ': ' + msg;
+          }
+          message(report, 'log', msg);
+        };
 
+        target.user_data = formatUserData(params.user_data, params.user_data_type);
         params.dotwalk = params.breadcrumb;
+        var eResult = target.eval(params.code);
+        
+        target.jslog = _jslog;
+
         var x = new snd_Xplore();
         x.xplore(eResult, 'snd_Xplore.ObjectReporter', params);
+        var messages = report.messages;
         report = x.reporter.getReport();
+        report.messages = messages;
       } catch (e) {
         message(report, 'error', e);
       }
     }
 
-    target.jslog = _jslog;
     params.reporter.done(report);
 
     function formatUserData(str, type) {
