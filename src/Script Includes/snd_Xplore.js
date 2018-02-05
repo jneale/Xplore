@@ -413,7 +413,7 @@ snd_Xplore.PrettyPrinter.prototype = {
 
   'GlideElement': function (obj, type) {
     if (type.indexOf('GlideElementBoolean') > -1) {
-      return !obj ? 'true' : 'false';
+      return obj ? 'true' : 'false';
     }
     if (type.indexOf('GlideElementNumeric') > -1) {
       return '' + obj;
@@ -587,6 +587,9 @@ snd_Xplore.getOutputMessages = function () {
     ret.push({type: 'info', message: tmp[i]});
   }
 
+  // merge gslog workaround for Istanbul onwards
+  ret = ret.concat(this._gslogs);
+
   // gs.print
   tmp = GlideSessionDebug.getOutputMessages().toArray();
   try {
@@ -744,4 +747,36 @@ snd_Xplore.getVersion = function () {
   gr.setLimit(1);
   gr.query();
   return gr.next() ? gr.getValue('version') : 'Unknown';
+};
+
+///////////////////////////////////////////////////////
+// Workaround for log statements in Istanbul onwards //
+///////////////////////////////////////////////////////
+
+snd_Xplore._gslogs = [];
+snd_Xplore._gslogMessage = function (level, msg, source) {
+  var time = new Date().toISOString();
+  snd_Xplore._gslogs.push({
+    type: level,
+    message: time + ': ' + msg,
+    source: source
+  });
+};
+snd_Xplore.gsprint = function (msg, source) {
+  snd_Xplore._gslogMessage('-1', msg, source);
+};
+snd_Xplore.gslog = function (msg, source) {
+  snd_Xplore._gslogMessage('-1', msg, source);
+};
+snd_Xplore.gsdebug = function (msg, source) {
+  snd_Xplore._gslogMessage('-1', msg, source);
+};
+snd_Xplore.gsinfo = function (msg, source) {
+  snd_Xplore._gslogMessage('0', msg, source);
+};
+snd_Xplore.gswarn = function (msg, source) {
+  snd_Xplore._gslogMessage('1', msg, source);
+};
+snd_Xplore.gserror = function (msg, source) {
+  snd_Xplore._gslogMessage('2', msg, source);
 };

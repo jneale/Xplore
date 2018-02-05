@@ -88,7 +88,8 @@ var snd_xplore_util = {
       no_quotes: !$('#setting_quotes').is(':checked'),
       show_props: $('#show_props').is(':checked'),
       show_strings: $('#show_strings').is(':checked'),
-      html_messages: $('#show_html_messages').is(':checked')
+      html_messages: $('#show_html_messages').is(':checked'),
+      fix_gslog: $('#fix_gslog').is(':checked')
     };
 
     snd_xplore(params);
@@ -653,6 +654,16 @@ var snd_script_search_util = (function () {
     api.loadAll();
   });
 
+  $('#scripts_refresh').click(function () {
+    $list.empty();
+    api.loadAll().done(function () {
+      var search = $('#script_pane_search').val();
+      if (search) {
+        snd_script_search_util.search(search);
+      }
+    });
+  });
+
   return api;
 })();
 
@@ -826,6 +837,15 @@ $(function () {
       } else {
         $('#script_output').removeClass('wrap-pre');
       }
+    });
+  $('#fix_gslog').
+    bootstrapToggle({
+      on: 'Replace',
+      off: 'Ignore',
+      onstyle: 'success',
+      offstyle: 'warning',
+      size: 'mini',
+      width: 75
     });
 
   // set default to wrapped
