@@ -9,6 +9,7 @@ A toolkit for every ServiceNow developer. Find more at https://thewhitespace.io.
 * Added Refresh button to Script Includes list.
 * Added Xplore system properties category and application module.
 * Added property to prevent script execution in Production instances.
+* Fixed issue with instantiated JavaScript classes throwing 'Method "toString" called on incompatible object.'
 
 ### Version 4.4
 * Prevented 'getLine' exception from causing fatal error.

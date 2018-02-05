@@ -368,7 +368,11 @@ snd_Xplore.PrettyPrinter.prototype = {
   },
 
   'String': function (obj) {
-    obj = obj + '';
+    try {
+      obj = obj + '';
+    } catch (e) {
+      obj = Object.prototype.toString.call(obj);
+    }
 
     // handle object types and memory references
     if (this.no_quotes || obj.match(this.not_str_regex)) {
