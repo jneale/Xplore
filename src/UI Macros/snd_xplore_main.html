@@ -133,6 +133,13 @@
             scroll right in the output pane to read them. If you'd rather see
             each line as-is then change this setting.</p>
         </div>
+        <div class="checkbox">
+          <input type="checkbox" id="fix_gslog" checked="checked" />
+          <strong>Fix Logs</strong>
+          <p>Replace calls to gs.print, gs.log, gs.debug, gs.info, gs.warn and gs.error
+             with internal functions so that we can capture the logs. NOTE: This
+             only applies to the code in Xplore, not business rules or script includes.</p>
+        </div>
         <p class="small">*New values will apply to the next script being run.</p>
       </div>
 
@@ -140,6 +147,7 @@
         <div id="script_pane_loading" class="pull-right" style="display:none;">
           <i class="glyphicon glyphicon-refresh spin"></i>
         </div>
+        <button class="btn btn-link btn-sm pull-right" id="scripts_refresh">Refresh</button>
         <p class="lead">Scripts</p>
         <p>Easily append script includes to the editor window.</p>
         <input type="text" class="form-control" id="script_pane_search"

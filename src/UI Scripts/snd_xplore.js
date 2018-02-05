@@ -41,7 +41,7 @@ var snd_xplore = (function () {
 
     if (target) {
       try {
-       
+
         // spoof ServiceNow's jslog function
         var _jslog = target.jslog;
         target.jslog = function(msg, src) {
@@ -62,7 +62,7 @@ var snd_xplore = (function () {
         target.user_data = formatUserData(params.user_data, params.user_data_type);
         params.dotwalk = params.breadcrumb;
         var eResult = target.eval(params.code);
-        
+
         target.jslog = _jslog;
 
         var x = new snd_Xplore();
@@ -165,7 +165,8 @@ var snd_xplore = (function () {
           scope: $('#scope').val(),
           no_quotes: params.no_quotes,
           show_props: params.show_props,
-          show_strings: params.show_strings
+          show_strings: params.show_strings,
+          fix_gslog: params.fix_gslog
         })
       },
       dataType: "json"

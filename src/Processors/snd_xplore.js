@@ -276,6 +276,12 @@ XploreRunner.prototype.run = function run(options) {
     return report;
   }
 
+  if (!this.productionCheck()) {
+    gs.addErrorMessage('Script execution has been disabled ("snd_xplore.production_access" == false)');
+    gs.addErrorMessage('Production environment detected ("glide.installation.production" == true)');
+    return end();
+  }
+
   if (!options) {
     gs.addErrorMessage('Xplore processor did not receive a request.');
     return end();
@@ -291,6 +297,10 @@ XploreRunner.prototype.run = function run(options) {
   try {
     this.validateScript(script);
     this.logRequest(script, options.scope);
+
+    if (options.fix_gslog) {
+      script = this.fixLogs(script);
+    }
 
     // not ideal doing this
     global.user_data = this.formatUserData(options.user_data, options.user_data_type);
@@ -308,6 +318,28 @@ XploreRunner.prototype.run = function run(options) {
   }
 
   return end(report);
+};
+
+/**
+ * Check if we are running in Production and the user has access to run scripts.
+ *
+ * @return {Boolean}
+ */
+XploreRunner.prototype.productionCheck = function () {
+  var is_production = gs.getProperty('glide.installation.production') == 'true';
+  var is_production_enabled = gs.getProperty('snd_xplore.production_access') == 'true';
+  if (is_production) return is_production_enabled;
+  return true;
+};
+
+/**
+ * Replace calls to gs.print etc so that we can capture the logs.
+ *
+ * @param  {String} code
+ * @return {String}
+ */
+XploreRunner.prototype.fixLogs = function (code) {
+  return code.replace(/gs\.(print|log|debug|info|warn|error)/g, "snd_Xplore.gs$1");
 };
 
 /**
@@ -390,6 +422,7 @@ XploreRunner.prototype.validateScript = function validateScript(script) {
   }
   return true;
 };
+
 /**
   summary:
     Run Xplore on a script in the global environment
@@ -1052,7 +1085,7 @@ function XploreTableHierarchy(table, options) {
   // check the user has the role to access
   if (!hasAccess()) {
     g_response.setStatus(403); // forbidden
-    response = processTemplate(UI_403, MACRO_VARS);
+    //response = processTemplate(UI_403, MACRO_VARS);
     if (response) {
       g_processor.writeOutput('text/html', response);
     } else {

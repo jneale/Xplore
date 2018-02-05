@@ -1,6 +1,15 @@
 # Xplore: Developer Toolkit
 A toolkit for every ServiceNow developer. Find more at https://thewhitespace.io.
 
+### Version 4.5
+* Fix inverted booleans.
+* Fix support for jslog() in client mode.
+* Added GlideRecord shortcut menu items to the List and Row system context menus (right click from list header or row).
+* Added workaround for server logging methods gs.print, gs.log, gs.info, gs.debug, gs.warn and gs.error in Istanbul+.
+* Added Refresh button to Script Includes list.
+* Added Xplore system properties category and application module.
+* Added property to prevent script execution in Production instances.
+
 ### Version 4.4
 * Prevented 'getLine' exception from causing fatal error.
 * Increased timer scope to include hours.
