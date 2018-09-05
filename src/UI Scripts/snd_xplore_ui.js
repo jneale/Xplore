@@ -783,7 +783,8 @@ $(function () {
     indentUnit: 2,
     smartIndent: true,
     matchBrackets: true,
-    mode: 'javascript'
+    mode: 'javascript',
+    keyMap: 'sublime'
   });
 
   var sxr = snd_xplore_reporter;
