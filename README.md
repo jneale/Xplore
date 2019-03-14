@@ -17,7 +17,7 @@ Use one of the utilities to make development activities easier.
 * Built in regular expression testing tool
 * Built in table explorer
 * Built in log viewer
-* Fuji, Geneva and Helsinki compatible
+* Tested to be compatible with ServiceNow Madrid release
 
 ## The Interface
 
