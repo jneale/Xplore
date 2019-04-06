@@ -5,9 +5,10 @@ A toolkit for every ServiceNow developer. Find more at https://thewhitespace.io.
 * Madrid support.
 * Upgraded CodeMirror to v4 with support for Sublime keymap (https://github.com/thewhitespace/Xplore/pull/17)
 * Added JSON formatting for properties which are native objects or arrays.
+* Added form context menu item to open any record in Xplore.
+* Fixed issue with breadcrumbs containing dots not being supported (https://github.com/thewhitespace/Xplore/pull/19)
 * Fixed issue with error values when viewing Scoped GlideRecords.
 * Fixed issue with using log method replacements not finding snd_Xplore in scopes.
-* Fixed issue with breadcrumbs containing dots not being supported (https://github.com/thewhitespace/Xplore/pull/19)
 
 ### Version 4.5
 * Fix inverted booleans.
