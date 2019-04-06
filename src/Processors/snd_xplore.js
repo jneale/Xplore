@@ -339,7 +339,7 @@ XploreRunner.prototype.productionCheck = function () {
  * @return {String}
  */
 XploreRunner.prototype.fixLogs = function (code) {
-  return code.replace(/gs\.(print|log|debug|info|warn|error)/g, "snd_Xplore.gs$1");
+  return code.replace(/gs\.(print|log|debug|info|warn|error)/g, "global.snd_Xplore.gs$1");
 };
 
 /**

@@ -1,6 +1,13 @@
 # Xplore: Developer Toolkit
 A toolkit for every ServiceNow developer. Find more at https://thewhitespace.io.
 
+### Version 4.6
+* Madrid support.
+* Upgraded CodeMirror to v4 with support for Sublime keymap (https://github.com/thewhitespace/Xplore/pull/17)
+* Added JSON formatting for properties which are native objects or arrays.
+* Fixed issue with error values when viewing Scoped GlideRecords.
+* Fixed issue with using log method replacements not finding snd_Xplore in scopes.
+
 ### Version 4.5
 * Fix inverted booleans.
 * Fix support for jslog() in client mode.

@@ -4,13 +4,13 @@
  * Thanks to Jim Coyne for the original version of this.
  * https://community.servicenow.com/community/develop/blog/2016/06/10/xplore-gliderecord-script-tool
  */
-var snd_xplore_list = {};
+var snd_xplore_shortcuts = {};
 
 /**
  * Open the list query in Xplore.
  *
  */
-snd_xplore_list.openQuery = function openQuery() {
+snd_xplore_shortcuts.openQuery = function openQuery() {
 	var query = ('' + g_list.getFixedQuery()).replace('null', '');
 	if (query == '') {
 		query = ('' + g_list.getRelatedQuery()).replace('null', '');
@@ -42,27 +42,27 @@ snd_xplore_list.openQuery = function openQuery() {
 	script += '}' + newline;
 	script += 'run();';
 
-	snd_xplore_list.open(script);
+	snd_xplore_shortcuts.open(script);
 };
 
 /**
  * Open the single Record in Xplore.
  *
  */
-snd_xplore_list.openRecord = function openRow() {
+snd_xplore_shortcuts.openRecord = function openRow() {
 	var newline = '\n';
 	var script = 'var gr = new GlideRecord(\'' + g_list.tableName + '\');' + newline;
 	script += 'gr.get(\'' + g_sysId + '\');' + newline;
 	script += 'gr;';
 
-	snd_xplore_list.open(script);
+	snd_xplore_shortcuts.open(script);
 };
 
 /**
  * Open a new Xplore window and set the script.
  *
  */
-snd_xplore_list.open = function open(script) {
+snd_xplore_shortcuts.open = function open(script) {
 	// open Xplore in a new window
 	var win = window.open('/snd_xplore.do');
 

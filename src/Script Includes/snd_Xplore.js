@@ -83,10 +83,14 @@ snd_Xplore.prototype.debugMsg = function (msg) {
  */
 snd_Xplore.prototype.xplore = function (obj, reporter, options) {
   var is_java_obj,
+      use_json,
       target,
       x;
 
   options = options || {};
+  use_json = options.use_json;
+  if (typeof options.use_json === 'undefined') options.use_json = false;
+
   this.prettyPrinter.noQuotes(options.no_quotes);
 
   if (options.dotwalk) obj = snd_Xplore.dotwalk(obj, options.dotwalk);
@@ -105,6 +109,7 @@ snd_Xplore.prototype.xplore = function (obj, reporter, options) {
   this.debugMsg('Exploring object ' + target.name);
 
   if (options.show_props !== false && obj !== null && obj !== undefined) {
+    options.use_json = use_json;
     this.xploreProps(obj, reporter, options);
   }
 
@@ -249,7 +254,7 @@ snd_Xplore.prototype.lookAt = function (obj, name, options) {
   } else if (options.show_strings === false) {
     result.string = '*IGNORED*';
   } else {
-    result.string = this.prettyPrinter.format(obj);
+    result.string = this.prettyPrinter.format(obj, options.use_json);
   }
 
   return result;
@@ -395,11 +400,12 @@ snd_Xplore.PrettyPrinter.prototype = {
   },
 
   'Array': function (obj) {
-    var str = [];
-    for (var i = 0; i < obj.length; i++) {
-      str.push(this.format(obj[i]));
-    }
-    return '[' + str.join(', ') + ']';
+    // var str = [];
+    // for (var i = 0; i < obj.length; i++) {
+    //   str.push(this.format(obj[i]));
+    // }
+    // return '[' + str.join(', ') + ']';
+    return JSON.stringify(obj, '', 2);
   },
 
   'SNRegExp': function (obj) {
@@ -416,20 +422,34 @@ snd_Xplore.PrettyPrinter.prototype = {
   },
 
   'GlideElement': function (obj, type) {
-    if (type.indexOf('GlideElementBoolean') > -1) {
-      return obj ? 'true' : 'false';
-    }
-    if (type.indexOf('GlideElementNumeric') > -1) {
-      return '' + obj;
-    }
+    var internal_type = 'string',
+        ed;
+
     if (type.indexOf('GlideElementHierarchicalVariables') > -1) {
       return ''; // prevent TypeError: Cannot find default value for object.
     }
-    if (type == 'GlideElementReference') {
+
+    try {
+      ed = obj.getED();
+      internal_type = ed.getInternalType();
+    } catch (e) {};
+
+    if (internal_type == 'boolean') {
+      return obj ? 'true' : 'false';
+    }
+    if (internal_type == 'reference') {
       return this.GlideElementReference(obj);
     }
+    if (ed.isChoiceTable()) {
+      return obj.getDisplayValue() + ' [' + obj + ']';
+    }
+
     try {
-      obj = obj.getValue ? obj.getValue() : '' + obj;
+      if (type.indexOf('Scoped') > -1) {
+        obj = '' + obj;
+      } else {
+        obj = obj.getValue ? obj.getValue() : '' + obj;
+      }
       return this.format(obj);
     } catch (ex) {
       return ex.toString();
@@ -448,7 +468,7 @@ snd_Xplore.PrettyPrinter.prototype = {
     return result;
   },
 
-  format: function (obj) {
+  format: function (obj, use_json) {
     var real_type = this.getClassType(obj),
         type = real_type.replace('GlideScoped', 'Glide');
 
@@ -465,7 +485,12 @@ snd_Xplore.PrettyPrinter.prototype = {
     }
 
     if (type.indexOf('GlideRecord') > -1) return this.GlideRecord(obj);
-    if (type.indexOf('GlideElement') > -1) return this.GlideElement(obj, type);
+    if (type.indexOf('GlideElement') > -1) return this.GlideElement(obj, real_type);
+
+    // handle native JavaScript objects which would be useful to see as JSON
+    if (use_json && (obj instanceof Object || Array.isArray(obj))) {
+      return JSON.stringify(obj, '', 2);
+    }
 
     // handle native JavaScript objects which we know have a toString
     if (obj instanceof Function ||
