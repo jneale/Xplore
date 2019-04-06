@@ -441,12 +441,13 @@ var snd_xplore_reporter = (function () {
     };
 
     this.getBreadcrumb = function () {
-      return breadcrumbs.reduce(
-          function(r,c){
-              if (r.length > 0) r+=".";
-              r+= c.replace(/\./g,'&#46;');
-              return r;
-          },"");
+      return breadcrumbs.reduce(function (r, c) {
+        if (r.length > 0) {
+          r += ".";
+        }
+        r += c.replace(/\./g,'&#46;');
+        return r;
+      }, "");
     };
 
     this.clearBreadcrumb = function () {

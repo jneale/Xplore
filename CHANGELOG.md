@@ -7,6 +7,7 @@ A toolkit for every ServiceNow developer. Find more at https://thewhitespace.io.
 * Added JSON formatting for properties which are native objects or arrays.
 * Fixed issue with error values when viewing Scoped GlideRecords.
 * Fixed issue with using log method replacements not finding snd_Xplore in scopes.
+* Fixed issue with breadcrumbs containing dots not being supported (https://github.com/thewhitespace/Xplore/pull/19)
 
 ### Version 4.5
 * Fix inverted booleans.
