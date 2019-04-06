@@ -333,7 +333,11 @@ snd_Xplore.getLists = function () {
 snd_Xplore.dotwalk = function (obj, path) {
   // summary:
   //   Dotwalk a path on an object
-  var pathArr = path.split('.');
+  var pathArr = path.split(".").reduce(
+      function(r,c){
+            r.push(c.replace(/&#46;/g,"."));
+            return r;
+      }, []);
   var o = obj;
   for (var i = 0; i < pathArr.length; i++) {
     path = pathArr[i];
