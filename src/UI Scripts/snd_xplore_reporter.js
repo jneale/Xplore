@@ -112,11 +112,17 @@ var snd_xplore_reporter = (function () {
       if (classMap[m.type] == 'danger') {
         script_update = tryBlacklist(temp) || script_update;
       }
-      if (!asHtml) {
-        temp = escapeHtml(temp);
+
+      if (m.is_json) {
+        target.append('<tr><td class="' + classMap[m.type] + '" style="white-space: pre">' +
+            escapeHtml(temp) + '</td></tr>');
+      } else {
+        if (!asHtml) {
+          temp = escapeHtml(temp);
+        }
+        target.append('<tr><td class="' + classMap[m.type] + '">' +
+            temp.replace(/\n/g, '<br>') + '</td></tr>');
       }
-      target.append('<tr><td class="' + classMap[m.type] + '">' +
-          temp.replace('\n', '<br>') + '</td></tr>');
     }
 
     if (script_update) {

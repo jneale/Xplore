@@ -1,6 +1,11 @@
 # Xplore: Developer Toolkit
 A toolkit for every ServiceNow developer. Find more at https://thewhitespace.io.
 
+### Version 4.7
+* Prevent Ctrl+Enter inserting new line in code.
+* Add support for Ctrl+S to execute the script.
+* Detect objects passed to gs.log/gs.info/gs.error/gs.debug and jslog methods and display them as JSON. (Server processing only applies when Fix Logs option is enabled.)
+
 ### Version 4.6
 * Madrid support.
 * Upgraded CodeMirror to v4 with support for Sublime keymap (https://github.com/thewhitespace/Xplore/pull/17)

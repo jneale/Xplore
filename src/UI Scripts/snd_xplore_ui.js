@@ -784,7 +784,15 @@ $(function () {
     smartIndent: true,
     matchBrackets: true,
     mode: 'javascript',
-    keyMap: 'sublime'
+    keyMap: 'sublime',
+    extraKeys: {
+      'Ctrl-Enter': function (instance) {
+        snd_xplore_util.executeNew();
+      },
+      'Ctrl-S': function (instance) {
+        snd_xplore_util.executeNew();
+      }
+    }
   });
 
   var sxr = snd_xplore_reporter;
@@ -883,8 +891,6 @@ $(function () {
     }
   });
 
-
-
   // setup the editor toggle button
   $('#editor_toggle').on('click', function () {
     snd_xplore_util.toggleEditor();
@@ -893,16 +899,6 @@ $(function () {
   // Execute the script again when the breadcrumb is reset
   $('#clearBreadcrumb').on('click', function () {
     snd_xplore_util.executeNew();
-  });
-
-  // execute when Ctrl + Enter is used
-  $('#editor').keydown(function (event) {
-    if (event.ctrlKey) {
-      if (event.keyCode == 10 || event.keyCode == 13) {
-        event.preventDefault();
-        snd_xplore_util.executeNew();
-      }
-    }
   });
 
   // Dirty form detection

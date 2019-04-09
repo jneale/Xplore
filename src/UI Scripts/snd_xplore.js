@@ -51,12 +51,20 @@ var snd_xplore = (function () {
             ('0' + d.getMinutes()).substr(-2) + ':' +
             ('0' + d.getSeconds()).substr(-2) + '.' +
             ('00' + d.getMilliseconds()).substr(-3);
+          var is_json;
+          if (typeof msg === 'string') {
+            is_json = snd_Xplore.isJson(msg);
+            if (is_json) msg = '\n' + msg;
+          } else {
+            is_json = true;
+            msg = '\n' + JSON.stringify(msg, null, 2);
+          }
           if (src) {
             msg = timestamp + ': [' + src + '] ' + msg;
           } else {
             msg = timestamp + ': ' + msg;
           }
-          message(report, 'log', msg);
+          message(report, 'log', msg, is_json);
         };
 
         target.user_data = formatUserData(params.user_data, params.user_data_type);
@@ -212,7 +220,7 @@ var snd_xplore = (function () {
     };
   }
 
-  function message(result, type, value) {
+  function message(result, type, value, is_json) {
     // summary:
     //   Write a message to the result object
     // type: string
@@ -220,7 +228,8 @@ var snd_xplore = (function () {
 
     result.messages.push({
       type: '' + type,
-      message: '' + value
+      message: '' + value,
+      is_json: is_json
     });
   }
 

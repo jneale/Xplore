@@ -580,8 +580,6 @@ snd_Xplore.PrintReporter.prototype.complete = function () {
 // Object Reporter
 //==============================================================================
 
-
-
 /**
  * Pushes an array of objects containing two properties describing the message
  * into the response.messages array.
@@ -595,6 +593,15 @@ snd_Xplore.PrintReporter.prototype.complete = function () {
  *
 **/
 snd_Xplore.getOutputMessages = function () {
+
+  function add(type, message) {
+    var o = {};
+    o.type = type;
+    o.message = message;
+    o.is_json = snd_Xplore.isJson(message);
+    ret.push(o);
+  }
+
   var ret = [],
       tmp,
       i;
@@ -604,19 +611,19 @@ snd_Xplore.getOutputMessages = function () {
   // access
   tmp = gs.getAccessMessages().toArray();
   for (i = 0; i < tmp.length; i++) {
-    ret.push({type: 'access', message: tmp[i]});
+    add('access', tmp[i]);
   }
 
   // errors
   tmp = gs.getErrorMessages().toArray();
   for (i = 0; i < tmp.length; i++) {
-    ret.push({type: 'error', message: tmp[i]});
+    add('error', tmp[i]);
   }
 
   // info
   tmp = gs.getInfoMessages().toArray();
   for (i = 0; i < tmp.length; i++) {
-    ret.push({type: 'info', message: tmp[i]});
+    add('info', tmp[i]);
   }
 
   // merge gslog workaround for Istanbul onwards
@@ -626,7 +633,7 @@ snd_Xplore.getOutputMessages = function () {
   tmp = GlideSessionDebug.getOutputMessages().toArray();
   try {
     for (i = 0; i < tmp.length; i++) {
-      ret.push({type: 'log', message: ('' + tmp[i].line).replace(' : ', ' ')}); // remove unnecessary colon
+      add('log', ('' + tmp[i].line).replace(' : ', ' ')); // remove unnecessary colon
     }
   } catch (e) {
     if (tmp.length) {
@@ -788,11 +795,17 @@ snd_Xplore.getVersion = function () {
 snd_Xplore._gslogs = [];
 snd_Xplore._gslogMessage = function (level, msg, source) {
   var time = new Date().toISOString();
-  snd_Xplore._gslogs.push({
-    type: level,
-    message: time + ': ' + msg,
-    source: source
-  });
+  var tmp = {};
+  tmp.type = level;
+  tmp.source = source;
+  if (typeof msg === 'string') {
+    tmp.is_json = snd_Xplore.isJson(msg);
+  } else {
+    tmp.is_json = true;
+    msg = JSON.stringify(msg, null, 2);
+  }
+  tmp.message = time + ': ' + (tmp.is_json ? '\n' : '') + msg;
+  snd_Xplore._gslogs.push(tmp);
 };
 snd_Xplore.gsprint = function (msg, source) {
   snd_Xplore._gslogMessage('-1', msg, source);
@@ -811,4 +824,13 @@ snd_Xplore.gswarn = function (msg, source) {
 };
 snd_Xplore.gserror = function (msg, source) {
   snd_Xplore._gslogMessage('2', msg, source);
+};
+
+snd_Xplore.isJson = function isJson(str) {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true;
 };
