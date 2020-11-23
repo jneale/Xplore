@@ -25,6 +25,8 @@ snd_xplore_shortcuts.openQuery = function openQuery() {
 	var script = 'function run() {' + newline;
 	script += '    var gr = new GlideRecord(\'' + g_list.tableName + '\');' + newline;
 	if (query) {
+		// Ensure single quotes in the query are escaped in the generated script
+		query = query.replace(/'/g, '\\\'');
 		script += '    gr.addEncodedQuery(\'' + query + '\');' + newline;
 	}
 	script += '    //gr.orderBy(\'name\');' + newline;
