@@ -14,7 +14,7 @@
   </div>
 </section>
 
-<section class="section-light">
+<section>
   <div class="container">
     <div>
       <div class="feature-block text-center">

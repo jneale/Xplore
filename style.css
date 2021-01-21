@@ -5,9 +5,9 @@ p {
 }
 
 footer {
-	margin-top: 3rem;
-	padding: 1rem 0;
-	font-size: 0.8rem;
+  margin-top: 3rem;
+  padding: 1rem 0;
+  font-size: 0.8rem;
 }
 
 .section-light {
@@ -15,7 +15,7 @@ footer {
 }
 
 .hero-5-image {
-	position: absolute;
+  position: absolute;
   left: 50%;
   top: 50px;
   bottom: 0px;
@@ -23,16 +23,16 @@ footer {
 }
 
 .text-20 {
-	opacity: 1;
+  opacity: 1;
   font-size: 20px;
   line-height: 30px;
   font-weight: 400;
 }
 
 .text-16 {
-	line-height: 24px;
+  line-height: 24px;
 }
 
 .text-14-60 {
-	opacity: 0.6;
+  opacity: 0.6;
 }
