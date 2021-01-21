@@ -4,6 +4,10 @@ p {
   line-height: 24px;
 }
 
+footer {
+	margin-top: 5rem;
+}
+
 .section-light {
   background-color: rgba(24, 46, 77, 0.05);
 }
