@@ -5,7 +5,9 @@ p {
 }
 
 footer {
-	margin-top: 5rem;
+	margin-top: 3rem;
+	padding: 1rem 0;
+	font-size: 0.8rem;
 }
 
 .section-light {
