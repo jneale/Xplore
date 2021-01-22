@@ -1,6 +1,37 @@
 # Xplore: Developer Toolkit
 A toolkit for every ServiceNow developer. Find more at https://thewhitespace.io.
 
+### Version 4.8
+* (beta) Added support for themes! The themes have been adapted from CodeMirror
+  themes to with Xplore so some work better than others.
+* Added script execution history. Each time you open Xplore, a new session is
+  started and your script is saved when you run it. By default, 50 sessions
+  are stored, but you can change this number using a system property. This is
+  user specific.
+* Settings from within Xplore are now able to be saved so they are loaded the next
+  time Xplore is opened. This is user specific.
+* Added automatic link recognition to Xplore output. Reference fields, links, and
+  table.sys_id values are automatically converted to clickable links.
+* Added support for function hoisting in the Editor. Note this is disabled by default but
+  can be enabled from Xplore settings.
+* Reorganised the main information window and about section and included release notes.
+* Overhauled the Logs menu to include many more contextual links for logs generated
+  during the last script execution, as well as shortcut links to logs just generated today.
+* Added Select2 to Target and Scope selectors to make them easier to use.
+* Improved the gs log behaviour to work as close to native as possible. gs.debug(), gs.info(),
+  gs.warn() and gs.error() can now take 6 arguments while gs.log() will take 2 and gs.print() just 1.
+* Fixed a bug where opening a list with an encoded query containing single quotes would
+  not work because it was not properly escaped.
+* Minor improvements to Xplore processor.
+* Changed blacklist to ignorelist and redlist to warnlist.
+* Updated JSON implementation.
+* Fixed a bug with the Table Heirarchy generating an undefined exception.
+* Fixed a bug where user data would not format properly when formatted within a scope.
+* Fixed a bug with RegExp not showing unmatched alternative groups.
+* Fixed a UI issue with the header on narrower screens.
+* Fixed a bug where results might not be shown during scoped script execution.
+* Fixed a bug that prevented Ctrl+D (select next occurrence) from working in the editor.
+
 ### Version 4.7
 * Prevent Ctrl+Enter inserting new line in code.
 * Add support for Ctrl+S to execute the script.

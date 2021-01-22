@@ -10,6 +10,44 @@ function ActionList() {}
 
 /**
   summary:
+    Gets a list of all the script history for this user.
+ **/
+ActionList.prototype.getScriptHistory = function () {
+  return new snd_Xplore.ScriptHistory().retrieve();
+};
+
+/**
+  summary:
+    Removes a specific user script from the history.
+ **/
+ActionList.prototype.deleteScriptHistoryItem = function (params) {
+  if (params.id) {
+    return new snd_Xplore.ScriptHistory().remove(params.id);
+  } else {
+    throw 'Missing id.';
+  }
+};
+
+ActionList.prototype.storeScriptHistory = function (params) {
+  var sh = new snd_Xplore.ScriptHistory();
+  sh.store(params);
+}
+
+/**
+  summary:
+    Sets a user preference using name and value.
+ **/
+ActionList.prototype.setPreference = function (params) {
+  if (params.name && params.hasOwnProperty('value')) {
+    gs.getUser().setPreference(params.name, params.value);
+  } else {
+    throw 'Missing preference parameters.';
+  }
+  return true;
+};
+
+/**
+  summary:
     Format a string e.g. XML
   returns: String
 **/
@@ -23,10 +61,8 @@ ActionList.prototype.formatString = function (params) {
       tmp = new XMLDocument(str);
       return tmp.toIndentedString().trim();
     } else {
-      tmp = new JSON();
-      tmp.prettify();
-      str = tmp.decode(str);
-      return tmp.encode(str);
+      tmp = JSON.parse(str);
+      return JSON.stringify(tmp, null, 4);
     }
   } catch (e) {}
   return str;
@@ -102,7 +138,7 @@ ActionList.prototype._evalRegex = function _evalRegex(input, expression, options
       });
       // because groups.concat(m) will add the Array as an object instead of its values
       for (i = 1, a = []; i < m.length; i++) {
-          a.push(m[i]);
+          a.push(m[i] || ''); // prevent null when an alternative group is not matched
       }
       groups.push(a);
       if (!loop) break;
@@ -194,7 +230,7 @@ ActionList.prototype.regex = function regex(params) {
 };
 
 ActionList.prototype.run = function run(params) {
-  var report;
+  var report, runner;
   if (!params.data) {
     gs.addErrorMessage('Invalid HTTP data object.');
     report = new snd_Xplore.ObjectReporter().getReport();
@@ -272,6 +308,8 @@ XploreRunner.prototype.run = function run(options) {
   function end(report) {
     report = report || self.default_reporter.getReport();
     report.messages = snd_Xplore.getOutputMessages();
+    report.options = options;
+    delete report.options.code;
     self.stop();
     return report;
   }
@@ -295,22 +333,49 @@ XploreRunner.prototype.run = function run(options) {
   }
 
   try {
-    this.validateScript(script);
+
+    // Try to validate the script first and automatically switch to hoisting if
+    // we have an invalid return.
+    try {
+      this.validateScript(script);
+    } catch (e) {
+      if (e.toString().indexOf('invalid return') === 0) {
+        try {
+          this.validateScript('(function () {' + script + '}).call(this)');
+          options.support_hoisting = true;
+        } catch (e2) {
+          throw e; // throw the original error
+        }
+      } else {
+        throw e;
+      }
+    }
+
+    // This is an option from the user or can be set above for dynamic return value
+    if (options.support_hoisting) {
+      script = '(function () {' + script + '}).call(this)';
+    }
+
     this.logRequest(script, options.scope);
 
     if (options.fix_gslog) {
       script = this.fixLogs(script);
     }
 
-    // not ideal doing this
-    global.user_data = this.formatUserData(options.user_data, options.user_data_type);
+    options.user_data = this.formatUserData(options.user_data, options.user_data_type);
     options.dotwalk = options.breadcrumb;
+
+    // init logtail here so we don't capture the logRequest() above
+    //snd_Xplore.Logtail.start();
+
+    new ActionList().storeScriptHistory(options);
 
     if (options.scope && options.scope != 'global') {
       report = this.runScopedScript(script, options);
     } else {
       report = this.runGlobalScript(script, options);
     }
+
   } catch (e) {
     var x = new snd_Xplore();
     x.xplore(e, this.reporter_name);
@@ -364,8 +429,7 @@ XploreRunner.prototype.formatUserData = function (str, type) {
     }
   } else if (type.indexOf('JSON') > -1) {
     try {
-      tmp = new JSON();
-      return tmp.decode(str);
+      return JSON.parse(str);
     } catch (e) {
       throw new Error(err + 'JSON. ' + e);
     }
@@ -437,7 +501,8 @@ XploreRunner.prototype.runGlobalScript = function runGlobalScript(script, option
 
   // try to catch exceptions here - this won't catch all exceptions
   // newlines will affect the exception lineNumber
-  script = 'try {' + script + ';\n} catch (e) { e; }';
+  script = 'try { ' + script + ';\n} catch (e) { e; }';
+  global.user_data = options.user_data; // not ideal doing this
   obj = GlideEvaluator.evaluateString(script);
   x = new snd_Xplore();
   x.xplore(obj, 'snd_Xplore.ObjectReporter', options);
@@ -454,7 +519,7 @@ XploreRunner.prototype.runGlobalScript = function runGlobalScript(script, option
 **/
 XploreRunner.prototype.runScopedScript = function runScopedScript(script, options) {
 
-  var scopeId = (function (scopeName) {
+  var run_scope = (function (scopeName) {
     if (scopeName == 'global') return 'global';
     var gr = new GlideRecord('sys_scope');
     gr.addQuery('scope', '=', scopeName);
@@ -466,24 +531,24 @@ XploreRunner.prototype.runScopedScript = function runScopedScript(script, option
     throw 'Unknown scope [' + scopeName + ']';
   })(options.scope);
 
-  var safeOptions = {};
-  safeOptions = {
+  var safe_options = {};
+  safe_options = {
     dotwalk: options.dotwalk,
     show_props: options.show_props,
     show_strings: options.show_strings
   };
 
-  var tryScript = '"try {" + $$script + "; } catch (e) { e; }"';
+  var try_script = '"try {" + $$script + "\\n;} catch (e) { e; }"';
   var scopedScript = '';
   scopedScript += 'var gr = new GlideRecord("sys_script_include");\n';
   scopedScript += 'gr.get("api_name", "global.' + XploreRunner.C_TEMP_SCRIPT_NAME + '");\n';
   scopedScript += 'gr.api_name = "' + options.scope + '." + gr.name;\n';
-  scopedScript += 'gr.sys_scope = "' + scopeId + '";\n';
-  scopedScript += 'gr.script = ' + tryScript + ';\n';
+  scopedScript += 'gr.sys_scope = "' + run_scope + '";\n';
+  scopedScript += 'gr.script = ' + try_script + ';\n';
   scopedScript += 'var gse = new GlideScopedEvaluator();\n';
   scopedScript += 'gse.putVariable("user_data", user_data);\n';
   scopedScript += 'var obj = gse.evaluateScript(gr, "script");\n';
-  scopedScript += 'var options = ' + (new JSON().encode(safeOptions)) + ';\n';
+  scopedScript += 'var options = ' + (JSON.stringify(safe_options)) + ';\n';
   scopedScript += 'var x = new global.snd_Xplore();\n';
   scopedScript += 'x.xplore(obj, "snd_Xplore.ObjectReporter", options);\n';
   scopedScript += '$$result = x.reporter.getReport();\n';
@@ -854,8 +919,6 @@ function XploreTableHierarchy(table, options) {
   // the actions that can be run
   var actions = {};
 
-  var json = new global.JSON();
-
   // Makes the parameters passed to the request easily av
   var params = (function () {
     var names = g_request.getParameterNames(),
@@ -868,7 +931,7 @@ function XploreTableHierarchy(table, options) {
       params[name] = '' + g_request.getParameter(name);
     }
     if (params.data) {
-      params.data = json.decode(params.data);
+      params.data = JSON.parse(params.data);
     }
     return params;
   })();
@@ -934,8 +997,12 @@ function XploreTableHierarchy(table, options) {
 
     } catch (ex) {
       ret.$success = false;
-      ret.$error = 'Exception occured. ' + ex.name + ': ' + ex.message;
-      if (ex.lineNumber) ret.$error += ' on line ' + ex.lineNumber;
+      if (typeof ex === 'string' || !ex.name) {
+        ret.$error = '' + ex;
+      } else {
+        ret.$error = 'Exception occured. ' + ex.name + ': ' + ex.message;
+        if (ex.lineNumber) ret.$error += ' on line ' + ex.lineNumber;
+      }
     }
 
     ret.$time = (new Date().getTime()) - start_time;
@@ -1111,7 +1178,7 @@ function XploreTableHierarchy(table, options) {
   // process the action that has been requested by the browser
   else if (params.action) {
     response = processAction(params);
-    g_processor.writeOutput('application/json', json.encode(response));
+    g_processor.writeOutput('application/json', JSON.stringify(response));
   }
 
   // send the requested template or the main interface

@@ -23,7 +23,7 @@ var snd_xplore = (function () {
       return;
     }
 
-    if (params.runAt == "server") {
+    if (params.target == "server") {
       runServerCode(params);
     } else {
       runClientCode(params);
@@ -37,7 +37,7 @@ var snd_xplore = (function () {
     //   An instruction object
 
     var report = psuedoResult();
-    var target = findTarget(params.runAt);
+    var target = findTarget(params.target);
 
     if (target) {
       try {
@@ -104,31 +104,31 @@ var snd_xplore = (function () {
       return str;
     }
 
-    function findTarget(runAt) {
+    function findTarget(target) {
       // summary:
       //   Get the client target window for the code
-      // runAt: string
+      // target: string
       //   The target window: 'opener' or 'frame_{n}'
       //   Leave empty or set false for the standard window
       // return the target window
 
-      var target;
-      if (typeof runAt === 'string' && (runAt == 'opener' || runAt.indexOf('frame_') === 0)) {
+      var target_window;
+      if (typeof target === 'string' && (target == 'opener' || target.indexOf('frame_') === 0)) {
         if (!window.opener) {
           message(result, 'error', 'Cannot evaluate in parent; no opener found.');
-        } else if (runAt == 'opener') {
-          target = window.opener;
+        } else if (target == 'opener') {
+          target_window = window.opener;
         } else {
-          var i = parseInt(runAt.split('_')[1], 10);
-          target = window.opener.frames.length >= i ? window.opener.frames[i] : false;
-          if (!target) {
+          var i = parseInt(target.split('_')[1], 10);
+          target_window = window.opener.frames.length >= i ? window.opener.frames[i] : false;
+          if (!target_window) {
             message(result, 'error', 'Invalid frame index. Frame ' + i + ' not found.');
           }
         }
       } else {
-        target = window;
+        target_window = window;
       }
-      return target;
+      return target_window;
     }
   }
 
@@ -165,16 +165,11 @@ var snd_xplore = (function () {
       type: "POST",
       url: "/snd_xplore.do?action=run",
       data: {
-        data: JSON.stringify({
-          code: params.code,
-          user_data: params.user_data,
-          user_data_type: params.user_data_type,
-          breadcrumb: params.breadcrumb,
-          scope: $('#scope').val(),
-          no_quotes: params.no_quotes,
-          show_props: params.show_props,
-          show_strings: params.show_strings,
-          fix_gslog: params.fix_gslog
+        data: JSON.stringify(params, function (key, val) {
+          if (!key) return val; // this is the params object itself
+          if (typeof val != 'object') { // now handle each property
+            return val;
+          }
         })
       },
       dataType: "json"
@@ -274,6 +269,10 @@ if (typeof window.snd_log !== 'function') {
     }
     return function () {};
   })();
+}
+
+if (typeof window.jslog !== 'function') {
+  window.jslog = window.snd_log;
 }
 
 /* -----------------------------------------------------

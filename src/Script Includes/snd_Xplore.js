@@ -4,13 +4,13 @@ var snd_Xplore = function () {
 
   /**
    * {RegExp}
-   * Black list to prevent looking over inaccessible Java stuff.
+   * Ignore list to prevent looking over inaccessible Java stuff.
    * The majority of these are fully capitalised properties found on Java Packages
    * which would otherwise throw an exception.
    * There is no point even adding these to the results list.
    * E.g. DB, Y, _XML, M2MMAINTAINORDER
    */
-  this.blacklist_regexp = /^[A-Z0-9_$]+$/;
+  this.ignorelist_regexp = /^[A-Z0-9_$]+$/;
   this.debug = false;
 };
 snd_Xplore._lists = null;
@@ -82,10 +82,8 @@ snd_Xplore.prototype.debugMsg = function (msg) {
  *   see: lookAt
  */
 snd_Xplore.prototype.xplore = function (obj, reporter, options) {
-  var is_java_obj,
-      use_json,
-      target,
-      x;
+  var use_json,
+      target;
 
   options = options || {};
   use_json = options.use_json;
@@ -118,66 +116,53 @@ snd_Xplore.prototype.xplore = function (obj, reporter, options) {
 };
 
 snd_Xplore.prototype.xploreProps = function (obj, reporter, options) {
-  var lists = snd_Xplore.getLists(),
-      type = Object.prototype.toString.call(obj),
-      is_java_obj = type.indexOf('Java') > -1,
-      is_string = type == '[object String]',
-      int_match = /^[0-9.]+$/,
-      result,
-      name;
+  var lists = snd_Xplore.getLists();
+  var type = snd_Xplore.getType(obj);
+  var properties = snd_Xplore.getPropertyNames(obj);
+  var prop_type;
+  var result;
+  var name;
+  var i;
 
   this.debugMsg('Exploring properties...');
 
   reporter = reporter || {};
   reporter.result = reporter.result || function () {};
 
-  if (type == '[object Function]' && typeof obj.prototype == 'object') {
-    reporter.result(this.lookAt(obj.prototype, 'prototype', options));
-  }
+  for (i = 0; i < properties.length; i++) {
+    name = properties[i];
+    prop_type = undefined; // reset
 
-  for (name in obj) {
-
-    if (is_string && name.match(int_match)) {
+    if (type.string == '[object String]' && name.match(/^[0-9.]+$/)) {
       // this is a letter in a string
       continue;
     }
 
     this.debugMsg('Looking at ' + name);
 
-    // if we are evaluating a Java class then we need to check the Blacklist
-    // so we don't even attempt to look at that property as it will just
-    // halt the thread and generate an illegal access exception.
-    if (lists.blacklist.indexOf(',' + name + ',') > -1 || (is_java_obj && name.match(this.blacklist_regexp))) {
-      this.debugMsg(' - blacklisted');
-      continue;
-    }
-
-    // hard code this here as it breaks with nullPointerException in scopes
-    if (name == 'class' && is_java_obj) {
-      this.debugMsg(' - *CLASS*');
-      reporter.result({
-        name: name,
-        type: 'JavaObject',
-        string: ''
-      });
+    if (lists.ignorelist.indexOf(',' + name + ',') > -1) {
+      this.debugMsg(' - ignore listed');
       continue;
     }
 
     try {
+      prop_type = snd_Xplore.getType(obj[name]);
       result = this.lookAt(obj[name], name, options);
       this.debugMsg(' - ' + result.type);
     } catch (ex) {
       this.debugMsg(' - Exception: ' + ex);
-      reporter.result({
+      result = {
         name: name,
-        type: '__unknown__',
-        string: '[Property access error: ' + ex + ']'
-      });
-      continue;
+        type: '[Restricted]'
+      };
+      if (ex.message && ex.message.indexOf('Illegal access') > -1) {
+        result.string = '[Restricted]';
+      } else {
+        result.string = '[Property access error: ' + ex + ']';
+      }
     }
 
     reporter.result(result);
-
   }
 };
 
@@ -206,8 +191,8 @@ snd_Xplore.prototype.xploreProps = function (obj, reporter, options) {
 **/
 snd_Xplore.prototype.lookAt = function (obj, name, options) {
   var result = {},
-      main_type,
-      lists = snd_Xplore.getLists();
+      lists = snd_Xplore.getLists(),
+      type;
 
   this.prettyPrinter.noQuotes(options.no_quotes);
 
@@ -216,8 +201,8 @@ snd_Xplore.prototype.lookAt = function (obj, name, options) {
   result.string = null;
 
   // this covers an independent call to this function - handled by xploreProps
-  if (lists.blacklist.indexOf(',' + name + ',') > -1) {
-    result.type = '*BLACKLISTED*';
+  if (lists.ignorelist.indexOf(',' + name + ',') > -1) {
+    result.type = '*IGNORE LISTED*';
     return result;
   }
 
@@ -231,11 +216,11 @@ snd_Xplore.prototype.lookAt = function (obj, name, options) {
       return result;
     }
 
-    main_type = Object.prototype.toString.call(obj);
-    result.type = main_type.slice(8, -1); // get <name> from [Object name]
+    type = snd_Xplore.getType(obj);
+    result.type = type.name;
   } catch (ex) {
     try {
-      result.type = main_type = typeof obj;
+      result.type = typeof obj;
     } catch (ex2) {
       result.type = '__unknown__';
       result.string = '[Property access error: ' + ex2 + ']';
@@ -243,18 +228,21 @@ snd_Xplore.prototype.lookAt = function (obj, name, options) {
     }
   }
 
-  if (lists.redlist.indexOf(',' + result.type + ',') > -1) {
-    result.string = '*REDLIST*';
+  if (lists.warnlist.indexOf(',' + result.type + ',') > -1) {
+    result.string = '*WARN LISTED*';
     return result;
   }
 
-  if (name == 'prototype') {
-    result.string = '[object ' + result.type + ']';
-    result.type = 'Object';
-  } else if (options.show_strings === false) {
+  if (options.show_strings === false) {
     result.string = '*IGNORED*';
   } else {
-    result.string = this.prettyPrinter.format(obj, options.use_json);
+    try {
+      result.string = this.prettyPrinter.format(obj, type, options.use_json);
+    } catch (e) {
+      snd_Xplore.gswarn('Warning: unable to show pretty format for "' + name + '" due to ' + e +
+        ' Showing string format instead.');
+      result.string += this.prettyPrinter.String(obj);
+    }
   }
 
   return result;
@@ -272,50 +260,50 @@ snd_Xplore._getPropertyArray = function (name) {
 };
 
 /**
- * Add elements for the black List not captured by RegExp.
+ * Add elements for the Ignore List not captured by RegExp.
  * These property names will be completely ignored.
  *
  * @param {String} item The name of a property name to completely ignore.
  * @arguments Add further item names.
  */
-snd_Xplore._blacklist = snd_Xplore._getPropertyArray('snd_xplore.blacklist');
-snd_Xplore.blacklist = function (item) {
+snd_Xplore._ignorelist = snd_Xplore._getPropertyArray('snd_xplore.ignorelist');
+snd_Xplore.ignorelist = function (item) {
   if (arguments.length) {
-    snd_Xplore._blacklist = snd_Xplore._blacklist.concat(Array.prototype.slice.apply(arguments));
+    snd_Xplore._ignorelist = snd_Xplore._ignorelist.concat(Array.prototype.slice.apply(arguments));
     snd_Xplore._lists = null;
   }
-  return snd_Xplore._blacklist;
+  return snd_Xplore._ignorelist;
 };
 
 /**
- * Add elements for the red List which must not use toString as they will throw
+ * Add elements for the warn List which must not use toString as they will throw
  * an exception. These property names will still show up in the results.
  *
  * @param {String} item The name of a property name to completely ignore.
  * @arguments Add further item names.
  */
-snd_Xplore._redlist = snd_Xplore._getPropertyArray('snd_xplore.redlist');
-snd_Xplore.redlist = function (item) {
+snd_Xplore._warnlist = snd_Xplore._getPropertyArray('snd_xplore.warnlist');
+snd_Xplore.warnlist = function (item) {
   if (arguments.length) {
-    snd_Xplore._redlist = snd_Xplore._redlist.concat(Array.prototype.slice.apply(arguments));
+    snd_Xplore._warnlist = snd_Xplore._warnlist.concat(Array.prototype.slice.apply(arguments));
     snd_Xplore._lists = null;
   }
-  return snd_Xplore._redlist;
+  return snd_Xplore._warnlist;
 };
 
 /**
- * Compile the black and red lists into an object.
+ * Compile the ignore and warn lists into an object.
  *
  * @return {Object}
- *     blacklist {String}
- *     redlist {String}
+ *     ignorelist {String}
+ *     warnlist {String}
  */
 snd_Xplore.getLists = function () {
   if (snd_Xplore._lists === null) {
     // prefix/suffix with comma so exact search can be made ',foo,'
     snd_Xplore._lists = {
-      blacklist: ',' + snd_Xplore._blacklist.join(',') + ',',
-      redlist: ',' + snd_Xplore._redlist.join(',') + ','
+      ignorelist: ',' + snd_Xplore._ignorelist.join(',') + ',',
+      warnlist: ',' + snd_Xplore._warnlist.join(',') + ','
     };
   }
   return snd_Xplore._lists;
@@ -353,6 +341,56 @@ snd_Xplore.dotwalk = function (obj, path) {
   return o;
 };
 
+snd_Xplore.getPropertyNames = function getPropertyNames(obj) {
+  var type = snd_Xplore.getType(obj);
+  var parent_type;
+  var result;
+  if (!type.is_java && (obj instanceof Object || typeof obj === 'function')) {
+    try {
+      result = Object.getOwnPropertyNames(obj);
+    } catch (e) {
+      snd_console.gswarn('Error reading property names from object: ' + e);
+      // do nothing - prevent 'not an object' errors with Java based objects
+    }
+  }
+  if (!result) {
+    result = [];
+    for (var x in obj) {
+      result.push(x);
+    }
+  }
+  result.sort();
+  return result;
+};
+
+snd_Xplore.getType = function getType(obj) {
+  var type = {};
+  var match;
+
+  type.string = Object.prototype.toString.call(obj);
+  type.is_java = type.string.indexOf('Java') > -1;
+  type.name = type.string.slice(8, -1);
+
+  return snd_Xplore._getType(obj, type);
+};
+
+// This is in a separate function to prevent ClassCastException.
+// For some reason, the presence of a try/catch in getType is throwing CCE. 
+snd_Xplore._getType = function _getType(obj, type) {
+  try {
+    type.of = typeof obj;
+  } catch (e) {
+    if (e.message && e.message.indexOf('Invalid JavaScript value of type') > -1) {
+      type.of = 'object';
+      match = e.message.match(/(?:of type) (\S+)/);
+      type.namespace = match ? match[1] : 'unknown';
+    } else {
+      gs.warn('Error finding type in getType: ' + e);
+    }
+  }
+  return type;
+}
+
 //==============================================================================
 // Pretty Printer
 //==============================================================================
@@ -369,10 +407,6 @@ snd_Xplore.PrettyPrinter.prototype = {
 
   noQuotes: function (b) {
     this.no_quotes = !!b;
-  },
-
-  getClassType: function (obj) {
-    return Object.prototype.toString.call(obj).slice(8, -1);
   },
 
   'String': function (obj) {
@@ -395,7 +429,7 @@ snd_Xplore.PrettyPrinter.prototype = {
   },
 
   'Function': function (obj) {
-    return '' + obj;
+    return Function.prototype.toString.call(obj);
   },
 
   'Number': function (obj) {
@@ -408,7 +442,13 @@ snd_Xplore.PrettyPrinter.prototype = {
     //   str.push(this.format(obj[i]));
     // }
     // return '[' + str.join(', ') + ']';
-    return JSON.stringify(obj, '', 2);
+    try {
+      return JSON.stringify(obj, '', 2);
+    } catch (e) {
+      snd_Xplore.gswarn('Warning: unable to show JSON format due to ' + e +
+        ' Showing string format instead.');
+      return obj.toString();
+    }
   },
 
   'SNRegExp': function (obj) {
@@ -420,7 +460,8 @@ snd_Xplore.PrettyPrinter.prototype = {
       'table: ' + obj.getLabel() + ' [' + obj.getTableName() + ']',
       'sys_id: ' + obj.getUniqueValue(),
       'display: ' + obj.getDisplayValue(),
-      'query: ' + obj.getEncodedQuery()
+      'query: ' + obj.getEncodedQuery(),
+      'link: ' + obj.getLink(true)
     ].join('\n');
   },
 
@@ -471,15 +512,14 @@ snd_Xplore.PrettyPrinter.prototype = {
     return result;
   },
 
-  format: function (obj, use_json) {
-    var real_type = this.getClassType(obj),
-        type = real_type.replace('GlideScoped', 'Glide');
+  format: function (obj, type, use_json) {
+    var root_type = type.name.replace('GlideScoped', 'Glide');
 
     if (this.is_browser) {
-      return type in this ? this[type](obj) : '' + obj;
+      return type.name in this ? this[type.name](obj) : '' + obj;
     }
 
-    if (obj === this.global || type == 'global') {
+    if (obj === this.global || type.name == 'global') {
       return '[global scope]';
     }
 
@@ -487,8 +527,8 @@ snd_Xplore.PrettyPrinter.prototype = {
       return '[' + type + ' scope]';
     }
 
-    if (type.indexOf('GlideRecord') > -1) return this.GlideRecord(obj);
-    if (type.indexOf('GlideElement') > -1) return this.GlideElement(obj, real_type);
+    if (root_type.indexOf('GlideRecord') > -1) return this.GlideRecord(obj);
+    if (root_type.indexOf('GlideElement') > -1) return this.GlideElement(obj, type.name);
 
     // handle native JavaScript objects which would be useful to see as JSON
     if (use_json && (obj instanceof Object || Array.isArray(obj))) {
@@ -499,16 +539,27 @@ snd_Xplore.PrettyPrinter.prototype = {
     if (obj instanceof Function ||
         obj instanceof Object ||
         obj instanceof Array ||
-        type == 'Number' ||
-        type == 'Boolean' ||
-        type == 'String' ||
+        type.name == 'Number' ||
+        type.name == 'Boolean' ||
+        type.name == 'String' ||
         obj instanceof RegExp) {
-      return type in this ? this[type](obj) : this.String(obj);
+      return type.name in this ? this[type.name](obj) : this.String(obj);
     }
 
     // Java objects can have the same type but break when calling toString
     // We would only get here if their instanceof did not match.
-    if (type === 'Function' || type === 'Object') {
+    if (type.of == 'function' || type.name === 'Function' || type.name === 'Object') {
+
+      try{
+        return '' + obj;
+      } catch (e) {
+        if (e.message && e.message == 'Cannot find default value for object.') {
+          return '';
+        } else {
+          snd_Xplore.gswarn('Error converting to string: ' + e);
+        }
+      }
+
       return '';
     }
 
@@ -516,7 +567,7 @@ snd_Xplore.PrettyPrinter.prototype = {
     try {
       return this.String(obj);
     } catch (e) {
-      return '[object ' + real_type + ']';
+      return type.string;
     }
   },
 
@@ -596,6 +647,7 @@ snd_Xplore.getOutputMessages = function () {
 
   function add(type, message) {
     var o = {};
+    //o.date = new Date().getTime();
     o.type = type;
     o.message = message;
     o.is_json = snd_Xplore.isJson(message);
@@ -626,35 +678,53 @@ snd_Xplore.getOutputMessages = function () {
     add('info', tmp[i]);
   }
 
-  // merge gslog workaround for Istanbul onwards
-  ret = ret.concat(this._gslogs);
+  var logs;
+  if (snd_Xplore._logtail) {
+    logs = [].concat(this._gslogs, snd_Xplore._logtail.getMessages());
+    logs.sort(function (a, b) {
+      if (a.date > b.date) return 1;
+      if (b.date > a.date) return -1;
+      return 0;
+    });
+    ret = ret.concat(logs);
+  } else {
+
+    // merge gslog workaround for Istanbul onwards
+    ret = ret.concat(this._gslogs); 
+  }
+
 
   // gs.print
-  tmp = GlideSessionDebug.getOutputMessages().toArray();
-  try {
-    for (i = 0; i < tmp.length; i++) {
-      add('log', ('' + tmp[i].line).replace(' : ', ' ')); // remove unnecessary colon
-    }
-  } catch (e) {
-    if (tmp.length) {
-      ret.unshift({type: 'access', message: '<p>Hey!<p>' +
-        '<p>It looks like you\'re using <code>gs.print</code>, <code>gs.info</code>, ' +
-        '<code>gs.warn</code> or <code>gs.error</code> in your script.</p>' +
-        '<p>Unfortunately ServiceNow have locked down the API and we no longer have access to read ' +
-        'those messages. You can see them by going to Logs > Node Logs; the time and thread name ' +
-        'should be pre-populated for this thread. Alternatively you can replace those methods with ' +
-        '<code>gs.addInfoMessage</code> although I appreciate this doesn\'t work for Script Includes, etc.</p>' +
-        '<p>If you have any insight or can help fix this, please get in touch!</p>' +
-        '<p>Thanks! James</p>' +
-        '<p><small>Original exception: ' + e.toString() + '</small></p>'});
-    }
-  } finally {
-    // remove all the messages we just retrieved
-    GlideSessionDebug.clearOutputMessages();
-  }
+//   tmp = GlideSessionDebug.getOutputMessages().toArray();
+//   try {
+//     for (i = 0; i < tmp.length; i++) {
+//       add('log', ('' + tmp[i].line).replace(' : ', ' ')); // remove unnecessary colon
+//     }
+//   } catch (e) {
+//     if (tmp.length) {
+//       ret.unshift({type: 'access', message: '<p>Hey!<p>' +
+//         '<p>It looks like you\'re using <code>gs.print</code>, <code>gs.info</code>, ' +
+//         '<code>gs.warn</code> or <code>gs.error</code> in your script.</p>' +
+//         '<p>Unfortunately ServiceNow have locked down the API and we no longer have access to read ' +
+//         'those messages. You can see them by going to Logs > Node Logs; the time and thread name ' +
+//         'should be pre-populated for this thread. Alternatively you can replace those methods with ' +
+//         '<code>gs.addInfoMessage</code> although I appreciate this doesn\'t work for Script Includes, etc.</p>' +
+//         '<p>If you have any insight or can help fix this, please get in touch!</p>' +
+//         '<p>Thanks! James</p>' +
+//         '<p><small>Original exception: ' + e.toString() + '</small></p>'});
+//     }
+//   } finally {
+//     // remove all the messages we just retrieved
+//     GlideSessionDebug.clearOutputMessages();
+//   }
 
   gs.flushAccessMessages();
   gs.flushMessages();
+
+  for (var i = 0, msg; i < ret.length; i++) {
+    msg = ret[i];
+    msg.message = snd_Xplore.formatDate(msg.date) + (msg.is_json ? '\n' : ' ') + msg.message;
+  }
 
   return ret;
 };
@@ -752,6 +822,8 @@ snd_Xplore.ObjectReporter.prototype.result = function (obj) {
 
 snd_Xplore.ObjectReporter.prototype.complete = function () {
   this.report.status = 'finished';
+  this.report.start_time = this.start_time;
+  this.report.end_time = this.is_browser ? new Date() : new GlideDateTime().getDisplayValue();
   this.report.node_log_url = this.generateNodeLogUrl();
 };
 
@@ -793,37 +865,54 @@ snd_Xplore.getVersion = function () {
 ///////////////////////////////////////////////////////
 
 snd_Xplore._gslogs = [];
-snd_Xplore._gslogMessage = function (level, msg, source) {
-  var time = new Date().toISOString();
+snd_Xplore._gslogMessage = function (level, msg, source, params) {
+  //var time = new Date().toISOString().replace('T', ' ').replace(/\.(\d+)Z/, ' ($1)');
   var tmp = {};
+  tmp.date = new Date().getTime();
   tmp.type = level;
   tmp.source = source;
   if (typeof msg === 'string') {
+  if (Array.isArray(params)) {
+    msg = snd_Xplore.substitute(msg, params);
+  } else {
     tmp.is_json = snd_Xplore.isJson(msg);
+  }
   } else {
     tmp.is_json = true;
     msg = JSON.stringify(msg, null, 2);
   }
-  tmp.message = time + ': ' + (tmp.is_json ? '\n' : '') + msg;
+  //tmp.message = time + ': ' + (tmp.is_json ? '\n' : '') + msg;
+  tmp.message = msg;
   snd_Xplore._gslogs.push(tmp);
 };
-snd_Xplore.gsprint = function (msg, source) {
-  snd_Xplore._gslogMessage('-1', msg, source);
+snd_Xplore.gsprint = function (msg) {
+  snd_Xplore._gslogMessage('-1', msg);
 };
 snd_Xplore.gslog = function (msg, source) {
   snd_Xplore._gslogMessage('-1', msg, source);
 };
-snd_Xplore.gsdebug = function (msg, source) {
-  snd_Xplore._gslogMessage('-1', msg, source);
+snd_Xplore.gsdebug = function (msg, p1, p2, p3, p4, p5) {
+  snd_Xplore._gslogMessage('-1', msg, null, [p1, p2, p3, p4, p5]);
 };
-snd_Xplore.gsinfo = function (msg, source) {
-  snd_Xplore._gslogMessage('0', msg, source);
+snd_Xplore.gsinfo = function (msg, p1, p2, p3, p4, p5) {
+  snd_Xplore._gslogMessage('0', msg, null, [p1, p2, p3, p4, p5]);
 };
-snd_Xplore.gswarn = function (msg, source) {
-  snd_Xplore._gslogMessage('1', msg, source);
+snd_Xplore.gswarn = function (msg, p1, p2, p3, p4, p5) {
+  snd_Xplore._gslogMessage('1', msg, null, [p1, p2, p3, p4, p5]);
 };
-snd_Xplore.gserror = function (msg, source) {
-  snd_Xplore._gslogMessage('2', msg, source);
+snd_Xplore.gserror = function (msg, p1, p2, p3, p4, p5) {
+  var params;
+  if (p1 && p1 instanceof Error) {
+    msg += ': ' + p1;
+  } else {
+    params = [p1, p2, p3, p4, p5];
+  }
+  snd_Xplore._gslogMessage('2', msg, null, params);
+};
+snd_Xplore.substitute = function substitute(msg, params) {
+  return msg.replace(/{(\d)}/g, function (m, index) {
+    return params.length > index ? params[index] : m;
+  });
 };
 
 snd_Xplore.isJson = function isJson(str) {
@@ -834,3 +923,288 @@ snd_Xplore.isJson = function isJson(str) {
   }
   return true;
 };
+
+snd_Xplore.formatDate = function formatDate(date) {
+  if (!date) return '';
+  var gdt = new GlideDateTime();
+  gdt.setNumericValue(date);
+  return gdt.getDisplayValue() + ' (' + new Date(date).getMilliseconds() + ')';
+};
+
+//==============================================================================
+// Xplore Logtail
+//==============================================================================
+
+/**
+ * Class for capturing logs. Does not capture scoped logs, only global.
+ * 
+ */
+snd_Xplore.Logtail = function Logtail() {
+  this.channel_name = 'logtail';
+  this.cm = GlideChannelManager.get();
+  if (!this.cm.exists(this.channel_name)) {
+     throw 'Channel does not exist: ' + this.channel_name;
+  }
+  this.channel = this.cm.getChannel(this.channel_name);
+
+  // Copy ChannelAjax
+  GlideThreadAttributes.createThreadAttribute("streaming_channel", this.channel_name);
+
+  this.start_sequence = this.channel.getLastSequence();
+
+  // we need this here (after getting the last channel sequence) so we can determine the transaction ID later
+  gs.debug('Starting ' + this.type);
+
+  this.messages = [];
+  
+  this.filter_messages = true;
+
+};
+
+snd_Xplore.Logtail.prototype.type = 'snd_Xplore.Logtail';
+
+/**
+ * Call this before executing any code to capture logs.
+ *
+ */
+snd_Xplore.Logtail.start = function start() {
+  // give to main object for getOutputMessages()
+  snd_Xplore._logtail = new snd_Xplore.Logtail();
+  return snd_Xplore._logtail;
+};
+
+snd_Xplore.Logtail.getMessages = function getMessages() {
+  if (snd_Xplore._logtail) {
+    return snd_Xplore._logtail.getMessages();
+  }
+};
+
+snd_Xplore.Logtail.prototype._messageFactory = function _messageFactory(date, message) {
+  var type = 'log';
+  if (message.indexOf('no thrown error') > -1) type = 'error'; // find call to gs.error
+  var o = {};
+  o.type = type;
+  o.message = message;
+  o.date = date;
+  o.is_json = snd_Xplore.isJson(message);
+  return o;
+};
+
+snd_Xplore.Logtail.prototype._getTransactionId = function _getTransactionId(message) {
+  return message.substr(0, 32);
+};
+
+snd_Xplore.Logtail.prototype.validateMessage = function validateMessage(channel_message) {
+  var message = channel_message.getMessage();
+  var ignore = false;
+  
+  if (!this.transaction_id) {
+    if (message.indexOf(this.type) === -1) {
+      if (this.filter_messages) return false;
+    } else {
+      this.transaction_id = this._getTransactionId(message);
+      // this.messages.push(this._messageFactory('Transaction ID: ' + this.transaction_id));
+      if (this.filter_messages) return false; // the user doesn't need to see this message really
+    }
+  } else {
+    if (this.filter_messages && this.transaction_id != this._getTransactionId(message)) {
+      return false;
+    }
+  }
+  
+  if (this.filter_messages) {
+    message = message.substr(33); // remove Transaction ID
+    if (message.indexOf('*** Script: ') === 0) {
+      message = message.substr(12);
+    }
+  }
+
+  return this._messageFactory(channel_message.getDate(), message);
+};
+
+snd_Xplore.Logtail.prototype.getMessages = function getMessages() {
+  var channel_messages = this.channel.getMessages();
+  var size = channel_messages.size();
+  var transaction;
+  this.messages = [];
+  for (var i = 0; i < size; i++) {
+    var message = channel_messages.get(i);
+    if (message.getSequence() > this.start_sequence) {
+      message = this.validateMessage(message);
+      if (message) {
+        this.messages.push(message);
+      }
+    }
+  }
+  return this.messages;
+};
+
+snd_Xplore.ScriptHistory = (function () {
+  function ScriptHistory() {}
+
+  ScriptHistory.prototype.type = 'snd_Xplore.ScriptHistory';
+
+  ScriptHistory.SCRIPT_PREFIX = 'xplore.script.';
+
+  ScriptHistory.HISTORY_PREFIX = 'xplore.history.';
+
+  ScriptHistory.prototype.store = function store(options) {
+    var result;
+
+    if (!options || typeof options != 'object') {
+      throw new Error('Invalid options object.');
+    }
+
+    options = Object.extend({}, options);
+
+    // If we are running a script again that was loaded, then let's just update it
+    // to match the current settings.
+    // If the script has changed (or was not loaded) then we'll create a new entry.
+    if (options.loaded_id) {
+      this._preventDuplicate(options);
+    }
+
+    options.id = options.id || (ScriptHistory.HISTORY_PREFIX + new Date().getTime());
+    options.name = options.name || new GlideDateTime().getDisplayValue() + ' Script';
+
+    if (!options.id.startsWith(ScriptHistory.HISTORY_PREFIX)) {
+      options.id = ScriptHistory.HISTORY_PREFIX + options.id;
+    }
+
+    result = this.setPreference(options.id, JSON.stringify(options), options.name);
+
+    this.enforceHistoryLimit(gs.getProperty('snd_xplore.history.limit'));
+
+    return result;
+  };
+
+  ScriptHistory.prototype._preventDuplicate = function (options) {
+    var script = this.get(options.loaded_id);
+    var diff = false;
+    if (!script) return;
+
+    'target,scope,code,user_data,user_data_type,support_hoisting'.split(',').forEach(function (name) {
+      diff = diff || (options[name] != script[name]);
+    });
+
+    if (diff) return;
+
+    // Use the historic script ID to prevent the same script being inserted numerous times
+    options.id = options.loaded_id;
+  }
+
+  ScriptHistory.prototype.get = function get(id) {
+    var preference = this.getPreference(id);
+    if (!preference) return;
+    try {
+      return JSON.parse(preference.getValue('value'));
+    } catch (e) {
+      return {
+        id: preference.getValue('name'),
+        name: '[Invalid script]'
+      };
+    }
+  };
+
+  ScriptHistory.prototype.retrieve = function retrieve() {
+    var result = [];
+    var obj,
+        gr;
+
+    gr = new GlideRecord('sys_user_preference');
+    gr.addQuery('user', '=', gs.getUserID());
+    gr.addQuery('name', 'STARTSWITH', ScriptHistory.SCRIPT_PREFIX)
+      .addOrCondition('name', 'STARTSWITH', ScriptHistory.HISTORY_PREFIX);
+    gr.orderByDesc('sys_updated_on');
+    gr.query();
+
+    while (gr.next()) {
+      try {
+        result.push(JSON.parse(gr.getValue('value')));
+      } catch (e) {
+        result.push({
+          id: gr.getValue('name'),
+          name: '[Invalid script]'
+        });
+      }
+    }
+
+    return result;
+  };
+
+  ScriptHistory.prototype.renameScript = function renameScript(id, name) {
+    var gr = this.getPreference(id);
+    var obj;
+    if (gr) {
+      try {
+        obj = JSON.parse(gr.getValue('value'));
+      } catch (e) {
+        throw new Error('Unable to rename script because of corrupt database value.');
+      }
+      obj.name = name;
+      gr.setValue('description', name);
+      gr.setValue('value', JSON.stringify(obj));
+      return gr.update();
+    }
+    return false;
+  };
+
+  ScriptHistory.prototype.remove = function remove(id) {
+    var gr = this.getPreference(id);
+    if (gr) {
+      return gr.deleteRecord();
+    }
+    return false;
+  };
+
+  ScriptHistory.prototype.enforceHistoryLimit = function enforceHistoryLimit(max_count, delete_limit) {
+    max_count = max_count || 50;
+
+    // we should only need to delete one - one in, one out, but this covers it somewhat if the settings are changed
+    delete_limit = delete_limit || 50; 
+    var count;
+    var gr = new GlideRecord('sys_user_preference');
+    gr.addQuery('user', '=', gs.getUserID());
+    gr.addQuery('name', 'STARTSWITH', ScriptHistory.HISTORY_PREFIX);
+    gr.orderByDesc('sys_updated_on');
+    gr.chooseWindow(max_count, delete_limit);
+    gr.query();
+
+    count = gr.getRowCount();
+    if (count > (max_count + delete_limit)) {
+      gs.error('Aborting snd_Xplore.ScriptHistory.enforceHistoryLimit() to prevent ' +
+        'unexpected data loss. Found ' + count + ' which breached the safety limit of ' + 
+        (max_count + delete_limit) + '. Query used: ' + gr.getEncodedQuery());
+      return;
+    }
+
+    while (gr.next()) {
+      gr.deleteRecord();
+    }
+  };
+
+  ScriptHistory.prototype.setPreference = function setPreference(name, value, description) {
+    var gr = this.getPreference(name);
+
+    if (!gr) {
+      gr = new GlideRecord('sys_user_preference');
+      gr.user = gs.getUserID();
+      gr.name = name;
+    }
+
+    gr.value = value;
+    gr.description = description;
+    return gr.update();
+  };
+
+  ScriptHistory.prototype.getPreference = function getPreference(name) {
+    var gr = new GlideRecord('sys_user_preference');
+    gr.addQuery('user', '=', gs.getUserID());
+    gr.addQuery('name', '=', name);
+    gr.setLimit(1);
+    gr.query();
+    return gr.next() ? gr : null;
+  };
+
+  return ScriptHistory;
+})();

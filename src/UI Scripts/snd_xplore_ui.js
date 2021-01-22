@@ -26,14 +26,25 @@ function getMinutesSince(startTime) {
 
 // main UI object
 var snd_xplore_ui = {};
+snd_xplore_ui.isDirty = function isDirty() {
+  // check is editor has been executed/saved
+  return snd_xplore_util.isDirty() || snd_xplore_regex_util.isDirty();
+};
 
 /*************************************
               XPLORE
 **************************************/
 
 var snd_xplore_util = {
+  start_time: null,
+  end_time: null,
   countup_interval: null,
   node_log_url: '',
+  is_dirty: false,
+  session_id: null, // for loaded scripts
+  isDirty: function () {
+    return snd_xplore_util.is_dirty;
+  },
   loading: function () {
     $timer = $('#timer');
     $('#xplore_btn')
@@ -43,13 +54,21 @@ var snd_xplore_util = {
     $('#cancel_btn').prop('disabled', false).text('Cancel').show();
     $('#output_loader').addClass('active');
 
+    snd_xplore_util.start_time = null;
+    snd_xplore_util.end_time = null;
+
     $timer.text('');
     var start = new Date().getTime();
     snd_xplore_util.countup_interval = setInterval(function () {
       $timer.text(getMinutesSince(start));
     }, 100);
   },
-  loadingComplete: function () {
+  loadingComplete: function (result) {
+    if (result) {
+      snd_xplore_util.start_time = result.start_time;
+      snd_xplore_util.end_time = result.end_time;
+      snd_xplore_util.is_dirty = false;
+    }
     $('#xplore_btn')
         .html('Run')
         .prop('disabled', false);
@@ -75,21 +94,38 @@ var snd_xplore_util = {
     }
     return code;
   },
-  execute: function () {
+  setPreference: function setPreference(name, value) {
+    $.ajax({
+      type: 'POST',
+      url: '/snd_xplore.do?action=setPreference&name=' + encodeURIComponent(name) + '&value=' + encodeURIComponent(value),
+      dataType: 'json'
+    }).
+    done(function (data) {
+        snd_log('Saved preference.');
+    }).
+    fail(function () {
+      snd_log('Error: setPreference failed.');
+    });
+  },
+  execute: function (code) {
     // summary:
     //   Gather the data from the client and run Xplore
     var params = {
-      code: snd_xplore_util.getCode(),
-      user_data: document.getElementById('user_data_input').value,
-      user_data_type: document.getElementById('user_data_type_select').value,
-      runAt: document.getElementById('target').value,
+      target: $('#target').val(),
+      scope: $('#scope').val(),
+      code: code || snd_xplore_util.getCode(),
+      user_data: $('#user_data_input').val(),
+      user_data_type: $('#user_data_type_select').val(),
       breadcrumb: snd_xplore_reporter.getBreadcrumb(),
       reporter: snd_xplore_reporter,
       no_quotes: !$('#setting_quotes').is(':checked'),
       show_props: $('#show_props').is(':checked'),
       show_strings: $('#show_strings').is(':checked'),
       html_messages: $('#show_html_messages').is(':checked'),
-      fix_gslog: $('#fix_gslog').is(':checked')
+      fix_gslog: $('#fix_gslog').is(':checked'),
+      support_hoisting: $('#support_hoisting').is(':checked'),
+      id: window.snd_xplore_session_id, // supplied in snd_xplore_main UI Macro
+      loaded_id: snd_xplore_util.session_id // the loaded script
     };
 
     snd_xplore(params);
@@ -103,21 +139,22 @@ var snd_xplore_util = {
 
     snd_xplore_util.toggleEditor(true, function () {
 
+      var confirmed = false;
+
       if (snd_xplore_editor.getValue()) {
-        if (!confirm('Replace code with demo?')) {
-          return;
-        }
+        confirmed = confirm('Do you want to replace the current script?');
+        if (!confirmed) return;
       }
 
+      $user_data_input = $('#user_data_input');
+      if ($user_data_input.val()) {
+        confirmed = confirmed || confirm('Do you want to replace the current user data?');
+        if (!confirmed) return;
+      }
+
+      $user_data_input.val(user_data);
       if (user_data) {
         $('#user_data_tab').tab('show');
-        $user_data_input = $('#user_data_input');
-        if ($user_data_input.val()) {
-          if (!confirm('Replace user data with demo user data?')) {
-            return;
-          }
-        }
-        $user_data_input.val(user_data);
       }
 
       $('#target').val('server');
@@ -271,6 +308,10 @@ var snd_xplore_regex_util = (function () {
     }
   }
 
+  function isDirty() {
+    return $('#regex').val() || $('#regex_input').val();
+  }
+
   snd_xplore.regex.addEvent('start', function () {
     $('#regex_loading').fadeIn();
   });
@@ -363,7 +404,8 @@ var snd_xplore_regex_util = (function () {
   })();
 
   return {
-    run: run
+    run: run,
+    isDirty: isDirty
   };
 })();
 
@@ -669,6 +711,157 @@ var snd_script_search_util = (function () {
 
 
 /*************************************
+           SCRIPT HISTORY
+**************************************/
+
+var snd_script_history_util = (function () {
+  var api = {};
+  var $list = $('#script_history');
+
+  function loading(b) {
+    $('#script_history_loading').toggle(b);
+  }
+
+  function maxLines(str, max_lines) {
+    var result = '';
+    var lines = str.split('\n');
+    max_lines = max_lines < lines.length ? max_lines : lines.length;
+    for (var i = 0; i < max_lines; i++) {
+      if (i) result += '\n';
+      if (lines[i].length > 80) {
+        lines[i] = lines[i].substr(0, 80) + '...';
+      }
+      result += lines[i];
+    }
+    if (i < lines.length) result += '\n...';
+    return result;
+  }
+
+  var escapeHtml = (function () {
+    var entityMap = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': '&quot;',
+      "'": '&#39;',
+      "/": '&#x2F;'
+    };
+    return function (string) {
+      return String(string).replace(/[&<>"'\/]/g, function (s) {
+        return entityMap[s];
+      });
+    };
+  })();
+
+  api.loadScript = function loadScript(options) {
+    snd_xplore_util.demo(options.code || '', options.user_data || '');
+    snd_xplore_util.session_id = options.id;
+    $('#target').val(options.target).trigger('change');
+    $('#scope').val(options.scope).trigger('change');
+    $('#setting_quotes').bootstrapToggle(options.no_quotes ? 'off' : 'on');
+    $('#show_props').bootstrapToggle(options.show_props ? 'on' : 'off');
+    $('#show_strings').bootstrapToggle(options.show_strings ? 'on' : 'off');
+    $('#show_html_messages').bootstrapToggle(options.show_html_messages ? 'on' : 'off');
+    $('#wrap_output_pre').bootstrapToggle(options.wrap_output_pre ? 'on' : 'off');
+    $('#fix_gslog').bootstrapToggle(options.fix_gslog ? 'on' : 'off');
+    $('#support_hoisting').bootstrapToggle(options.support_hoisting ? 'on' : 'off');
+  };
+
+  api.loadAll = function () {
+    loading(true);
+    return $.ajax({
+      type: 'GET',
+      url: '/snd_xplore.do?action=getScriptHistory',
+      dataType: 'json'
+    }).
+    done(function (data) {
+      api.history = data.result;
+      api.history_map = {};
+      $list.empty();
+      $.each(api.history, function (i, item) {
+        api.history_map[item.id] = item;
+        $list.append(
+          $('<div class="list-group-item interactive" data-id="' + item.id + '" data-replace="1">' +
+              '<button type="button" class="close" aria-label="Close"><span aria-hidden="true">×</span></button>' +
+              '<h5 class="list-group-item-heading">' + item.name + ' (' + item.scope + ')</h5> ' +
+              '<p class="list-group-item-text"><pre class="prettyprint linenums">' + escapeHtml(maxLines(item.code, 3)) + '</pre>' +
+            '</div>'));
+      });
+
+      // Google Code-Prettify
+      window.PR.prettyPrint();
+
+      loading(false);
+
+    }).
+    fail(function () {
+      snd_log('Error: snd_script_history_util.loadAll failed.');
+      loading(false);
+    });
+  };
+
+  api.deleteScript = function deleteScript(id) {
+    loading(true);
+    return $.ajax({
+      type: 'GET',
+      url: '/snd_xplore.do?action=deleteScriptHistoryItem&id=' + id,
+      dataType: 'json'
+    }).
+    done(function (data) {
+      api.loadAll();
+    }).
+    fail(function () {
+      snd_log('Error: snd_script_history_util.deleteScript failed.');
+      loading(false);
+    });
+  }
+
+  // load on window load
+  $(function () {
+    api.loadAll();
+  });
+
+  $list.on('click', 'div.list-group-item', function (e) {
+
+    // prevent nested buttons from opening the script
+    if ($(e.target).closest('button').length) return;
+
+    var $this = $(this);
+    var item;
+    if (!$this.attr('data-id')) {
+      snd_log('Error: script link does not have an id attribute');
+    } else {
+      item = api.history_map[$this.attr('data-id')];
+      if (item) {
+        api.loadScript(item);
+      } else {
+        throw new Error('Unable to load empty history item.');
+      }
+    }
+  });
+
+  $list.on('click', 'button.close', function (e) {
+    var $anchor = $(this).parent();
+    var item;
+    if (!confirm('Delete this script?')) return;
+
+    if (!$anchor.attr('data-id')) {
+      snd_log('Error: script link does not have an id attribute');
+    } else {
+      item = api.history_map[$anchor.attr('data-id')];
+      if (item) {
+        api.deleteScript(item.id);
+      } else {
+        throw new Error('Unable to delete history item.');
+      }
+    }
+  });
+
+  return api;
+})();
+
+
+/*************************************
             SIDE PANES
 **************************************/
 
@@ -725,6 +918,44 @@ var snd_script_search_util = (function () {
     }
   });
 
+})();
+
+
+snd_xplore_setting_util = (function () {
+  var util = {};
+
+  util.PREFERENCE = 'xplore.settings';
+
+  util.getSettings = function getSettings() {
+    var settings = {};
+    $('.xplore-setting').each(function (i, setting) {
+      setting = $(setting);
+      settings[setting.attr('id')] = setting.is(':checkbox') ? $(setting).is(':checked') : setting.val();
+    });
+    return settings;
+  };
+
+  util.save = function () {
+    var settings = util.getSettings();
+    snd_xplore_util.setPreference(util.PREFERENCE, JSON.stringify(settings));
+  };
+
+  util.reset = function () {
+    snd_xplore_util.setPreference(util.PREFERENCE, '{}');
+
+    $('.xplore-setting').each(function (i, setting) {
+      var default_value = snd_xplore_default_settings[setting.id];
+      setting = $(setting);
+      if (setting.is(':checkbox')) {
+        //setting.attr('checked', default_value);
+        setting.bootstrapToggle(default_value ? 'on' : 'off');
+      } else {
+        setting.val(default_value).change();
+      }
+    });
+  };
+
+  return util;
 })();
 
 
@@ -795,13 +1026,36 @@ $(function () {
     }
   });
 
+  window.snd_xplore_editor.on('change', function () {
+    snd_xplore_util.is_dirty = true;
+  });
+
+  $('#user_data_input').on('keyup', function () {
+    snd_xplore_util.is_dirty = true;
+  });
+
   var sxr = snd_xplore_reporter;
   sxr.initialize();
-  sxr.addEvent('start', snd_xplore_util.loading);
-  sxr.addEvent('done', snd_xplore_util.loadingComplete);
+  sxr.addEvent('start', function () {
+    snd_xplore_util.loading();
+    disableFilteredLogMenu();
+  });
+  sxr.addEvent('done', function (result) {
+    snd_xplore_util.loadingComplete(result);
+    if (snd_xplore_util.start_time && snd_xplore_util.end_time) {
+      enableFilteredLogMenu();
+    }
+  });
   sxr.addEvent('click.interactive-result', snd_xplore_util.execute);
   sxr.addEvent('click.breadcrumb', snd_xplore_util.execute);
 
+  $(document).ready(function () {
+    $('#target').select2();
+
+    // The width appears to be set by option values which means it's too narrow
+    // so we need to override width to our "max width" here instead.
+    $('#scope').select2({width: '350px'});
+  });
 
   // handle the run button clicking
   $('#xplore_btn').click(function () {
@@ -813,7 +1067,44 @@ $(function () {
     snd_xplore_util.cancel();
   });
 
+  // reload the script history when a user clicks the info tab
+  $('#info_pane_tab').click(function () {
+    snd_script_history_util.loadAll();
+  });
+
   // Setup property toggles
+  var current_theme = $('#setting_theme').val();
+  function updateTheme(theme, preview) {
+    theme = theme || $('#setting_theme').val();
+    $('.page').removeClass('xplore-s-' + current_theme).addClass('xplore-s-' + theme);
+    snd_xplore_editor.setOption('theme', theme);
+    current_theme = theme;
+  }
+  snd_xplore_editor.setOption('theme', current_theme);
+
+  // select2 only works when visible so we run it when the modal opens
+  $('#modal_settings').on('shown.bs.modal', function () {
+    $('#setting_theme').select2({
+      dropdownParent: $('#modal_settings')
+    })
+    .on('select2:close', function (e) {
+      updateTheme(null, true); // reset the theme from preview
+    })
+    .on('change', function (e) {
+      updateTheme(); // save the theme preference
+    })
+    .on('select2:open', function () {
+      // preview the theme as the user presses up/down
+      // register the event once select2 has created the dropdown
+      $('.select2-dropdown').keyup(function (e) {
+        var key = e.keyCode || e.which;
+        if (key == 38 || key == 40) { // up or down key
+          updateTheme($('.select2-results__option.select2-results__option--highlighted').text(), true);
+        }
+      });
+    });
+  });
+
   $('#setting_quotes,#show_props,#show_strings').
     bootstrapToggle({
       on: 'Show',
@@ -856,6 +1147,23 @@ $(function () {
       size: 'mini',
       width: 75
     });
+  $('#support_hoisting').
+    bootstrapToggle({
+      on: 'On',
+      off: 'Off',
+      onstyle: 'warning',
+      offstyle: 'success',
+      size: 'mini',
+      width: 75
+    });
+
+  $('#save_settings').click(function () {
+    snd_xplore_setting_util.save();
+  });
+
+  $('#reset_settings').click(function () {
+    snd_xplore_setting_util.reset();
+  });
 
   // set default to wrapped
   if ($('#wrap_output_pre:checked')) {
@@ -903,9 +1211,8 @@ $(function () {
 
   // Dirty form detection
   $(window).bind('beforeunload', function() {
-    var code = snd_xplore_util.getCode();
-    if (code.length) {
-      return 'Do you want to leave?';
+    if (snd_xplore_ui.isDirty()) {
+      return 'There are unsaved changes on this page. Do you want to leave?';
     }
   });
 
@@ -955,10 +1262,11 @@ $(function () {
   // Setup the onChange handler for hiding scope select
   // when the target is not the client.
   $('#target').on('change', function () {
+    // use parent to capture Select2
     if (this.value == 'server') {
-      $('#scope').fadeIn();
+      $('#scope').parent().fadeIn();
     } else {
-      $('#scope').fadeOut();
+      $('#scope').parent().fadeOut();
     }
   });
 
@@ -974,19 +1282,64 @@ $(function () {
 
   var $output_tabs_pane = $('#output_tabs_pane');
   var active_log_frame = '';
-  var node_log_url = '/ui_page_process.do?name=log_file_browser&max_rows=2000';
+  var default_node_log_url = '/ui_page_process.do?name=log_file_browser&max_rows=2000';
+  
+  function getQueryDate(date, time) {
+    if (time) {
+      date = date + '\',\'' + time;
+    } else {
+      date = date.split(' ').join('\',\'');
+    }
+    return 'javascript:gs.dateGenerate(\'' + date + '\')';
+  }
 
-  $('#system_log_tab').one('click', function () {
-    $('#system_log_frame').attr('src', '/syslog_list.do?sysparm_query=sys_created_onONToday%40javascript%3Ags.daysAgoStart(0)%40javascript%3Ags.daysAgoEnd(0)');
-  }).click(function () {
+  function getCreatedQuery(element) {
+    if (element.id.indexOf('filtered') === 0 && snd_xplore_util.start_time && snd_xplore_util.end_time) {
+      return encodeURIComponent('sys_created_on>=' + getQueryDate(snd_xplore_util.start_time) + '^sys_created_on<=' + getQueryDate(snd_xplore_util.end_time));
+    }
+    return 'sys_created_onONToday%40javascript%3Ags.daysAgoStart(0)%40javascript%3Ags.daysAgoEnd(0)';
+  }
+
+  function enableFilteredLogMenu() {
+    $('#filtered_log_menu_header, #filtered_log_menu_divider, #log_menu a[id^="filtered"]').show();
+  }
+
+  function disableFilteredLogMenu() {
+    $('#filtered_log_menu_header, #filtered_log_menu_divider, #log_menu a[id^="filtered"]').hide();
+  }
+  disableFilteredLogMenu(); // prevent links when the page loads
+
+  function updateLogFrame(src) {
+    $('#log_frame').attr('src', src);
     active_log_frame = 'system';
+  }
+
+  $('#system_log_tab,#filtered_system_log_tab').click(function () {
+    updateLogFrame('/syslog_list.do?sysparm_view=&sysparm_query=' + getCreatedQuery(this));
   });
-  $('#node_log_tab').click(function () {
+  $('#app_log_tab,#filtered_app_log_tab').click(function () {
+    updateLogFrame('/syslog_app_scope_list.do?sysparm_view=&sysparm_query=' + getCreatedQuery(this));
+  });
+  $('#email_log_tab,#filtered_email_log_tab').click(function () {
+    updateLogFrame('/sys_email_list.do?sysparm_view=&sysparm_query=' + getCreatedQuery(this));
+  });
+  $('#event_log_tab,#filtered_event_log_tab').click(function () {
+    updateLogFrame('/sysevent_list.do?sysparm_view=&sysparm_query=' + getCreatedQuery(this));
+  });
+  $('#request_log_tab,#filtered_request_log_tab').click(function () {
+    updateLogFrame('/sys_outbound_http_log_list.do?sysparm_view=&sysparm_query=' + getCreatedQuery(this));
+  });
+  $('#node_log_tab,#filtered_node_log_tab').click(function () {
     var new_url;
+
     active_log_frame = 'node';
-    new_url = $('#node_log_url').val();
+    if (this.id.indexOf('filtered') === 0) {
+      new_url = $('#node_log_url').val();
+    }
+
+    // we don't want to refresh the iframe if it's the same URL
     if (node_log_url !== new_url) {
-      node_log_url = new_url || '/ui_page_process.do?name=log_file_browser&max_rows=2000';
+      node_log_url = new_url || default_node_log_url;
       $('#node_log_frame').attr('src', node_log_url);
     }
   });
@@ -1003,7 +1356,7 @@ $(function () {
     var $output_content = $('#output_content');
     var $output_tabs = $('#output_tabs');
     var h = $output_content.height() - $output_tabs.height() - 10;
-    $('#system_log_frame,#node_log_frame').css('height', h);
+    $('#log_frame,#node_log_frame').css('height', h);
   }
   resizeLogPane();
 

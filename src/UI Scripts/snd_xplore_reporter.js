@@ -11,11 +11,11 @@ var snd_xplore_reporter = (function () {
     if (!result.string) result.string = "";
     if (result.string.length < 100 && result.string.indexOf('\n') == '-1') {
       table.append('<tr><th class="col-md-1">Value</th><td class="col-md-11">' +
-          lineBreaks(prettyPrint(escapeHtml(result.string))) + '</td></tr>');
+          lineBreaks(prettyPrint(insertLinks(escapeHtml(result.string)))) + '</td></tr>');
     } else {
       //table.append('<tr><th class="col-md-1">Value</th><td class="col-md-11">&nbsp;</td></tr>');
       table.append('<tr class="data-more"><td colspan="2">' +
-          '<pre class="prettyprint linenums">' + escapeHtml(formatForPre(result.string)) +
+          '<pre class="prettyprint linenums">' + insertLinks(escapeHtml(formatForPre(result.string))) +
           '</pre></td></tr>');
     }
   }
@@ -48,7 +48,7 @@ var snd_xplore_reporter = (function () {
         table.append('<tr class="data-row">' +
           '<td class="col-md-3 prop">' + prop + '</td>' +
           '<td class="col-md-3 type">' + item.type + '</td>' +
-          '<td class="classol-md-6 val">' + prettyPrint(escapeHtml(item.string)) + '</td>' +
+          '<td class="col-md-6 val">' + prettyPrint(insertLinks(escapeHtml(item.string))) + '</td>' +
         '</tr>');
       }
     });
@@ -110,7 +110,7 @@ var snd_xplore_reporter = (function () {
       m = messages[i];
       temp = m.message;
       if (classMap[m.type] == 'danger') {
-        script_update = tryBlacklist(temp) || script_update;
+        script_update = tryIgnoreList(temp) || script_update;
       }
 
       if (m.is_json) {
@@ -126,20 +126,20 @@ var snd_xplore_reporter = (function () {
     }
 
     if (script_update) {
-      target.append('<tr><td class="info">Illegal property has been blacklisted. ' +
+      target.append('<tr><td class="info">Illegal property has been ignore-listed. ' +
                     'Please try again.</td></tr>');
     }
 
     $('#message_container').toggleClass('hidden', !i);
   }
 
-  function tryBlacklist(text) {
+  function tryIgnoreList(text) {
     // text = 'Illegal access to field fInternalTZ in class com.glide.glideobject.GlideDateTime';
     var word = text.match(/Illegal access to field (\w+)/),
         current;
     if (word) {
       current = snd_xplore_editor.getValue();
-      current = 'snd_Xplore.blacklist(\'' + word[1] + '\');\n' + current;
+      current = 'snd_Xplore.ignorelist(\'' + word[1] + '\');\n' + current;
       snd_xplore_editor.setValue(current);
     }
     return !!word;
@@ -215,8 +215,10 @@ var snd_xplore_reporter = (function () {
         'All</label>');
     }
 
-    $.each(show_types, function (type) {
-      id = '' + type.replace(/\./g, '_');
+    var keys = Object.keys(show_types);
+    keys.sort();
+    $.each(keys, function (i, type) {
+      id = ('' + type).replace(/\./g, '_').replace(/[^a-zA-Z0-9_]/g, '');
       target.append('<label class="checkbox-inline no_indent">' +
         '<input type="checkbox" id="show_' + id + '" value="' + type + '" />' +
         type + '</label>');
@@ -316,6 +318,23 @@ var snd_xplore_reporter = (function () {
 
   function lineBreaks(text) {
     return text.toString().trim().replace(/\n/g, '<br />');
+  }
+
+  function link(href, title) {
+    return '<a href="' + href + '" target="_blank">' + (title || 'Open') + '</a>';
+  }
+
+  function insertLinks(text) {
+    text = text.replace(/^((?:"|&quot;)([a-f0-9]{32})(?:"|&quot;) )(\[(\w+) .*\])$/, function (m, start, sys_id, label, table) { // GlideElementReference
+      return start + link(table + '.do?sys_id=' + sys_id, label);
+    });
+    text = text.replace(/link: (.+)/, function (m, href) { // GlideRecord
+      return 'link: ' + link(href, href);
+    });
+    text = text.replace(/([a-z_]+)[.:]([0-9a-f]{32})(?:[:.](\w*))?/g, function (m, table, sys_id, display) { // table.sys_id links
+      return '<a href="/' + table + '.do?sys_id=' + sys_id + '" target="_blank">' + m + '</a>';
+    });
+    return text;
   }
 
   var breadcrumbs = [];

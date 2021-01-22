@@ -1,5 +1,96 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null">
+<g:evaluate>
+  var settings;
+  try {
+    settings = JSON.parse(gs.getPreference('xplore.settings') || '{}');
+  } catch (e) {
+    settings = {};
+    gs.addErrorMessage('Xplore failed to load settings preferences. Invalid JSON.');
+  }
+
+  var default_settings = {
+    setting_theme: 'default',
+    setting_quotes: true,
+    show_props: true,
+    show_strings: true,
+    show_html_messages: true,
+    wrap_output_pre: true,
+    fix_gslog: true,
+    support_hoisting: false
+  };
+
+  for (var name in default_settings) {
+    if (!settings.hasOwnProperty(name)) {
+      settings[name] = default_settings[name];
+    }
+  }
+
+  var themes = [
+    "3024-day",
+    "3024-night",
+    "abcdef",
+    //"ambiance",
+    "base16-dark",
+    "base16-light",
+    "bespin",
+    "blackboard",
+    "cobalt",
+    "colorforth",
+    "darcula",
+    "dracula",
+    "duotone-dark",
+    "duotone-light",
+    "eclipse",
+    "elegant",
+    "erlang-dark",
+    "gruvbox-dark",
+    "hopscotch",
+    "icecoder",
+    "idea",
+    "isotope",
+    "lesser-dark",
+    "liquibyte",
+    "lucario",
+    "material",
+    "material-darker",
+    "material-ocean",
+    "material-palenight",
+    "mbo",
+    "mdn-like",
+    "midnight",
+    "monokai",
+    "moxer",
+    "neat",
+    "neo",
+    "night",
+    "nord",
+    "oceanic-next",
+    //"panda-syntax",
+    "paraiso-dark",
+    "paraiso-light",
+    "pastel-on-dark",
+    "railscasts",
+    "rubyblue",
+    "seti",
+    "shadowfox",
+    "solarized",
+    "ssms",
+    "the-matrix",
+    "tomorrow-night-bright",
+    "tomorrow-night-eighties",
+    "ttcn",
+    "twilight",
+    "vibrant-ink",
+    "xq-dark",
+    "xq-light",
+    "yeti",
+    "yonce",
+    "zenburn"
+  ];
+
+  var history_session_id = gs.generateGUID();
+</g:evaluate>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -9,10 +100,10 @@
     <title>Xplore</title>
 
     <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous" />
 
     <!-- Bootstrap Toggle -->
-    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.0/css/bootstrap-toggle.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" integrity="sha512-hievggED+/IcfxhYRSr4Auo1jbiOczpqpLZwfTVL/6hFACdbI3WQ8S9NCX50gsM9QVE+zLk/8wb9TlgriFbX+Q==" crossorigin="anonymous" />
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesnt work if you view the page via file:// -->
@@ -21,471 +112,739 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-    <!-- CodeMirror - native CSS in ServiceNow-->
-    <!--<link rel="stylesheet" href="/codemirror.css" />-->
-
     <!--CodeMirror Update-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.40.0/codemirror.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.css" integrity="sha512-xIf9AdJauwKIVtrVRZ0i4nHP61Ogx9fSRAkCLecmE2dL/U8ioWpDvFCAy4dcfecN72HHB9+7FfQj3aiO68aaaw==" crossorigin="anonymous" />
 
     <!-- snd_xplore -->
-    <link href="/efd550a80f2a020094f3c09ce1050ecf.cssdbx" rel="stylesheet" />
+    <link href="/snd_xplore.cssdbx" rel="stylesheet" />
+
+    <!--CodeMirror Themes-->
+    <link rel="stylesheet" href="/snd_xplore_themes.cssdbx" />
+
+    <!-- Select2 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" />
+
+    <script>
+      window.snd_xplore_session_id = "${history_session_id}";
+    </script>
   </head>
+  <g:evaluate jelly="true">var theme = settings.setting_theme;</g:evaluate>
   <body>
 
-    <div id="window_loader" class="page_loader active">
-      <div class="loading">
-        <i class="glyphicon glyphicon-refresh spin"></i>
+    <div class="page ${theme ? ' ws-s-' + theme : ''}">
+
+      <div id="window_loader" class="page_loader active">
+        <div class="loading">
+          <i class="glyphicon glyphicon-refresh spin"></i>
+        </div>
+      </div>
+
+      <nav class="navbar navbar-default navbar-fixed-top">
+        <a class="navbar-header" href="https://xploretoolkit.com" target="_blank" rel="noopener noreferrer nofollow">
+          <img class="navbar-brand" src="/ws_logo_Xplore_48.pngx" width="48" height="48"
+                 title="Xplore (${gs.getProperty('glide.buildtag')})"
+                 alt="Xplore logo" style="padding: 2px; margin-left: 2px; height: auto" />
+          <span class="navbar-brand" style="padding: 15px 8px 15px 4px">
+            <span class="text-primary">Xplore</span> <sub>${snd_Xplore.getVersion()}</sub>
+          </span>
+        </a>
+        <div id="navbar">
+          <ul class="nav navbar-nav">
+            <li>
+              <p class="navbar-control">
+                <select id="target" class="form-control">
+                  <option value="server">Server</option>
+                  <option value="client">Client</option>
+                </select>
+              </p>
+            </li>
+            <li>
+              <p class="navbar-control">
+                <select id="scope" class="form-control">
+                  <option>Loading</option>
+                </select>
+              </p>
+            </li>
+            <li>
+              <button id="xplore_btn" class="btn btn-success navbar-control"
+                title="Ctrl + Enter">Run</button>
+            </li>
+            <li>
+              <button id="cancel_btn" class="btn btn-danger navbar-control"
+                title="Cancel Transaction" style="display:none">Cancel</button>
+            </li>
+            <li id="timer" class="navbar-brand"></li>
+          </ul>
+        </div>
+      </nav>
+
+
+      <div id="wrapper">
+
+        <div id="side_controls">
+          <ul>
+            <li>
+              <a href="#" title="New"
+                onclick="window.opener ? window.opener.open(window.location.href, '_blank') : window.open(window.location.href, '_blank');">
+                <i class="glyphicon glyphicon-new-window"></i>
+              </a>
+            </li>
+            <li><a href="#" title="Toggle Editor" id="editor_toggle" class="active">
+              <i class="glyphicon glyphicon-console"></i></a>
+            </li>
+            <li>
+              <a href="#" title="Open Script" data-pane="script_pane">
+                <i class="glyphicon glyphicon-paste"></i>
+              </a>
+            </li>
+            <li>
+              <a href="#" title="Settings" data-toggle="modal"
+              data-target="#modal_settings">
+                <i class="glyphicon glyphicon-cog"></i>
+              </a>
+            </li>
+            <li>
+              <a href="#" title="About" data-toggle="modal"
+              data-target="#modal_about">
+                <i class="glyphicon glyphicon-info-sign"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div id="script_pane" class="side_pane" style="display: none;">
+          <div id="script_pane_loading" class="pull-right" style="display:none;">
+            <i class="glyphicon glyphicon-refresh spin"></i>
+          </div>
+          <button class="btn btn-link btn-sm pull-right" id="scripts_refresh">Refresh</button>
+          <p class="lead">Scripts</p>
+          <p>Easily append script includes to the editor window.</p>
+          <input type="text" class="form-control" id="script_pane_search"
+            placeholder="Search..." />
+
+          <p class="alert alert-warning" id="script_pane_404" style="display: none">
+            Nothing found.
+          </p>
+          <ul id="script_pane_list"></ul>
+        </div>
+
+        <div id="workbench">
+
+          <div id="editor">
+            <textarea class="form-control" id="snd_xplore" rows="10"></textarea>
+            <div class="ui-resizable-handle ui-resizable-e"></div>
+          </div>
+
+          <div id="output">
+
+            <div id="output_loader" class="page_loader">
+              <div class="loading">
+                <i class="glyphicon glyphicon-refresh spin"></i>
+              </div>
+            </div>
+
+            <div id="output_content">
+
+              <ul class="nav nav-tabs" role="tablist" id="output_tabs">
+                <li role="presentation" class="active">
+                  <a href="#info_pane" aria-controls="info_pane" id="info_pane_tab"
+                    role="tab" data-toggle="tab"
+                    title="Some stuff about Xplore">
+                    <i class="glyphicon glyphicon-info-sign"></i>
+                  </a>
+                </li>
+                <li role="presentation">
+                  <a href="#script_output" aria-controls="script_output"
+                    id="script_output_tab" role="tab" data-toggle="tab"
+                    title="View the output of your script">Output</a>
+                </li>
+                <li role="presentation">
+                  <a href="#user_data_pane" aria-controls="user_data_pane"
+                    id="user_data_tab" role="tab" data-toggle="tab"
+                    title="Test your code with large strings">User Data</a>
+                </li>
+                <li role="presentation">
+                  <a href="#regex_pane" aria-controls="regex_pane"
+                    id="regex_tab" role="tab" data-toggle="tab"
+                    title="Run regular expressions in ServiceNow">Regex</a>
+                </li>
+                <li role="presentation">
+                  <a href="#table_hierarchy_pane" aria-controls="table_hierarchy_pane"
+                    id="table_hierarchy_tab" role="tab" data-toggle="tab"
+                    title="View the hierarchy of a table">Table Hierarchy</a>
+                </li>
+                <li class="dropdown" role="presentation">
+                  <a href="javascript:void(0)" class="dropdown-toggle"
+                    data-toggle="dropdown">Logs <span class="caret"></span></a>
+                  <ul class="dropdown-menu" id="log_menu">
+                    <li class="dropdown-header" id="filtered_log_menu_header">Logs from the last run</li>  
+                    <li><a href="#log_pane" id="filtered_system_log_tab" aria-controls="log_pane"
+                      role="tab" data-toggle="tab">System Logs</a></li>
+                    <li><a href="#log_pane" id="filtered_app_log_tab" aria-controls="log_pane"
+                      role="tab" data-toggle="tab">Application Logs</a></li>
+                    <li><a href="#log_pane" id="filtered_email_log_tab" aria-controls="log_pane"
+                      role="tab" data-toggle="tab">Emails</a></li>
+                    <li><a href="#log_pane" id="filtered_event_log_tab" aria-controls="log_pane"
+                      role="tab" data-toggle="tab">Events</a></li>
+                    <li><a href="#log_pane" id="filtered_request_log_tab" aria-controls="log_pane"
+                      role="tab" data-toggle="tab">Outbound Requests</a></li>
+                    <li><a href="#node_log_pane" id="filtered_node_log_tab" aria-controls="node_log_pane"
+                      role="tab" data-toggle="tab">Node Logs</a></li>
+
+                    <li class="divider" id="filtered_log_menu_divider"></li>  
+                    <li class="dropdown-header">All logs from today</li>
+                    <li><a href="#log_pane" id="system_log_tab" aria-controls="log_pane"
+                      role="tab" data-toggle="tab">System Logs</a></li>
+                    <li><a href="#log_pane" id="app_log_tab" aria-controls="log_pane"
+                      role="tab" data-toggle="tab">Application Logs</a></li>
+                    <li><a href="#log_pane" id="email_log_tab" aria-controls="log_pane"
+                      role="tab" data-toggle="tab">Emails</a></li>
+                    <li><a href="#log_pane" id="event_log_tab" aria-controls="log_pane"
+                      role="tab" data-toggle="tab">Events</a></li>
+                    <li><a href="#log_pane" id="request_log_tab" aria-controls="log_pane"
+                      role="tab" data-toggle="tab">Outbound Requests</a></li>
+                    <li><a href="#node_log_pane" id="node_log_tab" aria-controls="node_log_pane"
+                      role="tab" data-toggle="tab">Node Logs</a></li>
+                    
+                    <!--li><a href="javascript:void(0)" id="log_reset">Reset</a></li-->
+                  </ul>
+                </li>
+              </ul>
+
+              <div class="tab-content" id="output_tabs_pane">
+
+                <div id="info_pane" role="tabpanel" class="tab-pane fade active in">
+                  <div class="alert alert-danger">
+                    <p>
+                      <strong>Warning:</strong> This utility runs code in your
+                      environment. Make sure you know what you are doing as it is
+                      entirely possible for you to screw up your instance.
+                    </p>
+                  </div>
+                  <g:macro_invoke macro="snd_xplore_info" />
+                </div>
+
+                <div id="script_output" role="tabpanel" class="tab-pane fade monospace">
+                  <ul id="breadcrumb" class="breadcrumb hidden">
+                    <li class="permanent">
+                      <a id="clearBreadcrumb" href="javascript:void(0);">Result</a>
+                    </li>
+                  </ul>
+
+                  <div id="message_container">
+                    <table class="table table-condensed" id="message_table">
+                      <tr>
+                        <td>
+                          <div class="alert alert-success"
+                              style="width: 70%; margin: 40px auto;">
+                            Output will be displayed here when you run a script.
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+
+                  <div id="log_container" class="hidden">
+                    <h4 class="monospace">System Logs</h4>
+                    <table class="table table-condensed" id="log_table"></table>
+                  </div>
+
+                  <div id="result_container">
+                    <table class="table table-condensed" id="description_table"></table>
+
+                    <div id="type_control"></div>
+                    <table class="table table-condensed" id="results_table"></table>
+                  </div>
+                </div>
+
+                <div id="user_data_pane" role="tabpanel" class="tab-pane fade">
+
+                  <div class="wrap row">
+                    <div class="col-xs-12">
+                      <div style="margin-bottom: 10px;">
+                        <h4 class="monospace">User Data</h4>
+                        <p>Easily add large strings to the variable <code>user_data</code>.</p>
+                        <p>Choose a format to automatically parse the data for the script
+                          and use the 'Format' button to prettify the data.</p>
+                        <div class="form-inline">
+                          <div class="input-group input-group-sm">
+                            <select class="form-control" id="user_data_type_select">
+                              <option>Plain (String)</option>
+                              <option>JSON (Object)</option>
+                              <option>XML (XMLDocument)</option>
+                              <option>XML (XMLDocument2)</option>
+                            </select>
+                            <span class="input-group-btn">
+                              <button class="btn btn-danger" id="user_data_format_btn">Prettify</button>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <textarea id="user_data_input" class="form-control monospace"></textarea>
+                    </div>
+                  </div>
+
+                </div>
+
+                <div id="regex_pane" role="tabpanel" class="tab-pane fade monospace">
+
+                  <div class="wrap row">
+                    <div class="col-xs-12">
+                      <div id="regex_loading" class="pull-right" style="display:none;">
+                        <i class="glyphicon glyphicon-refresh spin"></i>
+                      </div>
+                      <h4>Regular Expression</h4>
+                      <div>
+                        <div class="slash">/</div>
+                        <div class="regex-options">
+                          <div class="slash">/</div>
+                          <input type="text" value="g" id="regex_options" name="regex_options"
+                              class="form-control" tabindex="2" />
+                        </div>
+                        <div class="regex-expression">
+                          <input type="text" placeholder="expression" id="regex" name="regex"
+                              class="form-control" tabindex="1" />
+                        </div>
+                      </div>
+                      <p><code>user_data.match(<span id="regex_code"></span>)</code></p>
+                    </div>
+                    <div class="col-sm-6 col-xs-12">
+                      <h4>Test String</h4>
+                      <div class="panel panel-default">
+                        <textarea id="regex_input" style="width: 100%" rows="10"
+                            tabindex="3"></textarea>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 col-xs-12">
+                      <h4>Test Output</h4>
+                      <div id="regex_intro_panel" class="panel panel-default">
+                        <div class="panel-body">
+                          <p>Use this editor to test regular expressions as you write them,
+                            both in the client and as they would run in ServiceNow.</p>
+                          <p>The expression will be automatically evaluated on whichever
+                            target you have selected (client or server*) and the result shown here.</p>
+                          <p><small>*Global scope is always used when evaluating on the
+                            server.</small></p>
+                        </div>
+                      </div>
+                      <div id="regex_match_panel" class="panel panel-success" style="display: none">
+                        <div class="panel-heading">
+                          <h3 class="panel-title">Match</h3>
+                        </div>
+                        <div class="panel-body" id="regex_match"></div>
+                      </div>
+                      <div id="regex_group_panel" class="panel panel-success" style="display: none">
+                        <div class="panel-heading">
+                          <h3 class="panel-title">Match groups</h3>
+                        </div>
+                        <div class="panel-body" id="regex_group"></div>
+                      </div>
+                      <div id="regex_error_panel" class="alert alert-danger" style="display: none">
+                        <strong id="regex_error"></strong>
+                      </div>
+                    </div>
+                  </div>
+                  <div id="regex_help">
+                    <div class="col-xs-12">
+                      <h4>Words and Ranges</h4>
+                      <table class="table table-striped">
+                        <tr><td style="width: 9em;"><code>play</code></td><td>Match the word 'play'</td></tr>
+                        <tr><td><code>1337</code></td><td>Match the number '1337'</td></tr>
+                        <tr><td><code>[TF2]</code></td><td>A single character of T, F or 2</td></tr>
+                        <tr><td><code>[^xyz]</code></td><td>Any single character except x, y or z</td></tr>
+                        <tr><td><code>[a-z]</code></td><td>Any single character in the lowercase range a-z</td></tr>
+                        <tr><td><code>[a-zA-Z]</code></td><td>Any single character in ranges a-z or A-Z</td></tr>
+                        <tr><td><code>[a-zA-Z0-9]</code></td><td>Any alphanumeric character</td></tr>
+                      </table>
+                      <h4>Classes</h4>
+                      <table class="table table-striped">
+                        <tr><td style="width: 9em;"><code>.</code></td><td>Any single character</td></tr>
+                        <tr><td><code>\d</code></td><td>A single digit</td></tr>
+                        <tr><td><code>\D</code></td><td>A single non-digit</td></tr>
+                        <tr><td><code>\s</code></td><td>Any whitespace character</td></tr>
+                        <tr><td><code>\S</code></td><td>Any non-whitespace character</td></tr>
+                        <tr><td><code>\w</code></td><td>Any word character (alphanumeric or underscore)</td></tr>
+                        <tr><td><code>\W</code></td><td>Any non-word character</td></tr>
+                      </table>
+                      <h4>Quantifiers</h4>
+                      <table class="table table-striped">
+                        <tr><td style="width: 9em;"><code>d?</code></td><td>Zero or one of d</td></tr>
+                        <tr><td><code>o*</code></td><td>Zero or more of o</td></tr>
+                        <tr><td><code>o+</code></td><td>One or more of o</td></tr>
+                        <tr><td><code>m{4}</code></td><td>Exactly 4 of m</td></tr>
+                        <tr><td><code>H{2,}</code></td><td>2 or more of H</td></tr>
+                        <tr><td><code>L{1,3}</code></td><td>Between 1 and 3 of L</td></tr>
+                      </table>
+                      <h4>Anchors</h4>
+                      <table class="table table-striped">
+                        <tr><td style="width: 9em;"><code>^</code></td><td>Line start (works with multiline)</td></tr>
+                        <tr><td><code>$</code></td><td>Line end (works with multiline)</td></tr>
+                        <tr><td><code>\A</code></td><td>String start (ignore multiline)</td></tr>
+                        <tr><td><code>\Z</code></td><td>String end (ignore multiline)</td></tr>
+                        <tr><td><code>\b</code></td><td>A word boundary</td></tr>
+                        <tr><td><code>\B</code></td><td>A non-word boundary</td></tr>
+                      </table>
+                      <h4>Alternation and Groups</h4>
+                      <table class="table table-striped">
+                        <tr><td style="width: 9em;"><code>dead|alive</code></td><td>Match 'dead' or 'alive'</td></tr>
+                        <tr><td><code>(flag)</code></td><td>Capture a group containing 'flag'.</td></tr>
+                        <tr><td><code>(?!flag)</code></td><td>Non-capturing group.</td></tr>
+                        <tr><td><code>\2</code></td><td>Reference the second captured group.</td></tr>
+                        <tr><td><code>123(?=4)</code></td><td>Positive lookahead. Ensure 123 is followed by 4.</td></tr>
+                        <tr><td><code>123(?!5)</code></td><td>Negative lookahead. Ensure 123 is not followed by 5.</td></tr>
+                      </table>
+                      <h4>Options</h4>
+                      <table class="table table-striped">
+                        <tr><td style="width: 9em;"><code>g</code></td><td>Global matching. Lookup all matches instead of just the first.</td></tr>
+                        <tr><td><code>m</code></td><td>Multiline. $ and ^ will match on newlines.</td></tr>
+                        <tr><td><code>i</code></td><td>Case insensitive matching.</td></tr>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="table_hierarchy_pane" role="tabpanel" class="tab-pane fade monospace">
+                  <div class="wrap row">
+                    <div class="col-xs-12">
+                      <div id="table_hierarchy_loading" class="pull-right" style="display:none;">
+                        <i class="glyphicon glyphicon-refresh spin"></i>
+                      </div>
+                      <h4>Table Hierarchy</h4>
+                      <div class="panel-body">
+                        <p>Type in a table name to see all the tables in its hierarchy.</p>
+                        <p>Hit <kbd>Enter</kbd> to run.</p>
+
+                        <table class="table table-condensed">
+                          <tr><td><code>incident</code></td><td>Find all tables with names containing 'incident'</td></tr>
+                          <tr><td><code>&gt;incident</code></td><td>Find all tables with names starting with 'incident'</td></tr>
+                          <tr><td><code>=incident</code></td><td>Show only the 'incident' table</td></tr>
+                          <tr><td><code>*</code></td><td>Show all tables</td></tr>
+                        </table>
+
+                        <form class="form" action="" method="post" id="table_hierarchy_form">
+                          <div class="input-group">
+                            <input type="text" class="form-control" id="table_hierarchy_table" name="table_hierarchy_table" placeholder="table" />
+                            <span class="input-group-btn">
+                             <button type="submit" class="btn btn-default">Show</button>
+                            </span>
+                          </div>
+                          <div class="checkbox">
+                            <label>
+                              <input type="checkbox" id="table_hierarchy_table_do_label" checked="checked" /> Search table labels
+                            </label>
+                          </div>
+                        </form>
+
+                      </div>
+                    </div>
+                    <div id="table_hierarchy_result_container" class="col-xs-12" style="display: none">
+                      <h4>Hierarchy</h4>
+                      <div id="table_hierarchy_result"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="log_pane" role="tabpanel" class="tab-pane fade">
+                  <iframe id="log_frame" style="border: 0; width: 100%"></iframe>
+                </div>
+
+                <div id="node_log_pane" role="tabpanel" class="tab-pane fade">
+                  <input type="hidden" id="node_log_url" />
+                  <iframe id="node_log_frame" style="border: 0; width: 100%"></iframe>
+                </div>
+              </div><!-- /.tab-content -->
+
+            </div>
+          </div><!-- /#output -->
+        </div><!-- /#workbench -->
+      </div><!-- /.wrapper -->
+    </div> <!-- /.page -->
+
+    <div class="modal fade" id="modal_about" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document" style="max-width: 500px;">
+        <div class="modal-content">
+          <div class="modal-header" style="background-color: #337ab7; text-align: center; border-radius: 5px 5px 0 0">
+            <div class="row">
+              <div class="col-xs-12">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">${AMP}times;</span>
+                </button>
+              </div>
+            </div>
+            <img alt="Xplore" class="about_logo" role="presentation" src="snd_Xplore_logo.png" width="200" height="200" />
+          </div>
+          <div class="modal-body">
+            <h3 class="about-title">About Xplore ${snd_Xplore.getVersion()}</h3>
+            <p>Hey there!</p>
+            <p>
+              Thanks for clicking that button to find out more about who made
+              this bit of software for your exploratory enjoyment. If you like it
+              or have any feedback, feel free to get in touch.
+            </p>
+            <p>Thanks, James</p>
+            <p>
+              <a href="https://github.com/jneale/Xplore" target="_blank">GitHub</a>
+              |
+              <a href="https://twitter.com/James_Neale" class="twitter-follow-button"
+              data-show-count="false" target="_blank" rel="noopener noreferrer nofollow">
+                <span>Twitter</span>
+              </a>
+            </p>
+
+            <h5>Credits</h5>
+            <p>
+              The UI client uses
+              <a href="http://getbootstrap.com/" target="_blank" rel="noopener noreferrer nofollow">Bootstrap</a>,
+              <a href="http://jquery.com/" target="_blank" rel="noopener noreferrer nofollow">JQuery</a>,
+              <a href="http://codemirror.net/" target="_blank" rel="noopener noreferrer nofollow">CodeMirror</a>,
+              <a href="http://www.bootstraptoggle.com/" rel="noopener noreferrer nofollow">Bootstrap Toggle</a>,
+              <a href="http://github.com/google/code-prettify" rel="noopener noreferrer nofollow">Google Code-Prettify</a>.
+              and <a href="https://github.com/codedance/jquery.AreYouSure" rel="noopener noreferrer nofollow">jQuery Plugin: Are-You-Sure</a>.
+            </p>
+
+            <p class="text-muted small">Licence under the MIT License (MIT). Copyright © 2015 - 2020 James Neale.</p>
+          </div>
+        </div>
       </div>
     </div>
 
-    <nav class="navbar navbar-default navbar-fixed-top">
-      <a class="navbar-header" href="http://thewhitespace.io" target="_blank">
-         <img class="navbar-brand" src="/ws_logo_Xplore_48.pngx" width="48" height="48"
-              title="Xplore (${gs.getProperty('glide.buildtag')})"
-              alt="Xplore logo" style="padding: 2px; margin-left: 2px; height: auto" />
-         <span class="navbar-brand" style="padding: 15px 8px 15px 4px">
-          <span class="text-primary">Xplore</span> <sub>${snd_Xplore.getVersion()}</sub></span>
-      </a>
-      <div id="navbar">
-        <ul class="nav navbar-nav">
-          <li>
-            <p class="navbar-control">
-              <select id="target" class="form-control">
-                <option value="server">Server</option>
-                <option value="client">Client</option>
-              </select>
+    <div class="modal fade" id="modal_settings" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4>Settings</h4>
+            <br />
+            <p class="text-muted">
+              <sup class="badge badge-success">New</sup>
+              Settings can now be saved. Click the <kbd>Make default</kbd> button to save your settings
+              and have them used the next time you open Xplore. Clear your settings by using <kbd>Reset default</kbd>.
             </p>
-          </li>
-          <li>
-            <p class="navbar-control">
-              <select id="scope" class="form-control">
-                <option>Loading</option>
-              </select>
-            </p>
-          </li>
-          <li>
-            <button id="xplore_btn" class="btn btn-success navbar-control"
-              title="Ctrl + Enter">Run</button>
-          </li>
-          <li>
-            <button id="cancel_btn" class="btn btn-danger navbar-control"
-              title="Cancel Transaction" style="display:none">Cancel</button>
-          </li>
-          <li id="timer" class="navbar-brand"></li>
-        </ul>
-      </div>
-    </nav>
+          </div>
+          <div class="modal-body">
 
-    <div id="wrapper">
-
-      <div id="side_controls">
-        <ul>
-          <li>
-            <a href="javascript:void(0);" title="New"
-              onclick="window.opener ? window.opener.open(window.location.href, '_blank') : window.open(window.location.href, '_blank');">
-              <i class="glyphicon glyphicon-new-window"></i>
-            </a>
-          </li>
-          <li><a href="javascript:void(0)" title="Toggle Editor" id="editor_toggle" class="active">
-            <i class="glyphicon glyphicon-console"></i></a>
-          </li>
-          <li><a href="javascript:void(0);" title="Settings" data-pane="settings_pane">
-            <i class="glyphicon glyphicon-cog"></i></a>
-          </li>
-          <li>
-            <a href="javascript:void(0)" title="Open Script" data-pane="script_pane">
-              <i class="glyphicon glyphicon-paste"></i></a>
-          </li>
-        </ul>
-      </div>
-
-      <div id="settings_pane" class="side_pane" style="display: none;">
-        <p class="lead">Settings</p>
-        <div class="checkbox">
-          <input type="checkbox" id="setting_quotes" checked="checked" />
-          <strong>Quotes*</strong>
-          <p>By default, the Xplore Pretty Printer adds double quotes around
-          strings. Use this option to turn them off (useful for HTML/JSON strings).</p>
-        </div>
-        <div class="checkbox">
-          <input type="checkbox" id="show_props" checked="checked" />
-          <strong>Show Object Properties*</strong>
-          <p>Xplore will display the properties of the resulting objects of
-            any script you run. Turn off if you only care about the object
-            itself.</p>
-        </div>
-        <div class="checkbox">
-          <input type="checkbox" id="show_strings" checked="checked" />
-          <strong>Show String Values*</strong>
-          <p>Xplore will attempt to display the string values of the object and
-            its properties. Turn off if you encounter access errors or you don't
-            want to see strings. When off, all string values are shown as
-            &quot;<span class="text-danger">[user ignored]</span>&quot;.</p>
-        </div>
-        <div class="checkbox">
-          <input type="checkbox" id="show_html_messages" checked="checked" />
-          <strong>HTML Message Format*</strong>
-          <p>Output messages are shown as they are generated which means if they
-            contain something like an anchor tag the anchor will work. Turn off
-            if you want to see the raw string.</p>
-        </div>
-        <div class="checkbox">
-          <input type="checkbox" id="wrap_output_pre" checked="checked" />
-          <strong>Wrap Long Strings</strong>
-          <p>Wrapping of long strings, i.e. functions, means you don't have to
-            scroll right in the output pane to read them. If you'd rather see
-            each line as-is then change this setting.</p>
-        </div>
-        <div class="checkbox">
-          <input type="checkbox" id="fix_gslog" checked="checked" />
-          <strong>Fix Logs</strong>
-          <p>Replace calls to gs.print, gs.log, gs.debug, gs.info, gs.warn and gs.error
-             with internal functions so that we can capture the logs. NOTE: This
-             only applies to the code in Xplore, not business rules or script includes.</p>
-        </div>
-        <p class="small">*New values will apply to the next script being run.</p>
-      </div>
-
-      <div id="script_pane" class="side_pane" style="display: none;">
-        <div id="script_pane_loading" class="pull-right" style="display:none;">
-          <i class="glyphicon glyphicon-refresh spin"></i>
-        </div>
-        <button class="btn btn-link btn-sm pull-right" id="scripts_refresh">Refresh</button>
-        <p class="lead">Scripts</p>
-        <p>Easily append script includes to the editor window.</p>
-        <input type="text" class="form-control" id="script_pane_search"
-          placeholder="Search..." />
-
-        <p class="alert alert-warning" id="script_pane_404" style="display: none">
-          Nothing found.
-        </p>
-        <ul id="script_pane_list"></ul>
-      </div>
-
-      <div id="workbench">
-
-        <div id="editor">
-          <textarea class="form-control" id="snd_xplore" rows="10"></textarea>
-          <div class="ui-resizable-handle ui-resizable-e"></div>
-        </div>
-
-        <div id="output">
-
-          <div id="output_loader" class="page_loader">
-            <div class="loading">
-              <i class="glyphicon glyphicon-refresh spin"></i>
+            <div class="row">
+              <div class="col-xs-6">
+                <h5>
+                  <label for="setting_theme">
+                    Theme
+                    <sup class="badge badge-danger">beta</sup>
+                  </label>
+                </h5>
+                <p class="text-muted">
+                  Choose a different style for Xplore. Tip: click the dropdown and use keyboard 
+                  arrows to scroll up and down to see the theme change in realtime.
+                </p>
+                <p class="text-muted">Note: some themes work well and some not so much. If you find something
+                  obviously broken with a theme or are able to provide a fix to make it look
+                  better (or as the original theme designer intended) then please get in
+                  touch - contact details in the info popup.
+                </p>
+              </div>
+              <div class="col-xs-6">
+                <div class="m-t">
+                  <select class="form-control xplore-setting" id="setting_theme" name="setting_theme">
+                    <option value="default">Default</option>
+                    <j:forEach items="${themes}" var="jvar_theme">
+                      <g:evaluate jelly="true">var selected = theme == jelly.jvar_theme;</g:evaluate>
+                      <j:if test="${selected}">
+                        <option value="${jvar_theme}" selected="selected">${jvar_theme}</option>
+                      </j:if>
+                      <j:if test="${!selected}">
+                        <option value="${jvar_theme}">${jvar_theme}</option>
+                      </j:if>
+                    </j:forEach>
+                  </select>
+                </div>
+              </div>
             </div>
-          </div>
 
-          <div id="output_content">
-
-            <ul class="nav nav-tabs" role="tablist" id="output_tabs">
-              <li role="presentation" class="active">
-                <a href="#info_pane" aria-controls="info_pane" id="info_pane_tab"
-                  role="tab" data-toggle="tab"
-                  title="Some stuff about Xplore">
-                  <i class="glyphicon glyphicon-info-sign"></i>
-                </a>
-              </li>
-              <li role="presentation">
-                <a href="#script_output" aria-controls="script_output"
-                  id="script_output_tab" role="tab" data-toggle="tab"
-                  title="View the output of your script">Output</a>
-              </li>
-              <li role="presentation">
-                <a href="#user_data_pane" aria-controls="user_data_pane"
-                  id="user_data_tab" role="tab" data-toggle="tab"
-                  title="Test your code with large strings">User Data</a>
-              </li>
-              <li role="presentation">
-                <a href="#regex_pane" aria-controls="regex_pane"
-                  id="regex_tab" role="tab" data-toggle="tab"
-                  title="Run regular expressions in ServiceNow">Regex</a>
-              </li>
-              <li role="presentation">
-                <a href="#table_hierarchy_pane" aria-controls="table_hierarchy_pane"
-                  id="table_hierarchy_tab" role="tab" data-toggle="tab"
-                  title="View the hierarchy of a table">Table Hierarchy</a>
-              </li>
-              <li class="dropdown" role="presentation">
-                <a href="javascript:void(0)" class="dropdown-toggle"
-                  data-toggle="dropdown">Logs <span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                  <li><a href="#system_log_pane" id="system_log_tab" aria-controls="system_log_pane"
-                    role="tab" data-toggle="tab">System Logs</a></li>
-                  <li><a href="#node_log_pane" id="node_log_tab" aria-controls="node_log_pane"
-                    role="tab" data-toggle="tab">Node Logs</a></li>
-                  <li><a href="javascript:void(0)" id="log_reset">Reset</a></li>
-                </ul>
-              </li>
-            </ul>
-
-            <div class="tab-content" id="output_tabs_pane">
-
-              <div id="info_pane" role="tabpanel" class="tab-pane fade active in">
-                <g:macro_invoke macro="snd_xplore_info" />
+            <div class="row">
+              <div class="col-xs-9 col-sm-8">
+                <h5>Quotes*</h5>
+                <p class="text-muted">By default, the Xplore Pretty Printer adds double quotes around
+                strings. Use this option to turn them off (useful for HTML/JSON strings).</p>
               </div>
-
-              <div id="script_output" role="tabpanel" class="tab-pane fade monospace">
-                <ul id="breadcrumb" class="breadcrumb hidden">
-                  <li class="permanent">
-                    <a id="clearBreadcrumb" href="javascript:void(0);">Result</a>
-                  </li>
-                </ul>
-
-                <div id="message_container">
-                  <table class="table table-condensed" id="message_table">
-                    <tr>
-                      <td>
-                        <div class="alert alert-success"
-                            style="width: 70%; margin: 40px auto;">
-                          Output will be displayed here when you run a script.
-                        </div>
-                      </td>
-                    </tr>
-                  </table>
-                </div>
-
-                <div id="log_container" class="hidden">
-                  <h4 class="monospace">System Logs</h4>
-                  <table class="table table-condensed" id="log_table"></table>
-                </div>
-
-                <div id="result_container">
-                  <table class="table table-condensed" id="description_table"></table>
-
-                  <div id="type_control"></div>
-                  <table class="table table-condensed" id="results_table"></table>
-                </div>
+              <div class="col-xs-3 col-sm-4 text-right checkbox">
+                <g:evaluate jelly="true">var setting_quotes = !!settings.setting_quotes</g:evaluate>
+                <j:if test="${setting_quotes}">
+                  <input type="checkbox" id="setting_quotes" class="xplore-setting" checked="checked" />
+                </j:if>
+                <j:if test="${!setting_quotes}">
+                  <input type="checkbox" id="setting_quotes" class="xplore-setting" />
+                </j:if>
               </div>
+            </div>
 
-              <div id="user_data_pane" role="tabpanel" class="tab-pane fade">
-
-                <div class="wrap row">
-                  <div class="col-xs-12">
-                    <div style="margin-bottom: 10px;">
-                      <h4 class="monospace">User Data</h4>
-                      <p>Easily add large strings to the variable <code>user_data</code>.</p>
-                      <p>Choose a format to automatically parse the data for the script
-                        and use the 'Format' button to prettify the data.</p>
-                      <div class="form-inline">
-                        <div class="input-group input-group-sm">
-                          <select class="form-control" id="user_data_type_select">
-                            <option>Plain (String)</option>
-                            <option>JSON (Object)</option>
-                            <option>XML (XMLDocument)</option>
-                            <option>XML (XMLDocument2)</option>
-                          </select>
-                          <span class="input-group-btn">
-                            <button class="btn btn-danger" id="user_data_format_btn">Prettify</button>
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <textarea id="user_data_input" class="form-control monospace"></textarea>
-                  </div>
-                </div>
-
+            <div class="row">
+              <div class="col-xs-9 col-sm-8">
+                <h5>Show Object Properties*</h5>
+                <p class="text-muted">Xplore will display the properties of the resulting objects of
+                  any script you run. Turn off if you only care about the object
+                  itself.</p>
               </div>
-
-              <div id="regex_pane" role="tabpanel" class="tab-pane fade monospace">
-
-                <div class="wrap row">
-                  <div class="col-xs-12">
-                    <div id="regex_loading" class="pull-right" style="display:none;">
-                      <i class="glyphicon glyphicon-refresh spin"></i>
-                    </div>
-                    <h4>Regular Expression</h4>
-                    <div>
-                      <div class="slash">/</div>
-                      <div class="regex-options">
-                        <div class="slash">/</div>
-                        <input type="text" value="g" id="regex_options" name="regex_options"
-                            class="form-control" tabindex="2" />
-                      </div>
-                      <div class="regex-expression">
-                        <input type="text" placeholder="expression" id="regex" name="regex"
-                            class="form-control" tabindex="1" />
-                      </div>
-                    </div>
-                    <p><code>user_data.match(<span id="regex_code"></span>)</code></p>
-                  </div>
-                  <div class="col-sm-6 col-xs-12">
-                    <h4>Test String</h4>
-                    <div class="panel panel-default">
-                      <textarea id="regex_input" style="width: 100%" rows="10"
-                          tabindex="3"></textarea>
-                    </div>
-                  </div>
-                  <div class="col-sm-6 col-xs-12">
-                    <h4>Test Output</h4>
-                    <div id="regex_intro_panel" class="panel panel-default">
-                      <div class="panel-body">
-                        <p>Use this editor to test regular expressions as you write them,
-                          both in the client and as they would run in ServiceNow.</p>
-                        <p>The expression will be automatically evaluated on whichever
-                          target you have selected (client or server*) and the result shown here.</p>
-                        <p><small>*Global scope is always used when evaluating on the
-                          server.</small></p>
-                      </div>
-                    </div>
-                    <div id="regex_match_panel" class="panel panel-success" style="display: none">
-                      <div class="panel-heading">
-                        <h3 class="panel-title">Match</h3>
-                      </div>
-                      <div class="panel-body" id="regex_match"></div>
-                    </div>
-                    <div id="regex_group_panel" class="panel panel-success" style="display: none">
-                      <div class="panel-heading">
-                        <h3 class="panel-title">Match groups</h3>
-                      </div>
-                      <div class="panel-body" id="regex_group"></div>
-                    </div>
-                    <div id="regex_error_panel" class="alert alert-danger" style="display: none">
-                      <strong id="regex_error"></strong>
-                    </div>
-                  </div>
-                </div>
-                <div id="regex_help">
-                  <div class="col-xs-12">
-                    <h4>Words and Ranges</h4>
-                    <table class="table table-striped">
-                      <tr><td style="width: 9em;"><code>play</code></td><td>Match the word 'play'</td></tr>
-                      <tr><td><code>1337</code></td><td>Match the number '1337'</td></tr>
-                      <tr><td><code>[TF2]</code></td><td>A single character of T, F or 2</td></tr>
-                      <tr><td><code>[^xyz]</code></td><td>Any single character except x, y or z</td></tr>
-                      <tr><td><code>[a-z]</code></td><td>Any single character in the lowercase range a-z</td></tr>
-                      <tr><td><code>[a-zA-Z]</code></td><td>Any single character in ranges a-z or A-Z</td></tr>
-                      <tr><td><code>[a-zA-Z0-9]</code></td><td>Any alphanumeric character</td></tr>
-                    </table>
-                    <h4>Classes</h4>
-                    <table class="table table-striped">
-                      <tr><td style="width: 9em;"><code>.</code></td><td>Any single character</td></tr>
-                      <tr><td><code>\d</code></td><td>A single digit</td></tr>
-                      <tr><td><code>\D</code></td><td>A single non-digit</td></tr>
-                      <tr><td><code>\s</code></td><td>Any whitespace character</td></tr>
-                      <tr><td><code>\S</code></td><td>Any non-whitespace character</td></tr>
-                      <tr><td><code>\w</code></td><td>Any word character (alphanumeric or underscore)</td></tr>
-                      <tr><td><code>\W</code></td><td>Any non-word character</td></tr>
-                    </table>
-                    <h4>Quantifiers</h4>
-                    <table class="table table-striped">
-                      <tr><td style="width: 9em;"><code>d?</code></td><td>Zero or one of d</td></tr>
-                      <tr><td><code>o*</code></td><td>Zero or more of o</td></tr>
-                      <tr><td><code>o+</code></td><td>One or more of o</td></tr>
-                      <tr><td><code>m{4}</code></td><td>Exactly 4 of m</td></tr>
-                      <tr><td><code>H{2,}</code></td><td>2 or more of H</td></tr>
-                      <tr><td><code>L{1,3}</code></td><td>Between 1 and 3 of L</td></tr>
-                    </table>
-                    <h4>Anchors</h4>
-                    <table class="table table-striped">
-                      <tr><td style="width: 9em;"><code>^</code></td><td>Line start (works with multiline)</td></tr>
-                      <tr><td><code>$</code></td><td>Line end (works with multiline)</td></tr>
-                      <tr><td><code>\A</code></td><td>String start (ignore multiline)</td></tr>
-                      <tr><td><code>\Z</code></td><td>String end (ignore multiline)</td></tr>
-                      <tr><td><code>\b</code></td><td>A word boundary</td></tr>
-                      <tr><td><code>\B</code></td><td>A non-word boundary</td></tr>
-                    </table>
-                    <h4>Alternation and Groups</h4>
-                    <table class="table table-striped">
-                      <tr><td style="width: 9em;"><code>dead|alive</code></td><td>Match 'dead' or 'alive'</td></tr>
-                      <tr><td><code>(flag)</code></td><td>Capture a group containing 'flag'.</td></tr>
-                      <tr><td><code>(?!flag)</code></td><td>Non-capturing group.</td></tr>
-                      <tr><td><code>\2</code></td><td>Reference the second captured group.</td></tr>
-                      <tr><td><code>123(?=4)</code></td><td>Positive lookahead. Ensure 123 is followed by 4.</td></tr>
-                      <tr><td><code>123(?!5)</code></td><td>Negative lookahead. Ensure 123 is not followed by 5.</td></tr>
-                    </table>
-                    <h4>Options</h4>
-                    <table class="table table-striped">
-                      <tr><td style="width: 9em;"><code>g</code></td><td>Global matching. Lookup all matches instead of just the first.</td></tr>
-                      <tr><td><code>m</code></td><td>Multiline. $ and ^ will match on newlines.</td></tr>
-                      <tr><td><code>i</code></td><td>Case insensitive matching.</td></tr>
-                    </table>
-                  </div>
-                </div>
+              <div class="col-xs-3 col-sm-4 text-right checkbox">
+                <g:evaluate jelly="true">var show_props = !!settings.show_props</g:evaluate>
+                <j:if test="${show_props}">
+                  <input type="checkbox" id="show_props" class="xplore-setting" checked="checked" />
+                </j:if>
+                <j:if test="${!show_props}">
+                  <input type="checkbox" id="show_props" class="xplore-setting" />
+                </j:if>
               </div>
+            </div>
 
-              <div id="table_hierarchy_pane" role="tabpanel" class="tab-pane fade monospace">
-                <div class="wrap row">
-                  <div class="col-xs-12">
-                    <div id="table_hierarchy_loading" class="pull-right" style="display:none;">
-                      <i class="glyphicon glyphicon-refresh spin"></i>
-                    </div>
-                    <h4>Table Hierarchy</h4>
-                    <div class="panel-body">
-                      <p>Type in a table name to see all the tables in its hierarchy.</p>
-                      <p>Hit <kbd>Enter</kbd> to run.</p>
-
-                      <table class="table table-condensed">
-                        <tr><td><code>incident</code></td><td>Find all tables with names containing 'incident'</td></tr>
-                        <tr><td><code>&gt;incident</code></td><td>Find all tables with names starting with 'incident'</td></tr>
-                        <tr><td><code>=incident</code></td><td>Show only the 'incident' table</td></tr>
-                        <tr><td><code>*</code></td><td>Show all tables</td></tr>
-                      </table>
-
-                      <form class="form" action="" method="post" id="table_hierarchy_form">
-                        <div class="input-group">
-                          <input type="text" class="form-control" id="table_hierarchy_table" name="table_hierarchy_table" placeholder="table" />
-                          <span class="input-group-btn">
-                           <button type="submit" class="btn btn-default">Show</button>
-                          </span>
-                        </div>
-                        <div class="checkbox">
-                          <label>
-                            <input type="checkbox" id="table_hierarchy_table_do_label" checked="checked" /> Search table labels
-                          </label>
-                        </div>
-                      </form>
-
-                    </div>
-                  </div>
-                  <div id="table_hierarchy_result_container" class="col-xs-12" style="display: none">
-                    <h4>Hierarchy</h4>
-                    <div id="table_hierarchy_result"></div>
-                  </div>
-                </div>
+            <div class="row">
+              <div class="col-xs-9 col-sm-8">
+                <h5>Show String Values*</h5>
+                <p class="text-muted">Xplore will attempt to display the string values of the object and
+                  its properties. Turn off if you encounter access errors or you don't
+                  want to see strings. When off, all string values are shown as
+                  &quot;<span class="text-danger">[user ignored]</span>&quot;.</p>
               </div>
-
-              <div id="system_log_pane" role="tabpanel" class="tab-pane fade">
-                <iframe id="system_log_frame" style="border: 0; width: 100%"></iframe>
+              <div class="col-xs-3 col-sm-4 text-right checkbox">
+                <g:evaluate jelly="true">var show_strings = !!settings.show_strings</g:evaluate>
+                <j:if test="${show_strings}">
+                  <input type="checkbox" id="show_strings" class="xplore-setting" checked="checked" />
+                </j:if>
+                <j:if test="${!show_strings}">
+                  <input type="checkbox" id="show_strings" class="xplore-setting" />
+                </j:if>
               </div>
+            </div>
 
-              <div id="node_log_pane" role="tabpanel" class="tab-pane fade">
-                <input type="hidden" id="node_log_url" />
-                <iframe id="node_log_frame" style="border: 0; width: 100%"></iframe>
+            <div class="row">
+              <div class="col-xs-9 col-sm-8">
+                <h5>HTML Message Format*</h5>
+                <p class="text-muted">Output messages are shown as they are generated which means if they
+                  contain something like an anchor tag the anchor will work. Turn off
+                  if you want to see the raw string.</p>
               </div>
+              <div class="col-xs-3 col-sm-4 text-right checkbox">
+                <g:evaluate jelly="true">var show_html_messages = !!settings.show_html_messages</g:evaluate>
+                <j:if test="${show_html_messages}">
+                  <input type="checkbox" id="show_html_messages" class="xplore-setting" checked="checked" />
+                </j:if>
+                <j:if test="${!show_html_messages}">
+                  <input type="checkbox" id="show_html_messages" class="xplore-setting" />
+                </j:if>
+              </div>
+            </div>
 
-            </div><!--/.tab-content-->
+            <div class="row">
+              <div class="col-xs-9 col-sm-8">
+                <h5>Wrap Long Strings</h5>
+                <p class="text-muted">Wrapping of long strings, i.e. functions, means you don't have to
+                  scroll right in the output pane to read them. If you'd rather see
+                  each line as-is then change this setting.</p>
+              </div>
+              <div class="col-xs-3 col-sm-4 text-right checkbox">
+                <g:evaluate jelly="true">var wrap_output_pre = !!settings.wrap_output_pre</g:evaluate>
+                <j:if test="${wrap_output_pre}">
+                  <input type="checkbox" id="wrap_output_pre"  class="xplore-setting" checked="checked" />
+                </j:if>
+                <j:if test="${!wrap_output_pre}">
+                  <input type="checkbox" id="wrap_output_pre" class="xplore-setting" />
+                </j:if>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-xs-9 col-sm-8">
+                <h5>Fix Logs</h5>
+                <p class="text-muted">Replace calls to gs.print, gs.log, gs.debug, gs.info, gs.warn and gs.error
+                   with internal functions so that we can capture the logs. NOTE: This
+                   only applies to the code in Xplore, not business rules or script includes.</p>
+              </div>
+              <div class="col-xs-3 col-sm-4 text-right checkbox">
+                <g:evaluate jelly="true">var fix_gslog = !!settings.fix_gslog</g:evaluate>
+                <j:if test="${fix_gslog}">
+                  <input type="checkbox" id="fix_gslog"  class="xplore-setting" checked="checked" />
+                </j:if>
+                <j:if test="${!fix_gslog}">
+                  <input type="checkbox" id="fix_gslog" class="xplore-setting" />
+                </j:if>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-xs-9 col-sm-8">
+                <h5>Support Hoisting <sup class="badge badge-success">New</sup></h5>
+                <p class="text-muted">
+                  Code executed in Xplore is run within a try/catch block which prevents hoisting.
+                  You can enable hoisting here, but in order to see the result you will need to
+                  <code>return</code> the object you want to explore.
+                  e.g. <code>return "hello world"</code>
+                </p>
+              </div>
+              <div class="col-xs-3 col-sm-4 text-right checkbox">
+                <g:evaluate jelly="true">var support_hoisting = !!settings.support_hoisting</g:evaluate>
+                <j:if test="${support_hoisting}">
+                  <input type="checkbox" id="support_hoisting" class="xplore-setting" checked="checked" />
+                </j:if>
+                <j:if test="${!support_hoisting}">
+                  <input type="checkbox" id="support_hoisting" class="xplore-setting" />
+                </j:if>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-xs-12 text-right">
+                <button class="btn btn-default btn-sm" id="reset_settings"
+                title="Reset your setting to the Xplore defaults">${gs.getMessage('Reset default')}</button>
+                <button class="btn btn-default btn-sm" id="save_settings"
+                title="Save your settings for next time">${gs.getMessage('Make default')}</button>
+                <button class="btn btn-primary btn-sm" data-dismiss="modal" aria-label="Close"
+                title="Use these settings now, but don't save them for later">${gs.getMessage('OK')}</button>
+              </div>
+            </div>
+
+            <p class="small">*New values will apply to the next script being run.</p>
+
+            <script type="text/javascript">
+              // The only way we can pass this through Phase 1 Jelly is by stringifying on
+              // the server and parsing on the client. Phase 1 adds escape characters
+              // which would normally be removed by Phase 2, but since we don't run Phase 2
+              // this becomes an issue.
+              var snd_xplore_default_settings = JSON.parse("${JS:JSON.stringify(default_settings)}");
+            </script>
 
           </div>
         </div>
       </div>
-
     </div>
 
     <!-- jQuery (necessary for Bootstraps JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <!--
+      Sticking with jQuery 1 as it's compatible with Bootstrap 3.
+      Upgrading to jQuery 3 caused CSS issues in the tab-panes.
+    -->
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"
+            integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+            crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+            integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+            crossorigin="anonymous"></script>
+
+    <!-- Select2 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A==" crossorigin="anonymous"></script>
 
     <!-- Bootstrap -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
 
     <!-- Bootstrap Toggle -->
-    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.0/js/bootstrap-toggle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js" integrity="sha512-F636MAkMAhtTplahL9F6KmTfxTmYcAcjcCkyu0f0voT3N/6vzAuJ4Num55a0gEJ+hRLHhdz3vDvZpf6kqgEa5w==" crossorigin="anonymous"></script>
 
     <!-- Xplore -->
     <script src="/snd_xplore.jsdbx"></script>
     <script src="/snd_xplore_reporter.jsdbx"></script>
 
-    <!-- CodeMirror - native scripts in ServiceNow -->
-    <!--<script src="/codemirror.js"></script>-->
-    <!--<script src="/scripts/javascript.js"></script>-->
-
     <!--CodeMirror Update-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.40.0/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.40.0/mode/javascript/javascript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.40.0/keymap/sublime.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.40.0/addon/comment/comment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.js" integrity="sha512-zuvaVNiXwWY7U7HEdXsoTislTEElpKLELFoyQw0Bg7zfGhC4vG8eAhCxIQAvHmprW7dFhTq5zshUko4K3B4mSA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/mode/javascript/javascript.min.js" integrity="sha512-EKqHN1wvffwb5Hx+y5JeXPGNDKKxxW1Es4hexkgSf+QkQwEDNs6bp4KKCRNVLUbRPGkrDQ7yEVwvDg1tq7n1fA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/hint/javascript-hint.min.js" integrity="sha512-2zi+0HSB5MXoy+BenDX/EKjqN6eUnsG2Lh9cpx+Ckua3Yi2XupO8ife9VELSg8iR7AT98yHQNyyaAL4ImVHcoQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/comment/comment.min.js" integrity="sha512-VQ13rjo5LQmLPtbaWGV4DWx1Zbggd+MZVj6FGT6ltCbUiAN3e/7Usf61eO9vdXENLruXjEeEC3ADoN09P00R4A==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/search/searchcursor.min.js" integrity="sha512-WjPtMaVG4q6cJDk6ErkkZt87NQ8NAyk35hoBbylGAnNTiDara/vHlpGKCdhXFwBFQ26nRpyW7cNmv0tKVLE6ww==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/keymap/sublime.min.js" integrity="sha512-Z2h8JV7HR8dsltSOC7rrvVvvxHGj6cNvDDA3AJO99Nzvx5h28qT3KjqmwblYIGm/tEv319Cb+pORlgCnYADqYQ==" crossorigin="anonymous"></script>
 
     <!-- Google Code Prettify -->
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
