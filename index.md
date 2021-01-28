@@ -20,8 +20,8 @@
       <div class="feature-block text-center">
         <h2 class="feature-headline">A must have for every developer</h2>
         <div class="feature-narrative w-richtext">
-          <p>Xplore is used by professionals across the world to improve development activities and support for their instances.</p>
-          <p>As is a ServiceNow application built for developers by developers, you can learn, test, write, and debug code, and so much more!</p>
+          <p>Xplore is used by ServiceNow developers across the world to improve development activities and support for their instances.</p>
+          <p>You can learn, test, write, and debug code, and so much more!</p>
         </div>
       </div>
     </div>
