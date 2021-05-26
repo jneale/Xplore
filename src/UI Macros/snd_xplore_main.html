@@ -808,6 +808,15 @@
               var snd_xplore_default_settings = JSON.parse("${JS:JSON.stringify(default_settings)}");
             </script>
 
+			<!-- Adjust the "top" attribute of the "wrapper" div accordingly to the header -->
+			<script type="text/javascript">
+				function resizeWrapper() {
+					document.getElementById("wrapper").style.top = document.getElementById("navbar").parentElement.offsetHeight + "px";
+				}
+				window.addEventListener("resize", resizeWrapper);
+				window.addEventListener("load", resizeWrapper);
+			</script>
+			
           </div>
         </div>
       </div>
