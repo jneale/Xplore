@@ -10,6 +10,7 @@
   }
 
   var default_settings = {
+    setting_save_shortcut: true,
     setting_theme: 'default',
     setting_quotes: true,
     show_props: true,
@@ -129,9 +130,9 @@
     </script>
   </head>
   <g:evaluate jelly="true">var theme = settings.setting_theme;</g:evaluate>
-  <body>
+  <body class="page ${theme ? ' xplore-s-' + theme : ''}">
 
-    <div class="page ${theme ? ' xplore-s-' + theme : ''}">
+    <div>
 
       <div id="window_loader" class="page_loader active">
         <div class="loading">
@@ -140,7 +141,7 @@
       </div>
 
       <nav class="navbar navbar-default navbar-fixed-top">
-        <a class="navbar-header" href="https://xploretoolkit.com" target="_blank" rel="noopener noreferrer nofollow">
+        <a class="navbar-header" href="/snd_xplore.do">
           <img class="navbar-brand" src="/ws_logo_Xplore_48.pngx" width="48" height="48"
                  title="Xplore (${gs.getProperty('glide.buildtag')})"
                  alt="Xplore logo" style="padding: 2px; margin-left: 2px; height: auto" />
@@ -185,7 +186,7 @@
           <ul>
             <li>
               <a href="#" title="New"
-                onclick="window.opener ? window.opener.open(window.location.href, '_blank') : window.open(window.location.href, '_blank');">
+                onclick="window.opener ? window.opener.open(window.location.pathname, '_blank') : window.open(window.location.pathname, '_blank');">
                 <i class="glyphicon glyphicon-new-window"></i>
               </a>
             </li>
@@ -277,7 +278,7 @@
                   <a href="javascript:void(0)" class="dropdown-toggle"
                     data-toggle="dropdown">Logs <span class="caret"></span></a>
                   <ul class="dropdown-menu" id="log_menu">
-                    <li class="dropdown-header" id="filtered_log_menu_header">Logs from the last run</li>  
+                    <li class="dropdown-header" id="filtered_log_menu_header">Logs from the last run</li>
                     <li><a href="#log_pane" id="filtered_system_log_tab" aria-controls="log_pane"
                       role="tab" data-toggle="tab">System Logs</a></li>
                     <li><a href="#log_pane" id="filtered_app_log_tab" aria-controls="log_pane"
@@ -291,7 +292,7 @@
                     <li><a href="#node_log_pane" id="filtered_node_log_tab" aria-controls="node_log_pane"
                       role="tab" data-toggle="tab">Node Logs</a></li>
 
-                    <li class="divider" id="filtered_log_menu_divider"></li>  
+                    <li class="divider" id="filtered_log_menu_divider"></li>
                     <li class="dropdown-header">All logs from today</li>
                     <li><a href="#log_pane" id="system_log_tab" aria-controls="log_pane"
                       role="tab" data-toggle="tab">System Logs</a></li>
@@ -305,7 +306,7 @@
                       role="tab" data-toggle="tab">Outbound Requests</a></li>
                     <li><a href="#node_log_pane" id="node_log_tab" aria-controls="node_log_pane"
                       role="tab" data-toggle="tab">Node Logs</a></li>
-                    
+
                     <!--li><a href="javascript:void(0)" id="log_reset">Reset</a></li-->
                   </ul>
                 </li>
@@ -351,7 +352,7 @@
 
                   <div id="result_container">
                     <table class="table table-condensed" id="description_table"></table>
-
+                    <button class="btn btn-link btn-sm pull-right" id="copy_results">Copy results</button>
                     <div id="type_control"></div>
                     <table class="table table-condensed" id="results_table"></table>
                   </div>
@@ -581,8 +582,19 @@
               this bit of software for your exploratory enjoyment. If you like it
               or have any feedback, feel free to get in touch.
             </p>
+            <p>
+              My day job is as Co Founder at <a href="https://sharelogic.com?utm_source=xplore" target="_blank"
+              rel="noopener noreferrer nofollow">ShareLogic.com</a> where we specialise
+              in integrating ServiceNow for MSP, Enterprise and Federal customers.
+              If you're looking for <a href="https://store.servicenow.com/sn_appstore_store.do#!/store/application/74f0b4550f8ca20094f3c09ce1050e6a" target="_blank"
+              rel="noopener noreferrer nofollow">the best solution to eBonding integrations</a>
+               in ServiceNow, then get in touch and we'd be happy to do a demo.
+            </p>
             <p>Thanks, James</p>
             <p>
+              <a href="https://xploretoolkit.com" target="_blank"
+              rel="noopener noreferrer nofollow">xploretoolkit.com</a>
+              |
               <a href="https://github.com/jneale/Xplore" target="_blank">GitHub</a>
               |
               <a href="https://twitter.com/James_Neale" class="twitter-follow-button"
@@ -602,7 +614,7 @@
               and <a href="https://github.com/codedance/jquery.AreYouSure" rel="noopener noreferrer nofollow">jQuery Plugin: Are-You-Sure</a>.
             </p>
 
-            <p class="text-muted small">Licence under the MIT License (MIT). Copyright © 2015 - 2020 James Neale.</p>
+            <p class="text-muted small">Licence under the MIT License (MIT). Copyright © 2015 - 2021 James Neale.</p>
           </div>
         </div>
       </div>
@@ -613,12 +625,6 @@
         <div class="modal-content">
           <div class="modal-header">
             <h4>Settings</h4>
-            <br />
-            <p class="text-muted">
-              <sup class="badge badge-success">New</sup>
-              Settings can now be saved. Click the <kbd>Make default</kbd> button to save your settings
-              and have them used the next time you open Xplore. Clear your settings by using <kbd>Reset default</kbd>.
-            </p>
           </div>
           <div class="modal-body">
 
@@ -631,7 +637,7 @@
                   </label>
                 </h5>
                 <p class="text-muted">
-                  Choose a different style for Xplore. Tip: click the dropdown and use keyboard 
+                  Choose a different style for Xplore. Tip: click the dropdown and use keyboard
                   arrows to scroll up and down to see the theme change in realtime.
                 </p>
                 <p class="text-muted">Note: some themes work well and some not so much. If you find something
@@ -660,7 +666,24 @@
 
             <div class="row">
               <div class="col-xs-9 col-sm-8">
-                <h5>Quotes*</h5>
+                <h5>Run on <kbd>Ctrl/Cmd</kbd> + <kbd>S</kbd></h5>
+                <p class="text-muted">Use the Save keyboard shortcut to run the script. Disable if you
+                  prefer to run only on <kbd>Ctrl/Cmd</kbd> + <kbd>Enter</kbd>.</p>
+              </div>
+              <div class="col-xs-3 col-sm-4 text-right checkbox">
+                <g:evaluate jelly="true">var setting_save_shortcut = !!settings.setting_save_shortcut</g:evaluate>
+                <j:if test="${setting_save_shortcut}">
+                  <input type="checkbox" id="setting_save_shortcut" class="xplore-setting" checked="checked" />
+                </j:if>
+                <j:if test="${!setting_save_shortcut}">
+                  <input type="checkbox" id="setting_save_shortcut" class="xplore-setting" />
+                </j:if>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-xs-9 col-sm-8">
+                <h5>Quotes</h5>
                 <p class="text-muted">By default, the Xplore Pretty Printer adds double quotes around
                 strings. Use this option to turn them off (useful for HTML/JSON strings).</p>
               </div>
@@ -677,7 +700,7 @@
 
             <div class="row">
               <div class="col-xs-9 col-sm-8">
-                <h5>Show Object Properties*</h5>
+                <h5>Show Object Properties</h5>
                 <p class="text-muted">Xplore will display the properties of the resulting objects of
                   any script you run. Turn off if you only care about the object
                   itself.</p>
@@ -695,7 +718,7 @@
 
             <div class="row">
               <div class="col-xs-9 col-sm-8">
-                <h5>Show String Values*</h5>
+                <h5>Show String Values</h5>
                 <p class="text-muted">Xplore will attempt to display the string values of the object and
                   its properties. Turn off if you encounter access errors or you don't
                   want to see strings. When off, all string values are shown as
@@ -714,7 +737,7 @@
 
             <div class="row">
               <div class="col-xs-9 col-sm-8">
-                <h5>HTML Message Format*</h5>
+                <h5>HTML Message Format</h5>
                 <p class="text-muted">Output messages are shown as they are generated which means if they
                   contain something like an anchor tag the anchor will work. Turn off
                   if you want to see the raw string.</p>
@@ -798,8 +821,6 @@
               </div>
             </div>
 
-            <p class="small">*New values will apply to the next script being run.</p>
-
             <script type="text/javascript">
               // The only way we can pass this through Phase 1 Jelly is by stringifying on
               // the server and parsing on the client. Phase 1 adds escape characters
@@ -808,19 +829,12 @@
               var snd_xplore_default_settings = JSON.parse("${JS:JSON.stringify(default_settings)}");
             </script>
 
-			<!-- Adjust the "top" attribute of the "wrapper" div accordingly to the header -->
-			<script type="text/javascript">
-				function resizeWrapper() {
-					document.getElementById("wrapper").style.top = document.getElementById("navbar").parentElement.offsetHeight + "px";
-				}
-				window.addEventListener("resize", resizeWrapper);
-				window.addEventListener("load", resizeWrapper);
-			</script>
-			
           </div>
         </div>
       </div>
     </div>
+
+    <div class="modal-dialog alert alert-info fade" id="notification"></div>
 
     <!-- jQuery (necessary for Bootstraps JavaScript plugins) -->
     <!--
@@ -859,6 +873,7 @@
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 
     <script src="/snd_xplore_ui.jsdbx"></script>
+
   </body>
 </html>
 </j:jelly>

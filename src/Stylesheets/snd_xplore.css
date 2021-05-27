@@ -102,6 +102,14 @@ h5 {
   }
 }
 
+#notification {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin: 10px;
+  z-index: 10000;
+}
+
 .navbar-nav {
   margin: 0;
 }

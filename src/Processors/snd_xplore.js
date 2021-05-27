@@ -28,9 +28,25 @@ ActionList.prototype.deleteScriptHistoryItem = function (params) {
   }
 };
 
+/**
+  summary:
+    Stores a script execution for history.
+ **/
 ActionList.prototype.storeScriptHistory = function (params) {
   var sh = new snd_Xplore.ScriptHistory();
   sh.store(params);
+}
+
+/**
+  summary:
+    Gets a specific user script from the history.
+ **/
+ActionList.prototype.fetchScriptHistoryItem = function (params) {
+  if (params.id) {
+    return new snd_Xplore.ScriptHistory().get(params.id);
+  } else {
+    throw 'Missing id.';
+  }
 }
 
 /**
@@ -362,13 +378,16 @@ XploreRunner.prototype.run = function run(options) {
       script = this.fixLogs(script);
     }
 
-    options.user_data = this.formatUserData(options.user_data, options.user_data_type);
     options.dotwalk = options.breadcrumb;
+
+    // store script history before updating user_data to prevent it being an object
+    // when we retrieve it later in the UI
+    new ActionList().storeScriptHistory(options);
+
+    options.user_data = this.formatUserData(options.user_data, options.user_data_type);
 
     // init logtail here so we don't capture the logRequest() above
     //snd_Xplore.Logtail.start();
-
-    new ActionList().storeScriptHistory(options);
 
     if (options.scope && options.scope != 'global') {
       report = this.runScopedScript(script, options);
@@ -414,6 +433,7 @@ XploreRunner.prototype.fixLogs = function (code) {
 XploreRunner.prototype.formatUserData = function (str, type) {
   var err = 'Unable to parse User Data as ',
       tmp;
+  if (!str) return str;
   if (type.indexOf('XMLDocument2') > -1) {
     tmp = new XMLDocument2();
     if (tmp.parseXML(str)) {

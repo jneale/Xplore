@@ -1,6 +1,19 @@
 # Xplore: Developer Toolkit
 A toolkit for every ServiceNow developer. Find more at https://thewhitespace.io.
 
+### Version 4.9
+* Added two new options to history items to open them in a new tab or share them via encoded URL.
+Large links can be pasted directly into the script editor where they will be loaded automatically.
+* Added a "Copy to Clipboard" link on the Output pane for easy copying of the result table.
+* Added padding to log message milliseconds so they line up nicely.
+* Added option to disable "Ctrl + S" shortcut.
+* Fixed a bug where object property names would be not be shown in the results.
+* Fixed a bug where JSON user data would show up as "[object Object]" when loading from history.
+* Fixed a bug caused by User Data Format being set but no user data being given.
+* Fixed a bug where result properties names containing HTML/JavaScript were being executed when added to the result table.
+* Fixed the contrast on keyword elements.
+* General theming improvements.
+
 ### Version 4.8
 * (beta) Added support for themes! The themes have been adapted from CodeMirror
   themes to with Xplore so some work better than others.

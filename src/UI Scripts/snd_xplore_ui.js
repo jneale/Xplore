@@ -128,6 +128,11 @@ var snd_xplore_util = {
       loaded_id: snd_xplore_util.session_id // the loaded script
     };
 
+    // allow the user to paste in a URL encoded history block
+    if (params.code.indexOf('/snd_xplore.do?item=') === 0) {
+      if (snd_script_history_util.parseUrlSearch(params.code)) return;
+    }
+
     snd_xplore(params);
   },
   executeNew: function () {
@@ -216,7 +221,76 @@ var snd_xplore_util = {
       dataType: 'xml'
     });
     $('#cancel_btn').prop('disabled', true).text('Cancelling...');
-  }
+  },
+   // courtesy of https://stackoverflow.com/questions/2044616/select-a-complete-table-with-javascript-to-be-copied-to-clipboard
+  copyElementToClipboard: function copyElementToClipboard(el) {
+    var body = document.body, range, sel;
+    if (document.createRange && window.getSelection) {
+      range = document.createRange();
+      sel = window.getSelection();
+      sel.removeAllRanges();
+      try {
+        range.selectNodeContents(el);
+        sel.addRange(range);
+      } catch (e) {
+        range.selectNode(el);
+        sel.addRange(range);
+      }
+      document.execCommand("copy");
+    } else if (body.createTextRange) {
+      range = body.createTextRange();
+      range.moveToElementText(el);
+      range.select();
+      range.execCommand("Copy");
+    }
+  },
+  copyTextToClipboard: function copyTextToClipboard(text) {
+    function fallbackCopyTextToClipboard(text) {
+      var textArea = document.createElement("textarea");
+      textArea.value = text;
+
+      // Avoid scrolling to bottom
+      textArea.style.top = "0";
+      textArea.style.left = "0";
+      textArea.style.position = "fixed";
+
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      try {
+        var successful = document.execCommand('copy');
+        var msg = successful ? '' : ' failed';
+        snd_xplore_util.simpleNotification('Copied to clipboard' + msg);
+      } catch (err) {
+        snd_xplore_util.simpleNotification('Copy to clipboard failed');
+      }
+
+      document.body.removeChild(textArea);
+    }
+
+    if (!navigator.clipboard) {
+      fallbackCopyTextToClipboard(text);
+      return;
+    }
+    navigator.clipboard.writeText(text).then(function() {
+      snd_xplore_util.simpleNotification('Copied to clipboard');
+    }, function(err) {
+      snd_xplore_util.simpleNotification('Copy to clipboard failed');
+    });
+  },
+  simpleNotification: (function () {
+    var simpleNotificationTimeout;
+    return function simpleNotification(message) {
+      var el = $('#notification');
+      $('#notification').text(message);
+      el.addClass('in'); // element has 'fade' class
+      clearTimeout(simpleNotificationTimeout);
+      simpleNotificationTimeout = setTimeout(function () {
+        el.removeClass('in');
+      }, 3000);
+    }
+  })()
 };
 
 $('.xplore_demo').on('click', 'a', function (e) {
@@ -747,7 +821,7 @@ var snd_script_history_util = (function () {
       "/": '&#x2F;'
     };
     return function (string) {
-      return String(string).replace(/[&<>"'\/]/g, function (s) {
+      return String(string).replace(/[&<>"'/]/g, function (s) {
         return entityMap[s];
       });
     };
@@ -755,16 +829,17 @@ var snd_script_history_util = (function () {
 
   api.loadScript = function loadScript(options) {
     snd_xplore_util.demo(options.code || '', options.user_data || '');
-    snd_xplore_util.session_id = options.id;
-    $('#target').val(options.target).trigger('change');
-    $('#scope').val(options.scope).trigger('change');
-    $('#setting_quotes').bootstrapToggle(options.no_quotes ? 'off' : 'on');
-    $('#show_props').bootstrapToggle(options.show_props ? 'on' : 'off');
-    $('#show_strings').bootstrapToggle(options.show_strings ? 'on' : 'off');
-    $('#show_html_messages').bootstrapToggle(options.show_html_messages ? 'on' : 'off');
-    $('#wrap_output_pre').bootstrapToggle(options.wrap_output_pre ? 'on' : 'off');
-    $('#fix_gslog').bootstrapToggle(options.fix_gslog ? 'on' : 'off');
-    $('#support_hoisting').bootstrapToggle(options.support_hoisting ? 'on' : 'off');
+    if (options.hasOwnProperty('id')) snd_xplore_util.session_id = options.id;
+    if (options.hasOwnProperty('user_data_type')) $('#user_data_type_select').val(options.user_data_type);
+    if (options.hasOwnProperty('target')) $('#target').val(options.target).trigger('change');
+    if (options.hasOwnProperty('scope')) $('#scope').val(options.scope).trigger('change');
+    if (options.hasOwnProperty('no_quotes')) $('#setting_quotes').bootstrapToggle(options.no_quotes ? 'off' : 'on');
+    if (options.hasOwnProperty('show_props')) $('#show_props').bootstrapToggle(options.show_props ? 'on' : 'off');
+    if (options.hasOwnProperty('show_strings')) $('#show_strings').bootstrapToggle(options.show_strings ? 'on' : 'off');
+    if (options.hasOwnProperty('show_html_messages')) $('#show_html_messages').bootstrapToggle(options.show_html_messages ? 'on' : 'off');
+    if (options.hasOwnProperty('wrap_output_pre')) $('#wrap_output_pre').bootstrapToggle(options.wrap_output_pre ? 'on' : 'off');
+    if (options.hasOwnProperty('fix_gslog')) $('#fix_gslog').bootstrapToggle(options.fix_gslog ? 'on' : 'off');
+    if (options.hasOwnProperty('support_hoisting')) $('#support_hoisting').bootstrapToggle(options.support_hoisting ? 'on' : 'off');
   };
 
   api.loadAll = function () {
@@ -783,7 +858,10 @@ var snd_script_history_util = (function () {
         $list.append(
           $('<div class="list-group-item interactive" data-id="' + item.id + '" data-replace="1">' +
               '<button type="button" class="close" aria-label="Close"><span aria-hidden="true">×</span></button>' +
-              '<h5 class="list-group-item-heading">' + item.name + ' (' + item.scope + ')</h5> ' +
+              '<h5 class="list-group-item-heading">' + item.name + ' (' + item.scope + ')' + '\n' +
+                '<a class="small" href="?historic=' + item.id + '" target="_blank">New Tab</a> | ' +
+                '<a href="javascript:void(0)" class="small copy-history-link">Copy Link</a>' +
+              '</h5> ' +
               '<p class="list-group-item-text"><pre class="prettyprint linenums">' + escapeHtml(maxLines(item.code, 3)) + '</pre>' +
             '</div>'));
       });
@@ -814,17 +892,64 @@ var snd_script_history_util = (function () {
       snd_log('Error: snd_script_history_util.deleteScript failed.');
       loading(false);
     });
+  };
+
+  api.fetchScript = function fetchScript(id) {
+    loading(true);
+    return $.ajax({
+      type: 'GET',
+      url: '/snd_xplore.do?action=fetchScriptHistoryItem&id=' + id,
+      dataType: 'json'
+    }).
+    done(function (data) {
+      if (data.result) {
+        api.loadScript(data.result);
+      } else if (data.$error) {
+        snd_log(data.$error);
+      }
+      loading(false);
+    }).
+    fail(function () {
+      snd_log('Error: snd_script_history_util.fetchScript failed.');
+      loading(false);
+    });
+  };
+
+  api.parseUrlSearch = function parseUrlSearch(search) {
+    var match, item;
+
+    match = search.match(/historic=([^&]+)/);
+    if (match) {
+      api.fetchScript(match[1]);
+      return true;
+    }
+
+    match = search.match(/item=([^&]+)/);
+    if (match) {
+      try {
+        item = JSON.parse(decodeURIComponent(match[1]));
+      } catch (e) {
+        snd_log('Error: Unable to load script from URL - bad JSON');
+      }
+      if (item) {
+        api.loadScript(item);
+      } else {
+        snd_xplore_util.simpleNotification('Error: Unable to load script from URL');
+      }
+      return true;
+    }
+
+    return false;
   }
 
-  // load on window load
-  $(function () {
-    api.loadAll();
-  });
+  api.loadFromUrl = function loadFromUrl() {
+    api.parseUrlSearch(window.location.search);
+  };
 
   $list.on('click', 'div.list-group-item', function (e) {
 
     // prevent nested buttons from opening the script
-    if ($(e.target).closest('button').length) return;
+    if ($(e.target).closest('button').length || $(e.target).closest('a').length) return;
 
     var $this = $(this);
     var item;
@@ -853,6 +978,23 @@ var snd_script_history_util = (function () {
         api.deleteScript(item.id);
       } else {
         throw new Error('Unable to delete history item.');
+      }
+    }
+  });
+
+  $list.on('click', 'a.copy-history-link', function (e) {
+    var $anchor = $(this).parent().parent();
+    var item, str;
+
+    if (!$anchor.attr('data-id')) {
+      snd_log('Error: script link does not have an id attribute');
+    } else {
+      item = api.history_map[$anchor.attr('data-id')];
+      if (item) {
+        str = JSON.stringify(item, 'target,scope,code,user_data,user_data_type,support_hoisting');
+        snd_xplore_util.copyTextToClipboard('/snd_xplore.do?item=' + encodeURIComponent(str));
+      } else {
+        throw new Error('No item to copy.');
       }
     }
   });
@@ -1021,7 +1163,9 @@ $(function () {
         snd_xplore_util.executeNew();
       },
       'Ctrl-S': function (instance) {
-        snd_xplore_util.executeNew();
+        if ($('#setting_save_shortcut').is(':checked')) {
+          snd_xplore_util.executeNew();
+        }
       }
     }
   });
@@ -1076,7 +1220,7 @@ $(function () {
   var current_theme = $('#setting_theme').val();
   function updateTheme(theme, preview) {
     theme = theme || $('#setting_theme').val();
-    $('.page').removeClass('xplore-s-' + current_theme).addClass('xplore-s-' + theme);
+    $('body').removeClass('xplore-s-' + current_theme).addClass('xplore-s-' + theme);
     snd_xplore_editor.setOption('theme', theme);
     current_theme = theme;
   }
@@ -1112,6 +1256,15 @@ $(function () {
       size: 'mini',
       onstyle: 'success',
       offstyle: 'danger',
+      width: 75
+    });
+  $('#setting_save_shortcut').
+    bootstrapToggle({
+      on: 'On',
+      off: 'Off',
+      onstyle: 'success',
+      offstyle: 'danger',
+      size: 'mini',
       width: 75
     });
   $('#show_html_messages').
@@ -1283,7 +1436,7 @@ $(function () {
   var $output_tabs_pane = $('#output_tabs_pane');
   var active_log_frame = '';
   var default_node_log_url = '/ui_page_process.do?name=log_file_browser&max_rows=2000';
-  
+
   function getQueryDate(date, time) {
     if (time) {
       date = date + '\',\'' + time;
@@ -1351,6 +1504,25 @@ $(function () {
     $('#' + active_log_frame + '_log_tab').click(); // select the tab
   });
 
+  $('#copy_results').click(function () {
+    var show_more_links = $('button.show-more');
+    var hidden_rows = $('.data-more');
+    show_more_links.hide();
+    hidden_rows.attr('data-hidden', function (el) {
+      return $(el).hasClass('hidden') ? 'true' : 'false';
+    });
+    hidden_rows.removeClass('hidden');
+    snd_xplore_util.copyElementToClipboard($('#results_table').get(0));
+    show_more_links.show();
+    hidden_rows.each(function (i, el) {
+      el = $(el);
+      if (el.attr('data-hidden') == 'true') {
+        el.addClass('hidden');
+      }
+    });
+    snd_xplore_util.simpleNotification('Results copied to clipboard');
+  });
+
   // facilitate system log frame resizing
   function resizeLogPane() {
     var $output_content = $('#output_content');
@@ -1380,6 +1552,12 @@ $(function () {
   }
   resizeUserData();
 
+  // Adjust the "top" attribute of the "wrapper" div accordingly to the header
+  function resizeWrapper() {
+    document.getElementById("wrapper").style.top = document.getElementById("navbar").parentElement.offsetHeight + "px";
+  }
+  resizeWrapper();
+
   // resize the view when the window resizes
   $(window).resize(function () {
     // need to see if we are changing the window size or just the editor width
@@ -1396,9 +1574,13 @@ $(function () {
     resizeLogPane();
     resizeOutputContent();
     resizeUserData();
+    resizeWrapper();
   });
 
+  snd_script_history_util.loadAll();
 
   snd_xplore_editor.focus();
   $('#window_loader').removeClass('active');
+
+  snd_script_history_util.loadFromUrl();
 });

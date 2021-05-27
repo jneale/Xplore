@@ -345,6 +345,8 @@ snd_Xplore.getPropertyNames = function getPropertyNames(obj) {
   var type = snd_Xplore.getType(obj);
   var parent_type;
   var result;
+
+  // attempt to use getOwnPropertyNames in the first instance
   if (!type.is_java && (obj instanceof Object || typeof obj === 'function')) {
     try {
       result = Object.getOwnPropertyNames(obj);
@@ -353,12 +355,17 @@ snd_Xplore.getPropertyNames = function getPropertyNames(obj) {
       // do nothing - prevent 'not an object' errors with Java based objects
     }
   }
+
+  // make sure we have an array
   if (!result) {
     result = [];
-    for (var x in obj) {
-      result.push(x);
-    }
   }
+
+  // get everything else
+  for (var x in obj) {
+    if (result.indexOf(x) === -1) result.push(x);
+  }
+
   result.sort();
   return result;
 };
@@ -927,8 +934,9 @@ snd_Xplore.isJson = function isJson(str) {
 snd_Xplore.formatDate = function formatDate(date) {
   if (!date) return '';
   var gdt = new GlideDateTime();
+  var ms = ('00' + (new Date(date).getMilliseconds())).slice(-3);
   gdt.setNumericValue(date);
-  return gdt.getDisplayValue() + ' (' + new Date(date).getMilliseconds() + ')';
+  return gdt.getDisplayValue() + ' (' + ms  + ')';
 };
 
 //==============================================================================
@@ -937,7 +945,7 @@ snd_Xplore.formatDate = function formatDate(date) {
 
 /**
  * Class for capturing logs. Does not capture scoped logs, only global.
- * 
+ *
  */
 snd_Xplore.Logtail = function Logtail() {
   this.channel_name = 'logtail';
@@ -956,7 +964,7 @@ snd_Xplore.Logtail = function Logtail() {
   gs.debug('Starting ' + this.type);
 
   this.messages = [];
-  
+
   this.filter_messages = true;
 
 };
@@ -997,7 +1005,7 @@ snd_Xplore.Logtail.prototype._getTransactionId = function _getTransactionId(mess
 snd_Xplore.Logtail.prototype.validateMessage = function validateMessage(channel_message) {
   var message = channel_message.getMessage();
   var ignore = false;
-  
+
   if (!this.transaction_id) {
     if (message.indexOf(this.type) === -1) {
       if (this.filter_messages) return false;
@@ -1011,7 +1019,7 @@ snd_Xplore.Logtail.prototype.validateMessage = function validateMessage(channel_
       return false;
     }
   }
-  
+
   if (this.filter_messages) {
     message = message.substr(33); // remove Transaction ID
     if (message.indexOf('*** Script: ') === 0) {
@@ -1161,7 +1169,7 @@ snd_Xplore.ScriptHistory = (function () {
     max_count = max_count || 50;
 
     // we should only need to delete one - one in, one out, but this covers it somewhat if the settings are changed
-    delete_limit = delete_limit || 50; 
+    delete_limit = delete_limit || 50;
     var count;
     var gr = new GlideRecord('sys_user_preference');
     gr.addQuery('user', '=', gs.getUserID());
@@ -1173,7 +1181,7 @@ snd_Xplore.ScriptHistory = (function () {
     count = gr.getRowCount();
     if (count > (max_count + delete_limit)) {
       gs.error('Aborting snd_Xplore.ScriptHistory.enforceHistoryLimit() to prevent ' +
-        'unexpected data loss. Found ' + count + ' which breached the safety limit of ' + 
+        'unexpected data loss. Found ' + count + ' which breached the safety limit of ' +
         (max_count + delete_limit) + '. Query used: ' + gr.getEncodedQuery());
       return;
     }
@@ -1199,7 +1207,6 @@ snd_Xplore.ScriptHistory = (function () {
 
   ScriptHistory.prototype.getPreference = function getPreference(name) {
     var gr = new GlideRecord('sys_user_preference');
-    gr.addQuery('user', '=', gs.getUserID());
     gr.addQuery('name', '=', name);
     gr.setLimit(1);
     gr.query();

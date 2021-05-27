@@ -26,6 +26,8 @@ var snd_xplore_reporter = (function () {
         '<th class="col-md-3">Type</th>' +
         '<th class="col-md-6">Value</th></tr>');
     $.each(result, function (i, item) {
+      item.name = escapeHtml(item.name);
+
       var prop = '<a href="javascript:void(0)" class="interactive">' + item.name + '</a>';
       if (item.type.toLowerCase() === 'function') {
         prop += ' <a href="javascript:void(0)" class="interactive"><span class="hidden">' +
@@ -395,12 +397,12 @@ var snd_xplore_reporter = (function () {
         if (breadcrumbs.length) {
           $breadcrumb.children().remove(':last');
           $breadcrumb.append('<li><a href="javascript:void(0)" id="breadcrumb_' +
-              pos + '">' + breadcrumbs[pos] + '</a></li>');
+              pos + '">' + escapeHtml(breadcrumbs[pos]) + '</a></li>');
         }
 
         // add the new last breadcrumb
         $breadcrumb
-            .append('<li>' + text + '</li>')
+            .append('<li>' + escapeHtml(text) + '</li>')
             .removeClass('hidden');
 
         breadcrumbs.push(text);
