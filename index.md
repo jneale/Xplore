@@ -52,7 +52,7 @@
       <div class="col-sm-4">
         <div class="feature5-item-wrap">
           <p class="text-20">Large Text Support</p>
-          <p class="text-14 text-14-60">XWorking with large strings can be
+          <p class="text-14 text-14-60">Working with large strings can be
             problematic. Xplore allows you to easily work with them for things
             like CSV parsing, XML processing and more.</p>
         </div>
