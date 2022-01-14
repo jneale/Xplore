@@ -111,6 +111,7 @@ var snd_xplore_util = {
     // summary:
     //   Gather the data from the client and run Xplore
     var params = {
+      debug_mode: $('#debug_mode').is(':checked'),
       target: $('#target').val(),
       scope: $('#scope').val(),
       code: code || snd_xplore_util.getCode(),
@@ -289,7 +290,7 @@ var snd_xplore_util = {
       simpleNotificationTimeout = setTimeout(function () {
         el.removeClass('in');
       }, 3000);
-    }
+    };
   })()
 };
 
@@ -840,6 +841,7 @@ var snd_script_history_util = (function () {
     if (options.hasOwnProperty('wrap_output_pre')) $('#wrap_output_pre').bootstrapToggle(options.wrap_output_pre ? 'on' : 'off');
     if (options.hasOwnProperty('fix_gslog')) $('#fix_gslog').bootstrapToggle(options.fix_gslog ? 'on' : 'off');
     if (options.hasOwnProperty('support_hoisting')) $('#support_hoisting').bootstrapToggle(options.support_hoisting ? 'on' : 'off');
+    if (options.hasOwnProperty('debug_mode')) $('#debug_mode').bootstrapToggle(options.debug_mode ? 'on' : 'off');
   };
 
   api.loadAll = function () {
@@ -940,7 +942,7 @@ var snd_script_history_util = (function () {
     }
 
     return false;
-  }
+  };
 
   api.loadFromUrl = function loadFromUrl() {
     api.parseUrlSearch(window.location.search);
@@ -1033,13 +1035,13 @@ var snd_script_history_util = (function () {
           //workbenchLeft += $pane.outerWidth();
           //$('#workbench').animate({left: workbenchLeft}, 400, function () {
             $pane.fadeIn(400);
-            //resizeOutputContent();
+            //resizeUtil.resizeOutputContent();
           //});
         } else {
           $pane.fadeOut(400);//, function () {
             //$('#workbench').animate({left: workbenchLeft}, 400, function () {
               //$('#workbench').css('left', '');
-              //resizeOutputContent()
+              //resizeUti.resizeOutputContent()
             //});
           //});
         }
@@ -1309,6 +1311,25 @@ $(function () {
       size: 'mini',
       width: 75
     });
+  $('#debug_mode').
+    bootstrapToggle({
+      on: 'On',
+      off: 'Off',
+      onstyle: 'success',
+      offstyle: 'default',
+      size: 'mini',
+      width: 75
+    });
+
+  $('#setting_editor_width').change(function () {
+    var el = $('#setting_editor_width');
+    var width = parseInt(el.val() || 40);
+    if (width < 10) width = 10;
+    if (width > 90) width = 90;
+    el.val(width + '%');
+    resizeUtil.setEditorWidthFromSettings();
+    resizeUtil.resize();
+  });
 
   $('#save_settings').click(function () {
     snd_xplore_setting_util.save();
@@ -1370,6 +1391,14 @@ $(function () {
   });
 
   var resizeUtil = {
+    setEditorWidthFromSettings: function () {
+      var width = parseInt($('#setting_editor_width').val() || 40); // default is 40% width
+      if (width > 90) width = 90;
+      if (width < 10) width = 10;
+      $('#editor').css('width', width + '%');
+      $('#output').css('left', width + '%');
+    },
+
     calcEditorRatio: function (store) {
       var ratio = $('#editor').width() / $('#workbench').width();
       if (store) {
@@ -1386,8 +1415,59 @@ $(function () {
       }
       return width;
     },
-    workbenchWidth: 0
+    workbenchWidth: 0,
+
+    resize: function () {
+      // need to see if we are changing the window size or just the editor width
+      // we do this by checking if the workbench width has changed
+      if (resizeUtil.workbenchWidth != resizeUtil.calcWorkbenchWidth(true)) {
+        var newWidth = $('#workbench').width() * resizeUtil.editorRatio;
+        var $editor = $('#editor');
+        $editor.css('width', newWidth);
+        if ($editor.is(':visible')) {
+          $('#output').css('left', newWidth);
+        }
+      }
+
+      resizeUtil.resizeLogPane();
+      resizeUtil.resizeOutputContent();
+      resizeUtil.resizeUserData();
+      resizeUtil.resizeWrapper();
+    },
+
+    // facilitate system log frame resizing
+    resizeLogPane: function resizeLogPane() {
+      var $output_content = $('#output_content');
+      var $output_tabs = $('#output_tabs');
+      var h = $output_content.height() - $output_tabs.height() - 10;
+      $('#log_frame,#node_log_frame').css('height', h);
+    },
+
+    // update the output pane so the tabs can stack and be seen
+    resizeOutputContent: function resizeOutputContent() {
+      $output_tabs_pane.css('top', $('#output_tabs').outerHeight() + 'px');
+    },
+
+    resizeUserData: function resizeUserData() {
+      var $user_data_pane = $('#user_data_pane');
+      var user_data_input = $('#user_data_input').get(0);
+      var remaining_space;
+
+      user_data_input.style.height = '';
+      remaining_space = $output_tabs_pane.height() - $user_data_pane.height();
+
+      if (remaining_space > 10) {
+        user_data_input.style.height = (remaining_space - 10) + 'px';
+      }
+    },
+
+    // Adjust the "top" attribute of the "wrapper" div accordingly to the header
+    resizeWrapper: function resizeWrapper() {
+      document.getElementById("wrapper").style.top = document.getElementById("navbar").parentElement.offsetHeight + "px";
+    }
+
   };
+  resizeUtil.setEditorWidthFromSettings();
   resizeUtil.calcEditorRatio(true);
   resizeUtil.calcWorkbenchWidth(true);
 
@@ -1523,64 +1603,32 @@ $(function () {
     snd_xplore_util.simpleNotification('Results copied to clipboard');
   });
 
-  // facilitate system log frame resizing
-  function resizeLogPane() {
-    var $output_content = $('#output_content');
-    var $output_tabs = $('#output_tabs');
-    var h = $output_content.height() - $output_tabs.height() - 10;
-    $('#log_frame,#node_log_frame').css('height', h);
-  }
-  resizeLogPane();
-
-  // update the output pane so the tabs can stack and be seen
-  function resizeOutputContent() {
-    $output_tabs_pane.css('top', $('#output_tabs').outerHeight() + 'px');
-  }
-  resizeOutputContent();
-
-  function resizeUserData() {
-    var $user_data_pane = $('#user_data_pane');
-    var user_data_input = $('#user_data_input').get(0);
-    var remaining_space;
-
-    user_data_input.style.height = '';
-    remaining_space = $output_tabs_pane.height() - $user_data_pane.height();
-
-    if (remaining_space > 10) {
-      user_data_input.style.height = (remaining_space - 10) + 'px';
-    }
-  }
-  resizeUserData();
-
-  // Adjust the "top" attribute of the "wrapper" div accordingly to the header
-  function resizeWrapper() {
-    document.getElementById("wrapper").style.top = document.getElementById("navbar").parentElement.offsetHeight + "px";
-  }
-  resizeWrapper();
+  resizeUtil.resizeLogPane();
+  resizeUtil.resizeOutputContent();
+  resizeUtil.resizeUserData();
+  resizeUtil.resizeWrapper();
 
   // resize the view when the window resizes
   $(window).resize(function () {
-    // need to see if we are changing the window size or just the editor width
-    // we do this by checking if the workbench width has changed
-    if (resizeUtil.workbenchWidth != resizeUtil.calcWorkbenchWidth(true)) {
-      var newWidth = $('#workbench').width() * resizeUtil.editorRatio;
-      var $editor = $('#editor');
-      $editor.css('width', newWidth);
-      if ($editor.is(':visible')) {
-        $('#output').css('left', newWidth);
-      }
-    }
-
-    resizeLogPane();
-    resizeOutputContent();
-    resizeUserData();
-    resizeWrapper();
+    resizeUtil.resize();
   });
 
-  snd_script_history_util.loadAll();
+  // Checkboxes will only be reset with a delay after duplicating a tab in Chrome
+  setTimeout(function () {
 
-  snd_xplore_editor.focus();
-  $('#window_loader').removeClass('active');
+    // Address Chrome duplicate tab bug which makes checkboxes selected even when they weren't
+    $.each(snd_xplore_default_settings, function (name, value) {
+      if (typeof value === 'boolean') {
+        $('#' + name).bootstrapToggle(value ? 'on' : 'off');
+      }
+    });
 
-  snd_script_history_util.loadFromUrl();
+    snd_script_history_util.loadAll();
+
+    snd_xplore_editor.focus();
+    $('#window_loader').removeClass('active');
+
+    snd_script_history_util.loadFromUrl();
+  }, 10);
+
 });

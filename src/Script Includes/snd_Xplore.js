@@ -50,7 +50,7 @@ snd_Xplore.prototype.getScopeName = function (scope) {
 snd_Xplore.prototype.debugMsg = function (msg) {
   if (this.debug) {
     if (typeof window === 'undefined') {
-      gs.debug(msg);
+      snd_Xplore.gsdebug(msg);
     } else {
       jslog(msg);
     }
@@ -88,6 +88,7 @@ snd_Xplore.prototype.xplore = function (obj, reporter, options) {
   options = options || {};
   use_json = options.use_json;
   if (typeof options.use_json === 'undefined') options.use_json = false;
+  this.debug = !!options.debug_mode;
 
   this.prettyPrinter.noQuotes(options.no_quotes);
 
@@ -155,15 +156,24 @@ snd_Xplore.prototype.xploreProps = function (obj, reporter, options) {
         name: name,
         type: '[Restricted]'
       };
-      if (ex.message && ex.message.indexOf('Illegal access') > -1) {
-        result.string = '[Restricted]';
-      } else {
-        result.string = '[Property access error: ' + ex + ']';
-      }
+      result.string = this.formatException(ex);
     }
 
     reporter.result(result);
   }
+
+  this.debugMsg('Done exploring properties.');
+};
+
+snd_Xplore.prototype.formatException = function formatException(ex) {
+  try {
+    if (ex.message && ex.message.indexOf('Illegal access') > -1) {
+      return '[Restricted]';
+    }
+  } catch (e) {
+    // prevent getMessage errors
+  }
+  return '[Property access error: ' + ex + ']';
 };
 
 /**
@@ -345,7 +355,7 @@ snd_Xplore.getPropertyNames = function getPropertyNames(obj) {
   var type = snd_Xplore.getType(obj);
   var parent_type;
   var result;
-
+  
   // attempt to use getOwnPropertyNames in the first instance
   if (!type.is_java && (obj instanceof Object || typeof obj === 'function')) {
     try {
@@ -392,7 +402,7 @@ snd_Xplore._getType = function _getType(obj, type) {
       match = e.message.match(/(?:of type) (\S+)/);
       type.namespace = match ? match[1] : 'unknown';
     } else {
-      gs.warn('Error finding type in getType: ' + e);
+      snd_Xplore.gswarn('Error finding type in getType: ' + e);
     }
   }
   return type;
@@ -697,7 +707,7 @@ snd_Xplore.getOutputMessages = function () {
   } else {
 
     // merge gslog workaround for Istanbul onwards
-    ret = ret.concat(this._gslogs); 
+    ret = ret.concat(snd_Xplore._gslogs); 
   }
 
 
@@ -853,7 +863,7 @@ snd_Xplore.ObjectReporter.prototype.getThreadName = function () {
   var value = '' + Object.prototype.valueOf.call(GlideWorkerThread.currentThread());
   var m = value.match(/(?:\[)([^,]+)/);
   if (!m) {
-    gs.warn('Cannot get current thread name.', 'snd_Xplore');
+    snd_Xplore.gswarn('Cannot get current thread name.', 'snd_Xplore');
     return '';
   }
   return m[1];
@@ -915,6 +925,12 @@ snd_Xplore.gserror = function (msg, p1, p2, p3, p4, p5) {
     params = [p1, p2, p3, p4, p5];
   }
   snd_Xplore._gslogMessage('2', msg, null, params);
+};
+snd_Xplore.notice = function (msg) {
+  var tmp = {};
+  tmp.type = '1'; // warn
+  tmp.message = 'Notice: ' + msg;
+  snd_Xplore._gslogs.push(tmp);
 };
 snd_Xplore.substitute = function substitute(msg, params) {
   return msg.replace(/{(\d)}/g, function (m, index) {
@@ -1180,7 +1196,7 @@ snd_Xplore.ScriptHistory = (function () {
 
     count = gr.getRowCount();
     if (count > (max_count + delete_limit)) {
-      gs.error('Aborting snd_Xplore.ScriptHistory.enforceHistoryLimit() to prevent ' +
+      snd_Xplore.gsError('Aborting snd_Xplore.ScriptHistory.enforceHistoryLimit() to prevent ' +
         'unexpected data loss. Found ' + count + ' which breached the safety limit of ' +
         (max_count + delete_limit) + '. Query used: ' + gr.getEncodedQuery());
       return;

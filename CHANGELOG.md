@@ -1,6 +1,19 @@
 # Xplore: Developer Toolkit
 A toolkit for every ServiceNow developer. Find more at https://thewhitespace.io.
 
+### Version 4.11
+* Tested on Rome and San Diego.
+* Added a new setting to control the default editor width.
+* Fixed a bug with scoped script execution not being aware of all config options.
+* Added a new debug mode option for Xplore to help with tricky Java APIs. This is primarily for Xplore development, but will likely be useful to others.
+* Added UI support for internal gs.debug, gs.warn, and gs.error logs.
+* Added better support for displaying exceptions by preventing Java getMessage errors.
+* Fixed a bug where duplicating tabs in Chrome would incorrectly turn all settings on.
+* Added a hoisting notice that is displayed whenever hoisting is active (related to Chrome duplicate tab bug).
+
+### Version 4.10 (Skipped)
+* Turns out ServiceNow Share truncates 4.10 to 4.1
+
 ### Version 4.9
 * Added two new options to history items to open them in a new tab or share them via encoded URL.
 Large links can be pasted directly into the script editor where they will be loaded automatically.

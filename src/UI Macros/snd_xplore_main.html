@@ -10,6 +10,7 @@
   }
 
   var default_settings = {
+  debug_mode: false,
     setting_save_shortcut: true,
     setting_theme: 'default',
     setting_quotes: true,
@@ -18,7 +19,8 @@
     show_html_messages: true,
     wrap_output_pre: true,
     fix_gslog: true,
-    support_hoisting: false
+    support_hoisting: false,
+    setting_editor_width: "40%"
   };
 
   for (var name in default_settings) {
@@ -614,7 +616,7 @@
               and <a href="https://github.com/codedance/jquery.AreYouSure" rel="noopener noreferrer nofollow">jQuery Plugin: Are-You-Sure</a>.
             </p>
 
-            <p class="text-muted small">Licence under the MIT License (MIT). Copyright © 2015 - 2021 James Neale.</p>
+            <p class="text-muted small">Licence under the MIT License (MIT). Copyright © 2015 - 2022 James Neale.</p>
           </div>
         </div>
       </div>
@@ -631,19 +633,11 @@
             <div class="row">
               <div class="col-xs-6">
                 <h5>
-                  <label for="setting_theme">
-                    Theme
-                    <sup class="badge badge-danger">beta</sup>
-                  </label>
+                  <label for="setting_theme">Theme</label>
                 </h5>
                 <p class="text-muted">
                   Choose a different style for Xplore. Tip: click the dropdown and use keyboard
                   arrows to scroll up and down to see the theme change in realtime.
-                </p>
-                <p class="text-muted">Note: some themes work well and some not so much. If you find something
-                  obviously broken with a theme or are able to provide a fix to make it look
-                  better (or as the original theme designer intended) then please get in
-                  touch - contact details in the info popup.
                 </p>
               </div>
               <div class="col-xs-6">
@@ -791,7 +785,7 @@
 
             <div class="row">
               <div class="col-xs-9 col-sm-8">
-                <h5>Support Hoisting <sup class="badge badge-success">New</sup></h5>
+                <h5>Support Hoisting</h5>
                 <p class="text-muted">
                   Code executed in Xplore is run within a try/catch block which prevents hoisting.
                   You can enable hoisting here, but in order to see the result you will need to
@@ -806,6 +800,38 @@
                 </j:if>
                 <j:if test="${!support_hoisting}">
                   <input type="checkbox" id="support_hoisting" class="xplore-setting" />
+                </j:if>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-xs-9 col-sm-8">
+                <h5>Editor Split Width <sup class="badge badge-success">New</sup></h5>
+                <p class="text-muted">
+                  Set the default percentage width for the editor. Default is <code>40%</code>.
+                  Value range is 10 - 90.
+                </p>
+              </div>
+              <div class="col-xs-3 col-sm-4 text-right checkbox">
+                <g:evaluate jelly="true">var setting_editor_width = settings.setting_editor_width</g:evaluate>
+                <input type="text" id="setting_editor_width" class="xplore-setting form-control input-sm" value="${setting_editor_width}" />
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-xs-9 col-sm-8">
+                <h5>Debug Mode</h5>
+                <p class="text-muted">
+                  Run Xplore in debug mode. You shouldn't need to use this.
+                </p>
+              </div>
+              <div class="col-xs-3 col-sm-4 text-right checkbox">
+                <g:evaluate jelly="true">var debug_mode = !!settings.debug_mode</g:evaluate>
+                <j:if test="${debug_mode}">
+                  <input type="checkbox" id="debug_mode" class="xplore-setting" checked="checked" />
+                </j:if>
+                <j:if test="${!debug_mode}">
+                  <input type="checkbox" id="debug_mode" class="xplore-setting" />
                 </j:if>
               </div>
             </div>

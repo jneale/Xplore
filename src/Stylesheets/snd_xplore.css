@@ -523,6 +523,13 @@ sup .label-as-badge {
   padding-left: 12px;
 }
 
+/* Settings */
+input.xplore-setting.form-control {
+  width: 80px;
+  text-align: center;
+  float: right; 
+}
+
 /* fix IE select */
 select::-ms-expand {
   display: none;

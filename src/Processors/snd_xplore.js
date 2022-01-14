@@ -369,6 +369,7 @@ XploreRunner.prototype.run = function run(options) {
 
     // This is an option from the user or can be set above for dynamic return value
     if (options.support_hoisting) {
+      snd_Xplore.notice('Automatic hoisting enabled.');
       script = '(function () {' + script + '}).call(this)';
     }
 
@@ -551,12 +552,11 @@ XploreRunner.prototype.runScopedScript = function runScopedScript(script, option
     throw 'Unknown scope [' + scopeName + ']';
   })(options.scope);
 
-  var safe_options = {};
-  safe_options = {
-    dotwalk: options.dotwalk,
-    show_props: options.show_props,
-    show_strings: options.show_strings
-  };
+  var safe_options = JSON.stringify(options, function (name, value) {
+  if (name.indexOf('user_data') == -1) {
+      return value;
+  }
+  });
 
   var try_script = '"try {" + $$script + "\\n;} catch (e) { e; }"';
   var scopedScript = '';
@@ -568,7 +568,7 @@ XploreRunner.prototype.runScopedScript = function runScopedScript(script, option
   scopedScript += 'var gse = new GlideScopedEvaluator();\n';
   scopedScript += 'gse.putVariable("user_data", user_data);\n';
   scopedScript += 'var obj = gse.evaluateScript(gr, "script");\n';
-  scopedScript += 'var options = ' + (JSON.stringify(safe_options)) + ';\n';
+  scopedScript += 'var options = ' + safe_options + ';\n';
   scopedScript += 'var x = new global.snd_Xplore();\n';
   scopedScript += 'x.xplore(obj, "snd_Xplore.ObjectReporter", options);\n';
   scopedScript += '$$result = x.reporter.getReport();\n';
