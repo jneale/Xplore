@@ -51,6 +51,7 @@ var snd_xplore_util = {
         .prop('disabled', true)
         .html('Loading... <i class="glyphicon glyphicon-refresh spin"></i>');
 
+    $('#format_btn').hide();
     $('#cancel_btn').prop('disabled', false).text('Cancel').show();
     $('#output_loader').addClass('active');
 
@@ -73,6 +74,7 @@ var snd_xplore_util = {
         .html('Run')
         .prop('disabled', false);
 
+    $('#format_btn').show();
     $('#cancel_btn').hide();
     $('#output_loader').removeClass('active');
     // make sure we are on the output tab
@@ -185,6 +187,16 @@ var snd_xplore_util = {
     fail(function () {
       snd_log('Error: could not format string.');
     });
+  },
+  beautify: function () {
+    var code = snd_xplore_editor.somethingSelected() ? snd_xplore_editor.getSelection()
+                                                     : snd_xplore_editor.getValue().replace(/^\s+/, '');
+    var options = {
+      indent_size: snd_xplore_editor.getOption('indentUnit')
+    };
+    if (code) {
+      snd_xplore_editor.setValue(js_beautify(code, options));
+    }
   },
   toggleEditor: (function () {
     var output_left = 300;
@@ -1154,8 +1166,8 @@ $(function () {
   window.snd_xplore_editor = CodeMirror.fromTextArea(document.getElementById("snd_xplore"), {
     lineNumbers: true,
     lineWrapping: true,
-    tabSize: 2,
-    indentUnit: 2,
+    tabSize: parseInt($('#setting_editor_tab_size').val(), 10),
+    indentUnit: parseInt($('#setting_editor_tab_size').val(), 10),
     smartIndent: true,
     matchBrackets: true,
     mode: 'javascript',
@@ -1168,6 +1180,9 @@ $(function () {
         if ($('#setting_save_shortcut').is(':checked')) {
           snd_xplore_util.executeNew();
         }
+      },
+      'Ctrl-Alt-F': function (instance) {
+        snd_xplore_util.beautify();
       }
     }
   });
@@ -1211,6 +1226,11 @@ $(function () {
   // handle the cancel button clicking
   $('#cancel_btn').click(function () {
     snd_xplore_util.cancel();
+  });
+
+  // handle the format button clicking
+  $('#format_btn').click(function () {
+    snd_xplore_util.beautify();
   });
 
   // reload the script history when a user clicks the info tab
@@ -1329,6 +1349,13 @@ $(function () {
     el.val(width + '%');
     resizeUtil.setEditorWidthFromSettings();
     resizeUtil.resize();
+  });
+
+  $('#setting_editor_tab_size').change(function () {
+    var el = $('#setting_editor_tab_size');
+    var size = parseInt(el.val() || 40);
+    snd_xplore_editor.setOption('tabSize', size);
+    snd_xplore_editor.setOption('indentUnit', size);
   });
 
   $('#save_settings').click(function () {

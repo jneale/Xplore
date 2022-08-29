@@ -10,7 +10,7 @@
   }
 
   var default_settings = {
-  debug_mode: false,
+    debug_mode: false,
     setting_save_shortcut: true,
     setting_theme: 'default',
     setting_quotes: true,
@@ -20,7 +20,8 @@
     wrap_output_pre: true,
     fix_gslog: true,
     support_hoisting: false,
-    setting_editor_width: "40%"
+    setting_editor_width: "40%",
+    setting_editor_tab_size: 2
   };
 
   for (var name in default_settings) {
@@ -103,7 +104,7 @@
     <title>Xplore</title>
 
     <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
 
     <!-- Bootstrap Toggle -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" integrity="sha512-hievggED+/IcfxhYRSr4Auo1jbiOczpqpLZwfTVL/6hFACdbI3WQ8S9NCX50gsM9QVE+zLk/8wb9TlgriFbX+Q==" crossorigin="anonymous" />
@@ -170,11 +171,18 @@
             </li>
             <li>
               <button id="xplore_btn" class="btn btn-success navbar-control"
-                title="Ctrl + Enter">Run</button>
+                title="Run (Ctrl + Enter)">Run</button>
             </li>
             <li>
               <button id="cancel_btn" class="btn btn-danger navbar-control"
                 title="Cancel Transaction" style="display:none">Cancel</button>
+            </li>
+            <li>
+              <button id="format_btn" class="btn btn-default navbar-control"
+                title="Format (Ctrl + Shift + F)">
+                <i class="glyphicon glyphicon-align-left"></i>
+                <span class="sr-only">Format</span>
+              </button>
             </li>
             <li id="timer" class="navbar-brand"></li>
           </ul>
@@ -806,15 +814,28 @@
 
             <div class="row">
               <div class="col-xs-9 col-sm-8">
-                <h5>Editor Split Width <sup class="badge badge-success">New</sup></h5>
+                <h5>Editor Split Width</h5>
                 <p class="text-muted">
-                  Set the default percentage width for the editor. Default is <code>40%</code>.
+                  Set the default percentage width for the editor. Default is <code>50%</code>.
                   Value range is 10 - 90.
                 </p>
               </div>
               <div class="col-xs-3 col-sm-4 text-right checkbox">
                 <g:evaluate jelly="true">var setting_editor_width = settings.setting_editor_width</g:evaluate>
                 <input type="text" id="setting_editor_width" class="xplore-setting form-control input-sm" value="${setting_editor_width}" />
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-xs-9 col-sm-8">
+                <h5>Editor Tab Size</h5>
+                <p class="text-muted">
+                  Set the default tab width for editing and formatting code. Default is <code>2</code>.
+                </p>
+              </div>
+              <div class="col-xs-3 col-sm-4 text-right checkbox">
+                <g:evaluate jelly="true">var setting_editor_tab_size = settings.setting_editor_tab_size</g:evaluate>
+                <input type="text" id="setting_editor_tab_size" class="xplore-setting form-control input-sm" value="${setting_editor_tab_size}" />
               </div>
             </div>
 
@@ -878,7 +899,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A==" crossorigin="anonymous"></script>
 
     <!-- Bootstrap -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
 
     <!-- Bootstrap Toggle -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js" integrity="sha512-F636MAkMAhtTplahL9F6KmTfxTmYcAcjcCkyu0f0voT3N/6vzAuJ4Num55a0gEJ+hRLHhdz3vDvZpf6kqgEa5w==" crossorigin="anonymous"></script>
@@ -889,14 +910,19 @@
 
     <!--CodeMirror Update-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.js" integrity="sha512-zuvaVNiXwWY7U7HEdXsoTislTEElpKLELFoyQw0Bg7zfGhC4vG8eAhCxIQAvHmprW7dFhTq5zshUko4K3B4mSA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/edit/matchbrackets.min.js" integrity="sha512-GlBJlDrIKL93TzLT5WYpPw9wRicOOghofNDodqg9WXPyLLFFb4RSERKonID8LLs6GpCCgXCbEGIraojzI+ngPA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/mode/javascript/javascript.min.js" integrity="sha512-EKqHN1wvffwb5Hx+y5JeXPGNDKKxxW1Es4hexkgSf+QkQwEDNs6bp4KKCRNVLUbRPGkrDQ7yEVwvDg1tq7n1fA==" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/hint/javascript-hint.min.js" integrity="sha512-2zi+0HSB5MXoy+BenDX/EKjqN6eUnsG2Lh9cpx+Ckua3Yi2XupO8ife9VELSg8iR7AT98yHQNyyaAL4ImVHcoQ==" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/comment/comment.min.js" integrity="sha512-VQ13rjo5LQmLPtbaWGV4DWx1Zbggd+MZVj6FGT6ltCbUiAN3e/7Usf61eO9vdXENLruXjEeEC3ADoN09P00R4A==" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/search/searchcursor.min.js" integrity="sha512-WjPtMaVG4q6cJDk6ErkkZt87NQ8NAyk35hoBbylGAnNTiDara/vHlpGKCdhXFwBFQ26nRpyW7cNmv0tKVLE6ww==" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/keymap/sublime.min.js" integrity="sha512-Z2h8JV7HR8dsltSOC7rrvVvvxHGj6cNvDDA3AJO99Nzvx5h28qT3KjqmwblYIGm/tEv319Cb+pORlgCnYADqYQ==" crossorigin="anonymous"></script>
 
+    <script src="/scripts/snc-code-editor/js-beautify.js"></script>
+
+
     <!-- Google Code Prettify -->
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+
 
     <script src="/snd_xplore_ui.jsdbx"></script>
 
