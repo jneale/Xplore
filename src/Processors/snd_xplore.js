@@ -495,7 +495,17 @@ XploreRunner.prototype.logRequest = function logRequest(code, scope) {
   throws: string
 **/
 XploreRunner.prototype.validateScript = function validateScript(script, scope) {
-  var error = GlideSystemUtilScript._getScriptError(script, scope);
+  var validator = new JSValidator();
+  validator.getParameter = function getParameter(name) {
+    if (name == 'sysparm_js_expression') {
+      return script;
+    }
+    if (name == 'sysparm_js_scope') { // only available from Tokyo
+      return scope;
+    }
+  };
+
+  var error = validator.validate();
   if (error) {
     var e = new SyntaxError(error);
     var m = error.match(/(.+) at line \((\d+)\) column \((\d+)\) problem = (.+)/);
@@ -554,9 +564,9 @@ XploreRunner.prototype.runScopedScript = function runScopedScript(script, option
   })(options.scope);
 
   var safe_options = JSON.stringify(options, function (name, value) {
-  if (name.indexOf('user_data') == -1) {
+    if (name.indexOf('user_data') == -1) {
       return value;
-  }
+    }
   });
 
   var try_script = '"try {" + $$script + "\\n;} catch (e) { e; }"';
