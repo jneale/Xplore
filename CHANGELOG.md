@@ -1,6 +1,12 @@
 # Xplore: Developer Toolkit
 A toolkit for every ServiceNow developer.
 
+### Version 4.13
+* Fixed snd_xplore_glasses script so it doesn't break in Studio or other applications.
+* Glasses icon has been replaced with the code-edit icon for San Diego versions.
+* Deprecated glasses support for UI15.
+* Fixed an issue where the notification area in lower right corner prevents "Show" links from working on smaller screens.
+
 ### Version 4.12.1
 * Fixed JS Validation issue in pre-Tokyo versions caused by fix for Tokyo.
 

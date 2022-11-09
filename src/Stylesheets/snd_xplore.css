@@ -105,9 +105,13 @@ h5 {
 #notification {
   position: absolute;
   bottom: 0;
-  right: 0;
+  right: -10000px;
   margin: 10px;
   z-index: 10000;
+}
+
+#notification.in {
+  right: 0;
 }
 
 .navbar-nav {
