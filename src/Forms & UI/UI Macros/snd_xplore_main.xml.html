@@ -13,7 +13,7 @@
     debug_mode: false,
     setting_save_shortcut: true,
     setting_theme: 'default',
-    setting_quotes: true,
+    setting_quotes: false,
     show_props: true,
     show_strings: true,
     show_html_messages: true,
@@ -21,7 +21,10 @@
     fix_gslog: true,
     support_hoisting: false,
     setting_editor_width: "40%",
-    setting_editor_tab_size: 2
+    setting_editor_tab_size: 2,
+    use_es_latest: true,
+    load_user_scope: true,
+    max_depth: snd_Xplore.DEFAULT_MAX_DEPTH
   };
 
   for (var name in default_settings) {
@@ -94,6 +97,7 @@
   ];
 
   var history_session_id = gs.generateGUID();
+  var initial_scope = settings.load_user_scope ? gs.getCurrentApplicationScope() : 'global';
 </g:evaluate>
 <html lang="en">
   <head>
@@ -130,6 +134,7 @@
 
     <script>
       window.snd_xplore_session_id = "${history_session_id}";
+	  window.snd_xplore_initial_scope = "${initial_scope}";
     </script>
   </head>
   <g:evaluate jelly="true">var theme = settings.setting_theme;</g:evaluate>
@@ -336,12 +341,13 @@
                 </div>
 
                 <div id="script_output" role="tabpanel" class="tab-pane fade monospace">
-                  <ul id="breadcrumb" class="breadcrumb hidden">
+
+                  <ul id="breadcrumb" class="row breadcrumb hidden">
                     <li class="permanent">
                       <a id="clearBreadcrumb" href="javascript:void(0);">Result</a>
                     </li>
                   </ul>
-
+				  
                   <div id="message_container">
                     <table class="table table-condensed" id="message_table">
                       <tr>
@@ -360,9 +366,17 @@
                     <table class="table table-condensed" id="log_table"></table>
                   </div>
 
+                  <div id="result_timestamp_container" class="help-block pull-right hidden">
+                    <span id="result_timestamp"></span>
+                    <button class="btn btn-xs btn-primary" id="regenerate">Regenerate</button>
+                  </div>
+
                   <div id="result_container">
                     <table class="table table-condensed" id="description_table"></table>
-                    <button class="btn btn-link btn-sm pull-right" id="copy_results">Copy results</button>
+                    <button class="btn btn-link btn-sm pull-right" id="copy_results" title="Copy result table">
+                      <i class="glyphicon glyphicon-copy"></i>
+                      Copy results
+                    </button>
                     <div id="type_control"></div>
                     <table class="table table-condensed" id="results_table"></table>
                   </div>
@@ -378,6 +392,9 @@
                         <p>Choose a format to automatically parse the data for the script
                           and use the 'Format' button to prettify the data.</p>
                         <div class="form-inline">
+                          <button class="btn btn-link btn-sm pull-right" id="copy_user_data" title="Copy result table">
+                            <i class="glyphicon glyphicon-copy"></i>
+                          </button>
                           <div class="input-group input-group-sm">
                             <select class="form-control" id="user_data_type_select">
                               <option>Plain (String)</option>
@@ -667,6 +684,74 @@
             </div>
 
             <div class="row">
+              <div class="col-xs-10">
+                <h5>Maximum Property Depth</h5>
+                <p class="text-muted">
+                  The maximum number of nested property levels to automatically explore
+                  in the result.
+                  Default is <code>${default_settings.max_depth}</code>.
+                </p>
+              </div>
+              <div class="col-xs-2">
+                <div class="m-t text-center" style="max-width: 75px">
+                  <g:evaluate jelly="true">var max_depth = settings.max_depth</g:evaluate>
+                  <select class="form-control xplore-setting" id="max_depth" name="max_depth">
+                    <j:forEach begin="1" end="${snd_Xplore.MAX_DEPTH}" indexVar="jvar_i">
+                      <g:evaluate jelly="true">var selected = max_depth == jelly.jvar_i;</g:evaluate>
+                      <j:if test="${selected}">
+                        <option value="${jvar_i}" selected="selected">${jvar_i}</option>
+                      </j:if>
+                      <j:if test="${!selected}">
+                        <option value="${jvar_i}">${jvar_i}</option>
+                      </j:if>
+                    </j:forEach>
+                  </select>
+                </div>
+              </div>
+            </div>
+			
+			      <div class="row">
+              <div class="col-xs-9 col-sm-8">
+                <h5>Load with User Scope</h5>
+                <p class="text-muted">
+                  Always start Xplore in the currently selected user application scope.
+                  Disable this setting to start in global scope.
+                </p>
+                <p class="text-info">
+                  <span class="glyphicon glyphicon-info-sign"></span>
+                  Use "Make default" to save this setting for next time.
+                </p>
+              </div>
+              <div class="col-xs-3 col-sm-4 text-right checkbox">
+                <g:evaluate jelly="true">var load_user_scope = !!settings.load_user_scope</g:evaluate>
+                <j:if test="${load_user_scope}">
+                  <input type="checkbox" id="load_user_scope" class="xplore-setting" checked="checked" />
+                </j:if>
+                <j:if test="${!load_user_scope}">
+                  <input type="checkbox" id="load_user_scope" class="xplore-setting" />
+                </j:if>
+              </div>
+            </div>
+
+			      <div class="row">
+              <div class="col-xs-9 col-sm-8">
+                <h5>Use ES Latest</h5>
+                <p class="text-muted">
+                  Run Xplore using latest ECMA Script capabilities.
+                </p>
+              </div>
+              <div class="col-xs-3 col-sm-4 text-right checkbox">
+                <g:evaluate jelly="true">var use_es_latest = !!settings.use_es_latest</g:evaluate>
+                <j:if test="${use_es_latest}">
+                  <input type="checkbox" id="use_es_latest" class="xplore-setting" checked="checked" />
+                </j:if>
+                <j:if test="${!use_es_latest}">
+                  <input type="checkbox" id="use_es_latest" class="xplore-setting" />
+                </j:if>
+              </div>
+            </div>
+
+            <div class="row">
               <div class="col-xs-9 col-sm-8">
                 <h5>Run on <kbd>Ctrl/Cmd</kbd> + <kbd>S</kbd></h5>
                 <p class="text-muted">Use the Save keyboard shortcut to run the script. Disable if you
@@ -683,7 +768,7 @@
               </div>
             </div>
 
-            <div class="row">
+            <!-- <div class="row">
               <div class="col-xs-9 col-sm-8">
                 <h5>Quotes</h5>
                 <p class="text-muted">By default, the Xplore Pretty Printer adds double quotes around
@@ -698,7 +783,7 @@
                   <input type="checkbox" id="setting_quotes" class="xplore-setting" />
                 </j:if>
               </div>
-            </div>
+            </div> -->
 
             <div class="row">
               <div class="col-xs-9 col-sm-8">
@@ -816,7 +901,7 @@
               <div class="col-xs-9 col-sm-8">
                 <h5>Editor Split Width</h5>
                 <p class="text-muted">
-                  Set the default percentage width for the editor. Default is <code>50%</code>.
+                  Set the default percentage width for the editor. Default is <code>${default_settings.setting_editor_width}</code>.
                   Value range is 10 - 90.
                 </p>
               </div>
@@ -830,7 +915,7 @@
               <div class="col-xs-9 col-sm-8">
                 <h5>Editor Tab Size</h5>
                 <p class="text-muted">
-                  Set the default tab width for editing and formatting code. Default is <code>2</code>.
+                  Set the default tab width for editing and formatting code. Default is <code>${default_settings.setting_editor_tab_size}</code>.
                 </p>
               </div>
               <div class="col-xs-3 col-sm-4 text-right checkbox">

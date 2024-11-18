@@ -301,8 +301,7 @@ function XploreRunner() {
   this.reporter_name = 'snd_Xplore.ObjectReporter';
 }
 
-// global scope is implied in this name
-XploreRunner.C_TEMP_SCRIPT_NAME = 'snd_Xplore_code';
+XploreRunner.USER_SCRIPT = 'snd_Xplore_code_' + gs.getUserID();
 
 /**
   summary:
@@ -354,11 +353,11 @@ XploreRunner.prototype.run = function run(options) {
     // we have an invalid return.
     try {
       options.scope = options.scope || 'global';
-      this.validateScript(script, options.scope);
+      this.validateScript(script, options.scope, options);
     } catch (e) {
       if (e.toString().indexOf('invalid return') === 0) {
         try {
-          this.validateScript('(function () {' + script + '}).call(this)', options.scope);
+          this.validateScript('(function () {' + script + '}).call(this)', options.scope, options);
           options.support_hoisting = true;
         } catch (e2) {
           throw e; // throw the original error
@@ -494,14 +493,26 @@ XploreRunner.prototype.logRequest = function logRequest(code, scope) {
   returns: true
   throws: string
 **/
-XploreRunner.prototype.validateScript = function validateScript(script, scope) {
+XploreRunner.prototype.validateScript = function validateScript(script, scope, options) {
   var validator = new JSValidator();
   validator.getParameter = function getParameter(name) {
     if (name == 'sysparm_js_expression') {
       return script;
     }
-    if (name == 'sysparm_js_scope') { // only available from Tokyo
+    if (name == 'sysparm_js_scope') { // introduced in Tokyo, no longer used in Xanadu
       return scope;
+    }
+	if (name == 'sysparm_scope') { // introduced in Xanadu
+      if (scope == 'global') return scope;
+      var gr = new GlideRecord('sys_scope');
+      if (gr.get('scope', scope)) {
+		return gr.sys_id + '';
+      }
+      gs.addErrorMessage('Unable to validate JS with scope ' + scope + '; sys_scope record not found.');
+      return 'global';
+	}
+    if (name == 'sysparm_use_es_latest') {
+      return options.use_es_latest;
     }
   };
 
@@ -543,6 +554,44 @@ XploreRunner.prototype.runGlobalScript = function runGlobalScript(script, option
 
 /**
   summary:
+    Get a script include GlideRecord that we can run scripts in and use with Script Debugger
+  options: Object
+    An object of options
+ */
+XploreRunner.prototype.getUserScriptInclude = function getUserScriptInclude(options) {
+  // We have to insert a real script include to avoid dynamic script prevention (only in node logs)
+  // Example error:
+  // *** WARNING *** Security restricted: GlideScopedEvaluator: Prohibited dynamic script against scope 'x_snd_eb' from scope 'rhino.global'
+  var run_scope = this.getRunScope(options.scope);
+  var gr = new GlideRecord("sys_script_include");
+  gr.get("name", XploreRunner.USER_SCRIPT);
+  if (!gr.isValidRecord()) {
+    gr.newRecord();
+    gr.name = XploreRunner.USER_SCRIPT;
+    gr.api_name = options.scope + '.' + gr.name;
+	  gr.access = 'public';
+    gr.insert();
+  }
+  gr.name = XploreRunner.USER_SCRIPT;
+  gr.api_name = options.scope + '.' + gr.name;
+  gr.sys_scope = run_scope;
+  return gr;
+};
+
+XploreRunner.prototype.getRunScope = function getRunScope(scope_name) { 
+  if (scope_name == 'global') return scope_name;
+  var gr = new GlideRecord('sys_scope');
+  gr.addQuery('scope', '=', scope_name);
+  gr.setLimit(1);
+  gr.query();
+  if (gr.next()) {
+    return gr.getUniqueValue();
+  }
+  throw 'Unknown scope [' + scope_name + ']';
+};
+
+/**
+  summary:
     Run Xplore on a script in a scoped environment
   script: String
     The script to evaluate
@@ -550,62 +599,27 @@ XploreRunner.prototype.runGlobalScript = function runGlobalScript(script, option
     An object of options
 **/
 XploreRunner.prototype.runScopedScript = function runScopedScript(script, options) {
-
-  var run_scope = (function (scopeName) {
-    if (scopeName == 'global') return 'global';
-    var gr = new GlideRecord('sys_scope');
-    gr.addQuery('scope', '=', scopeName);
-    gr.setLimit(1);
-    gr.query();
-    if (gr.next()) {
-      return gr.getUniqueValue();
-    }
-    throw 'Unknown scope [' + scopeName + ']';
-  })(options.scope);
-
-  var safe_options = JSON.stringify(options, function (name, value) {
-    if (name.indexOf('user_data') == -1) {
-      return value;
-    }
-  });
-
-  var try_script = '"try {" + $$script + "\\n;} catch (e) { e; }"';
-  var scopedScript = '';
-  scopedScript += 'var gr = new GlideRecord("sys_script_include");\n';
-  scopedScript += 'gr.get("api_name", "global.' + XploreRunner.C_TEMP_SCRIPT_NAME + '");\n';
-  scopedScript += 'gr.api_name = "' + options.scope + '." + gr.name;\n';
-  scopedScript += 'gr.sys_scope = "' + run_scope + '";\n';
-  scopedScript += 'gr.script = ' + try_script + ';\n';
-  scopedScript += 'var gse = new GlideScopedEvaluator();\n';
-  scopedScript += 'gse.putVariable("user_data", user_data);\n';
-  scopedScript += 'var obj = gse.evaluateScript(gr, "script");\n';
-  scopedScript += 'var options = ' + safe_options + ';\n';
-  scopedScript += 'var x = new global.snd_Xplore();\n';
-  scopedScript += 'x.xplore(obj, "snd_Xplore.ObjectReporter", options);\n';
-  scopedScript += '$$result = x.reporter.getReport();\n';
-
+  var gr = this.getUserScriptInclude(options);
+  var result;
   try {
-    this.validateScript(scopedScript, options.scope);
+    gr.script = 'try {' + script + '\n} catch (e) { e; }';
+    gr.update();
+
+    var gse = new GlideScopedEvaluator();
+    gse.putVariable("user_data", options.user_data);
+    result = gse.evaluateScript(gr, "script");
   } catch (e) {
-    e.name = 'Scoped Script Generation SyntaxError';
-    throw this.handleException(e, scopedScript);
+    result = e;
+  } finally {
+    gr.setUseEngines(false); // we don't need version control for the reset
+    // gr.script = '';
+    gr.sys_scope = "global";
+    gr.update();
   }
 
-  var gr = new GlideRecord('sys_script_include');
-  if (!gr.get('api_name', 'global.' + XploreRunner.C_TEMP_SCRIPT_NAME)) {
-    gr.name = XploreRunner.C_TEMP_SCRIPT_NAME;
-    gr.api_name = 'global.' + gr.name;
-    gr.script = '/* This script is deliberately empty. */';
-    gr.insert();
-  }
-  gr.script = scopedScript;
-
-  var gse = new GlideScopedEvaluator();
-  gse.putVariable('user_data', options.user_data);
-  gse.putVariable('$$script', script);
-  gse.putVariable('$$result', null);
-  gse.evaluateScript(gr, 'script');
-  return gse.getVariable('$$result');
+  var x = new global.snd_Xplore();
+  x.xplore(result, "snd_Xplore.ObjectReporter", options);
+  return x.reporter.getReport();
 };
 
 /**
@@ -950,7 +964,7 @@ function XploreTableHierarchy(table, options) {
   // the actions that can be run
   var actions = {};
 
-  // Makes the parameters passed to the request easily av
+  // Makes the parameters passed to the request easily available
   var params = (function () {
     var names = g_request.getParameterNames(),
         params = {},
@@ -1148,7 +1162,7 @@ function XploreTableHierarchy(table, options) {
         return html;
       }
 
-      var regexp = /([a-zA-Z0-9_.\-]*)\.(cssdbx|jsdbx)/g,
+      var regexp = /([a-zA-Z0-9_.-]*)\.(cssdbx|jsdbx)/g,
           key_map = {
             'jsdbx':  {table: 'sys_ui_script', key: 'name', val: 'name'},
             'cssdbx': {table: 'content_css',   key: 'name', val: 'sys_id'}

@@ -1,23 +1,69 @@
 var snd_xplore_reporter = (function () {
 
-  var showMoreButton = '<button class="btn btn-xs btn-link show-more" ' +
-      'data-show-more="false"><span class="glyphicon glyphicon-expand"></span> Show</button>';
+  var cached_result = null;
+
+  var copy_btn = '<button class="btn btn-xs btn-link interactive copy-value pull-right"' +
+    ' title="Copy value"><i class="glyphicon glyphicon-copy"></i> Copy value</button>';
 
   function setDescription(table, result) {
     var type = result.type ? result.type : '*UNKNOWN*';
-    table.empty().
-    append('<tr><th class="col-md-1">Type</th><td class="col-md-11">' + type +
+    if (type.toLowerCase() === 'function') {
+      type += ' <a href class="interactive">()</a>';
+    }
+
+    table.empty();
+
+    if (result.start_time && result.hasOwnProperty('results')) {
+      $('#result_timestamp').text(
+        (result.regenerated ? 'Regenerated' : 'Generated') +
+        (typeof result.time === 'number' ? ' in ' + (result.time / 1000).toFixed(2) + 's' : '')
+        + ' on ' + result.start_time);
+      $('#result_timestamp_container,#regenerate').removeClass('hidden');
+    } else {
+      $('#result_timestamp_container').addClass('hidden');
+    }
+
+    if (result.warning) {
+      table.append('<tr class="bg-warning"><th class="col-md-1">Warning</th><td class="col-md-11">' + result.warning +
         '</td></tr>');
+    }
+
+    if (result.name) {
+      table.append('<tr><th class="col-md-1">Name</th><td class="col-md-11">' + result.name + '</td></tr>');
+    }
+    table.append('<tr><th class="col-md-1">Type</th><td class="col-md-11">' + type + '</td></tr>');
+
     if (!result.string) result.string = "";
     if (result.string.length < 100 && result.string.indexOf('\n') == '-1') {
       table.append('<tr><th class="col-md-1">Value</th><td class="col-md-11">' +
+          copy_btn +
           lineBreaks(prettyPrint(insertLinks(escapeHtml(result.string)))) + '</td></tr>');
     } else {
-      //table.append('<tr><th class="col-md-1">Value</th><td class="col-md-11">&nbsp;</td></tr>');
       table.append('<tr class="data-more"><td colspan="2">' +
+          '<div class="clearfix">' +
+            copy_btn +
+            '<strong>Value</strong><br>' +
+          '</div>' +
           '<pre class="prettyprint linenums">' + insertLinks(escapeHtml(formatForPre(result.string))) +
           '</pre></td></tr>');
     }
+  }
+
+  function findResult(breadcrumbs, result) {
+    var item;
+    if (!cached_result || !Array.isArray(cached_result.results)) return;
+    item = breadcrumbs.reduce(function (result, name) {
+      if (result && Array.isArray(result.results)) {
+        for (var i = 0; i < result.results.length; i++) {
+          if (result.results[i].name == name) {
+            var item = result.results[i];
+            item.start_time = item.start_time || result.start_time;
+            return item;
+          }
+        }
+      }
+    }, result || cached_result);
+    return item;
   }
 
   function setResults(table, result) {
@@ -26,67 +72,39 @@ var snd_xplore_reporter = (function () {
         '<th class="col-md-3">Type</th>' +
         '<th class="col-md-6">Value</th></tr>');
     $.each(result, function (i, item) {
-      item.name = escapeHtml(item.name);
+      if (!item || typeof item !== 'object') return;
+      var type = item.type.toLowerCase();
+      var val = (type == 'string' ? '"' + (item.string || '') + '"' : item.string) || "";
+      var name = escapeHtml(item.name);
 
-      var prop = '<a href="javascript:void(0)" class="interactive">' + item.name + '</a>';
-      if (item.type.toLowerCase() === 'function') {
-        prop += ' <a href="javascript:void(0)" class="interactive"><span class="hidden">' +
-            item.name + '</span>()</a>';
+      var prop = '<a href class="interactive">' + name + '</a>';
+      if (type.toLowerCase() === 'function') {
+        prop += ' <a href class="interactive"><span class="hidden">' +
+            name + '</span>()</a>';
       }
-      if (!item.string) item.string = "";
-      if (item.string.length && (item.string.length >= 100 ||
-          item.type.toLowerCase() == 'function' ||
-          item.string.substr(0,8) == 'function')) {
+
+      if (val.length && (val.length >= 100 || type.toLowerCase() == 'function' || val.substr(0,8) == 'function')) {
         table.append('<tr class="data-row">' +
           '<td class="col-md-3 prop">' + prop + '</td>' +
           '<td class="col-md-3 type">' + item.type + '</td>' +
-          '<td class="col-md-6">' + showMoreButton + '</td>' +
+          '<td class="col-md-6">' +
+            '<a href class="show-more" data-show-more="false">' +
+              '<span class="glyphicon glyphicon-expand"></span> Show' +
+            '</a>' +
+          '</td>' +
         '</tr>');
         table.append('<tr class="data-more hidden">' +
           '<td colspan="3" class="val"><pre class="prettyprint linenums">' +
-          escapeHtml(formatForPre(item.string)) + '</pre></td>' +
+          escapeHtml(formatForPre(val)) + '</pre></td>' +
         '</tr>');
       } else {
         table.append('<tr class="data-row">' +
           '<td class="col-md-3 prop">' + prop + '</td>' +
           '<td class="col-md-3 type">' + item.type + '</td>' +
-          '<td class="col-md-6 val">' + prettyPrint(insertLinks(escapeHtml(item.string))) + '</td>' +
+          '<td class="col-md-6 val">' + prettyPrint(insertLinks(escapeHtml(val))) + '</td>' +
         '</tr>');
       }
     });
-  }
-
-  function displayResults(result, options) {
-
-    displayOutputMessages(result.messages, options.html_messages);
-
-    displayLogs(result.logs);
-
-    setDescription($('#description_table'), result);
-
-    var resultTable = $('#results_table');
-    resultTable.empty().append('<tr id="no_props" class="hidden"><td colspan="3">' +
-        'No properties to display.</td></tr>');
-
-    result.results.sort(function (a, b) {
-      var ai = parseInt(a.name, 10);
-      var bi = parseInt(b.name, 10);
-      if (ai > bi) return 1;
-      if (bi > ai) return -1;
-      if (a.name > b.name) return 1;
-      if (b.name > a.name) return -1;
-      return 0;
-    });
-
-    if (result.results.length) {
-      setResults(resultTable, result.results);
-    } else {
-      $('#no_props').removeClass('hidden');
-    }
-
-    showTypes();
-
-    $('#result_container').toggleClass('hidden', !(result.type || result.results.length));
   }
 
   function displayOutputMessages(messages, asHtml) {
@@ -105,15 +123,13 @@ var snd_xplore_reporter = (function () {
         temp;
 
     target.empty();
-    if (!messages) {
+    if (!messages || !messages.length) {
+      $('#message_container').addClass('hidden');
       return;
     }
     for (var i = 0, m; i < messages.length; i++) {
       m = messages[i];
       temp = m.message;
-      if (classMap[m.type] == 'danger') {
-        script_update = tryIgnoreList(temp) || script_update;
-      }
 
       if (m.is_json) {
         target.append('<tr><td class="' + classMap[m.type] + '" style="white-space: pre">' +
@@ -133,18 +149,6 @@ var snd_xplore_reporter = (function () {
     }
 
     $('#message_container').toggleClass('hidden', !i);
-  }
-
-  function tryIgnoreList(text) {
-    // text = 'Illegal access to field fInternalTZ in class com.glide.glideobject.GlideDateTime';
-    var word = text.match(/Illegal access to field (\w+)/),
-        current;
-    if (word) {
-      current = snd_xplore_editor.getValue();
-      current = 'snd_Xplore.ignorelist(\'' + word[1] + '\');\n' + current;
-      snd_xplore_editor.setValue(current);
-    }
-    return !!word;
   }
 
   function htmlPre(text) {
@@ -269,7 +273,7 @@ var snd_xplore_reporter = (function () {
       // show/hide the more info row
       var next = $this.next();
       if (next.hasClass('data-more')) {
-        var state = $this.find('button.show-more').attr('data-show-more');
+        var state = $this.find('a.show-more').attr('data-show-more');
         next.toggleClass('hidden', !(display_types[value] && state != 'false'));
       }
 
@@ -312,7 +316,7 @@ var snd_xplore_reporter = (function () {
       "/": '&#x2F;'
     };
     return function (string) {
-      return String(string).replace(/[&<>"'\/]/g, function (s) {
+      return String(string).replace(/[&<>"'/]/g, function (s) {
         return entityMap[s];
       });
     };
@@ -337,6 +341,25 @@ var snd_xplore_reporter = (function () {
       return '<a href="/' + table + '.do?sys_id=' + sys_id + '" target="_blank">' + m + '</a>';
     });
     return text;
+  }
+
+  function addBreadcrumb(text) {
+    var $breadcrumb = $('ul#breadcrumb');
+    var pos = breadcrumbs.length - 1;
+
+    // make the last breadcrumb active
+    if (breadcrumbs.length) {
+      $breadcrumb.children().remove(':last');
+      $breadcrumb.append('<li><a href id="breadcrumb_' +
+          pos + '">' + escapeHtml(breadcrumbs[pos]) + '</a></li>');
+    }
+
+    // add the new last breadcrumb
+    $breadcrumb
+        .append('<li>' + escapeHtml(text) + '</li>')
+        .removeClass('hidden');
+
+    breadcrumbs.push(text);
   }
 
   var breadcrumbs = [];
@@ -366,9 +389,11 @@ var snd_xplore_reporter = (function () {
 
       var sxr = this;
 
-      $('#results_table,#description_table').on('click', '.show-more', function () {
+      $('#results_table,#description_table').on('click', '.show-more', function (event) {
         // summary:
         //   Handle the 'Show...' button click for a result
+
+        event.preventDefault();
 
         var $this = $(this);
         var target = $this.parents('tr').next();
@@ -384,35 +409,46 @@ var snd_xplore_reporter = (function () {
 
       });
 
-      $('#results_table').on('click', 'a.interactive', function () {
+      $('#result_container').on('click', '.interactive', function (event) {
         // summary:
         //   Make property names interactive so we can dive into an object
 
+        event.preventDefault();
 
-        var $breadcrumb = $('ul#breadcrumb');
-        var pos = breadcrumbs.length - 1;
-        var text = $(this).text();
+        var $this = $(this);
+        var text = $this.text();
 
-        // make the last breadcrumb active
-        if (breadcrumbs.length) {
-          $breadcrumb.children().remove(':last');
-          $breadcrumb.append('<li><a href="javascript:void(0)" id="breadcrumb_' +
-              pos + '">' + escapeHtml(breadcrumbs[pos]) + '</a></li>');
+        if ($this.hasClass('explore-child')) {
+          sxr.fireEvent('click.interactive-result', this, [{dotwalk_first: true}]);
+          return;
         }
 
-        // add the new last breadcrumb
-        $breadcrumb
-            .append('<li>' + escapeHtml(text) + '</li>')
-            .removeClass('hidden');
+        if ($this.hasClass('copy-value')) {
+          sxr.copyValue();
+          return;
+        }
 
-        breadcrumbs.push(text);
+        if (text.length > 2 && text.substring(text.length - 2) == '()') {
+          text = text.substring(0, text.length - 2);
+          addBreadcrumb(text);
+          addBreadcrumb('()');
+        } else {
+          addBreadcrumb(text);
+        }
 
-        sxr.fireEvent('click.interactive-result', this);
+        var item = findResult(breadcrumbs);
+        if (item) {
+          sxr.displayResults(item, sxr.options);
+        } else {
+          sxr.fireEvent('click.interactive-result', this, [{dotwalk_first: true}]);
+        }
       });
 
-      $('ul#breadcrumb').on('click', 'a', function () {
+      $('ul#breadcrumb').on('click', 'a', function (event) {
         // summary:
         //   add the event handler for clicking on a breadcrumb to remove it
+        
+        event.preventDefault();
 
         var $breadcrumb = $('ul#breadcrumb');
 
@@ -435,9 +471,17 @@ var snd_xplore_reporter = (function () {
             $breadcrumb.append('<li>' + breadcrumbs[breadcrumbs.length - 1] + '</li>');
           }
 
-          $breadcrumb.toggleClass('hidden', !breadcrumbs.length);
-          sxr.fireEvent('click.breadcrumb', this);
+          var item = findResult(breadcrumbs);
+          if (item) {
+            sxr.displayResults(item, sxr.options);
+          } else {
+            sxr.fireEvent('click.breadcrumb', this, {dotwalk_first: true});
+          }
         }
+      });
+
+      $('#regenerate').click(function () {
+        sxr.fireEvent('click.interactive-result', this, [{dotwalk_first: true}]);
       });
 
       $('#type_control').on('change', 'input[type=checkbox]', function () {
@@ -454,17 +498,139 @@ var snd_xplore_reporter = (function () {
       });
     };
 
+    this.copyValue = function copyValue() {
+      var item = this.current_result;
+      if (!item) return;
+      var value = this.parseValueFromResult(item);
+      if (item.type != 'Function') value = JSON.stringify(value, null, 2);
+      snd_xplore_util.copyTextToClipboard(value);
+    };
+
+    this.parseValueFromResult = function parseValueFromResult(item) {
+      var result;
+      switch (item.type) {
+        case 'null': return null;
+        case 'undefined': return undefined;
+        case 'Boolean': return item.string == 'true' ? true : false;
+        case 'Number': return +item.string;
+        case 'String': return item.string;
+        case 'Function': return item.string;
+        case 'Array': 
+          result = [];
+          break;
+        default:
+          if (!item.results) return item.string;
+          result = {};
+      }
+      for (var i = 0, tmp; i < item.results.length; i++) {
+        tmp = item.results[i];
+        if (tmp.type === 'Function') continue;
+        result[tmp.name] = this.parseValueFromResult(tmp);
+      }
+      return result;
+    };
+
+    this.debugLog = function debugLog() {
+      if (this.options && this.options.debug_mode && typeof console === 'object') {
+        console.log.apply(console, arguments);
+      }
+    };
+
     this.start = function (params) {
+      if (this.options && (this.options.scope != params.scope || this.options.target != params.target)) {
+        params.regenerate = true;
+        params.dotwalk_first = false;
+      }
+
       this.options = params;
+      this.start_time = new Date().getTime();
+
+      this.debugLog('Params: ', params);
+
       this.fireEvent('start', null, [params]);
     };
 
     this.done = function (result) {
-      var target = $('#results');
-      $('#node_log_url').val(result.node_log_url);
-      target.empty();
-      displayResults(result, this.options);
-      this.fireEvent('done', null, [result]);
+      var updating_child = this.options.dotwalk_first;
+      var item;
+
+      if (!result) {
+        this.debugLog('No result!');
+        this.reset();
+        return;
+      }
+
+      if (result.type == 'Error') {
+        // Convert error result into error message
+        var error = findResult(['rhinoException'], result);
+        error = (error && error.string ? error.string : result.string).replace(/(^"|"$)/g, '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        error = error || 'Something went wrong with the request.';
+        result.messages.push({
+          date: result.end_time,
+          message: error,
+          source: null,
+          type: 2
+        });
+      } else if (this.options.regenerate || !updating_child) {
+        // resetting the entire result stack or not updating a child
+        cached_result = result;
+      }
+
+      // find and update an item using the xplore result
+      item = findResult(breadcrumbs);
+      if (updating_child) {
+        if (item) {
+          // updating existing item
+          item.regenerated = Array.isArray(item.results);
+          if (result.type == 'Error') {
+            if (item.$has_error) item.messages.splice(item.messages.length - 1);
+            item.results = [];
+            item.messages = (item.messages || []).concat(result.messages);
+            item.warning = result.warning;
+            item.$has_error = true;
+          } else {
+            for (var p in result) {
+              if (p == 'name') continue;
+              item[p] = result[p];
+            }
+          }
+        } else if (breadcrumbs[breadcrumbs.length - 1] == '()') {
+          // adding newly explored function result to parent
+          item = findResult(breadcrumbs.slice(0, breadcrumbs.length - 1));
+          if (item) {
+            result.name = '()';
+            item.results = item.results || [];
+            item.results.push(result);
+            item = result;
+          }
+        }
+      }
+      
+      if (!item) {
+        // if we haven't found an item then something must have changed
+        var error = 'Evaluated object has changed. Path to property ' + breadcrumbs.join('.') + ' is no longer valid.';
+        if (result.type == 'Error') {
+          item = $.extend({}, result)
+          if (!cached_result) cached_result = item;
+        } else {
+          item = {
+            type: 'Error',
+            string: error,
+            results: []
+          };
+        }
+        if (breadcrumbs.length) {
+          item.messages = item.messages ? item.messages.slice(0) : [];
+          item.messages.push({
+            date: new Date().getTime(),
+            message: error,
+            source: null,
+            type: 2
+          });
+        }
+      }
+
+      this.displayResults(item, this.options);
     };
 
     this.getBreadcrumb = function () {
@@ -477,9 +643,67 @@ var snd_xplore_reporter = (function () {
       }, "");
     };
 
+    this.reset = function () {
+      cached_result = null;
+      this.clearBreadcrumb();
+    };
+
     this.clearBreadcrumb = function () {
       breadcrumbs.length = 0;
       $('ul#breadcrumb').addClass('hidden').find('li:not(.permanent)').remove();
+      if (cached_result && this.options) {
+        this.displayResults(cached_result, this.options);
+      }
+    };
+
+    this.displayResults = function displayResults(result, options) {
+
+      this.current_result = result;
+
+      displayOutputMessages(result.messages, options.html_messages);
+      displayLogs(result.logs);
+      setDescription($('#description_table'), result);
+
+      var no_props = 'No properties to display.';
+      $('#copy_results').toggleClass('hidden', !result.results);
+      if (!result.hasOwnProperty('results')) {
+        no_props = '<button class="btn btn-xs btn-primary interactive explore-child">Explore!</button>';
+      }
+
+      var resultTable = $('#results_table');
+      resultTable.empty().append('<tr id="no_props" class="hidden"><td colspan="3">' + no_props + '</td></tr>');
+
+      $('#clearBreadcrumb').text((cached_result && cached_result.name) || 'Result');
+      $('ul#breadcrumb').removeClass('hidden');
+      $('#results').empty();
+      $('#node_log_url').val(result.node_log_url);
+
+      var results;
+      if (result.results && result.results.length) {
+        results = result.results.filter(function (item) {
+          return item.name.slice(-2) != '()'; // don't show cached function results
+        });
+        results.sort(function (a, b) {
+          var ai = parseInt(a.name, 10);
+          var bi = parseInt(b.name, 10);
+          if (ai > bi) return 1;
+          if (bi > ai) return -1;
+          if (a.name > b.name) return 1;
+          if (b.name > a.name) return -1;
+          return 0;
+        });
+        
+        setResults(resultTable, results);
+      } else {
+        $('#no_props').removeClass('hidden');
+      }
+  
+      showTypes();
+  
+      $('#result_container').toggleClass('hidden', !result.type && result.type != 'Error' && !results);
+      $('#breadcrumb').toggleClass('hidden', !cached_result);
+  
+      this.fireEvent('done', null, [result]);
     };
 
   }

@@ -1,6 +1,16 @@
 # Xplore: Developer Toolkit
 A toolkit for every ServiceNow developer.
 
+### Version 5.00
+* Redesigned the exploration experience with dynamic execution and nested property caching.
+* Improved explored object descriptions.
+* Fixed scoped execution for Xanadu.
+* Fixed issue preventing "Add Existing File" from working in Studio.
+* Improved glasses icon placement when resizing the browser in Polaris experience.
+* Xplore will automatically switch to the user's application scope by default.
+* Support for latest ECMAScript modes is now supported. (Requires application JavaScript mode to be set.)
+* Several other minor updates and fixes.
+
 ### Version 4.13
 * Fixed snd_xplore_glasses script so it doesn't break in Studio or other applications.
 * Glasses icon has been replaced with the code-edit icon for San Diego versions.

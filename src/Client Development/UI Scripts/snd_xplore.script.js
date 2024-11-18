@@ -12,14 +12,14 @@ var snd_xplore = (function () {
     // params: Object
     //   An instruction object
 
-    var reporter = params.reporter || defaultReporter();
+    params.reporter == params.reporter || defaultReporter();
 
-    reporter.start(params);
+    params.reporter.start(params);
 
     if (!params.code) {
       var result = psuedoResult();
       message(result, 'error', 'Expression required.');
-      reporter.done(result);
+      params.reporter.done(result);
       return;
     }
 
@@ -35,55 +35,6 @@ var snd_xplore = (function () {
     //   Run the script in the client and get the results
     // params: Object
     //   An instruction object
-
-    var report = psuedoResult();
-    var target = findTarget(params.target);
-
-    if (target) {
-      try {
-
-        // spoof ServiceNow's jslog function
-        var _jslog = target.jslog;
-        target.jslog = function(msg, src) {
-          var d = new Date();
-          var timestamp =
-            ('0' + d.getHours()).substr(-2) + ':' +
-            ('0' + d.getMinutes()).substr(-2) + ':' +
-            ('0' + d.getSeconds()).substr(-2) + '.' +
-            ('00' + d.getMilliseconds()).substr(-3);
-          var is_json;
-          if (typeof msg === 'string') {
-            is_json = snd_Xplore.isJson(msg);
-            if (is_json) msg = '\n' + msg;
-          } else {
-            is_json = true;
-            msg = '\n' + JSON.stringify(msg, null, 2);
-          }
-          if (src) {
-            msg = timestamp + ': [' + src + '] ' + msg;
-          } else {
-            msg = timestamp + ': ' + msg;
-          }
-          message(report, 'log', msg, is_json);
-        };
-
-        target.user_data = formatUserData(params.user_data, params.user_data_type);
-        params.dotwalk = params.breadcrumb;
-        var eResult = target.eval(params.code);
-
-        target.jslog = _jslog;
-
-        var x = new snd_Xplore();
-        x.xplore(eResult, 'snd_Xplore.ObjectReporter', params);
-        var messages = report.messages;
-        report = x.reporter.getReport();
-        report.messages = messages;
-      } catch (e) {
-        message(report, 'error', e);
-      }
-    }
-
-    params.reporter.done(report);
 
     function formatUserData(str, type) {
       var err = 'Unable to parse User Data as ',
@@ -130,6 +81,64 @@ var snd_xplore = (function () {
       }
       return target_window;
     }
+
+    var report = psuedoResult();
+    var target = findTarget(params.target);
+
+    if (!target) {
+      params.reporter.done(report);
+      return;
+    }
+
+    try {
+
+      // spoof ServiceNow's jslog function
+      var _jslog = target.jslog;
+      target.jslog = function(msg, src) {
+        var d = new Date();
+        var timestamp =
+          ('0' + d.getHours()).substr(-2) + ':' +
+          ('0' + d.getMinutes()).substr(-2) + ':' +
+          ('0' + d.getSeconds()).substr(-2) + '.' +
+          ('00' + d.getMilliseconds()).substr(-3);
+        var is_json;
+        if (typeof msg === 'string') {
+          is_json = snd_Xplore.isJson(msg);
+          if (is_json) msg = '\n' + msg;
+        } else {
+          is_json = true;
+          msg = '\n' + JSON.stringify(msg, null, 2);
+        }
+        if (src) {
+          msg = timestamp + ': [' + src + '] ' + msg;
+        } else {
+          msg = timestamp + ': ' + msg;
+        }
+        message(report, 'log', msg, is_json);
+      };
+
+      target.user_data = formatUserData(params.user_data, params.user_data_type);
+      params.dotwalk = params.breadcrumb;
+      var eResult = target.eval(params.code);
+
+      target.jslog = _jslog;
+
+      var x = new snd_Xplore();
+      x.xplore(eResult, 'snd_Xplore.ObjectReporter', params);
+      var messages = report.messages;
+      report = x.reporter.getReport();
+      report.messages = messages;
+    } catch (e) {
+      if (typeof console !== 'undefined') (console.error || console.log)(e);
+      var msg = e.toString();
+      if (e.stack) {
+        var match = (Array.isArray(e.stack) ? e.stack.join(' ') : e.stack).match(/^[\s\S]+?\s(?:at|in)\s[a-zA-Z0-9.]+/);
+        if (match) msg = match[0].replace(/[\n\s]+/g, ' ');
+      }
+      message(report, 'error', msg, true);
+    }
+
+    params.reporter.done(report);
   }
 
   function runServerCode(params) {
@@ -220,7 +229,6 @@ var snd_xplore = (function () {
     //   Write a message to the result object
     // type: string
     // value: string
-
     result.messages.push({
       type: '' + type,
       message: '' + value,

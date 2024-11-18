@@ -109,27 +109,31 @@ var snd_xplore_util = {
       snd_log('Error: setPreference failed.');
     });
   },
-  execute: function (code) {
+  execute: function (options) {
     // summary:
     //   Gather the data from the client and run Xplore
     var params = {
       debug_mode: $('#debug_mode').is(':checked'),
       target: $('#target').val(),
       scope: $('#scope').val(),
-      code: code || snd_xplore_util.getCode(),
+      code: snd_xplore_util.getCode(),
       user_data: $('#user_data_input').val(),
       user_data_type: $('#user_data_type_select').val(),
       breadcrumb: snd_xplore_reporter.getBreadcrumb(),
       reporter: snd_xplore_reporter,
-      no_quotes: !$('#setting_quotes').is(':checked'),
+      no_quotes: true, //!$('#setting_quotes').is(':checked'), // disabled to support copy to object
       show_props: $('#show_props').is(':checked'),
+      max_depth: parseInt($('#max_depth').val(), 10),
       show_strings: $('#show_strings').is(':checked'),
       html_messages: $('#show_html_messages').is(':checked'),
       fix_gslog: $('#fix_gslog').is(':checked'),
       support_hoisting: $('#support_hoisting').is(':checked'),
+      use_es_latest: $('#use_es_latest').is(':checked'),
       id: window.snd_xplore_session_id, // supplied in snd_xplore_main UI Macro
       loaded_id: snd_xplore_util.session_id // the loaded script
     };
+
+    if (options) $.extend(params, options);
 
     // allow the user to paste in a URL encoded history block
     if (params.code.indexOf('/snd_xplore.do?item=') === 0) {
@@ -139,7 +143,7 @@ var snd_xplore_util = {
     snd_xplore(params);
   },
   executeNew: function () {
-    snd_xplore_reporter.clearBreadcrumb();
+    snd_xplore_reporter.reset();
     this.execute();
   },
   demo: function (code, user_data) {
@@ -250,6 +254,7 @@ var snd_xplore_util = {
         sel.addRange(range);
       }
       document.execCommand("copy");
+      sel.removeAllRanges();
     } else if (body.createTextRange) {
       range = body.createTextRange();
       range.moveToElementText(el);
@@ -854,6 +859,8 @@ var snd_script_history_util = (function () {
     if (options.hasOwnProperty('fix_gslog')) $('#fix_gslog').bootstrapToggle(options.fix_gslog ? 'on' : 'off');
     if (options.hasOwnProperty('support_hoisting')) $('#support_hoisting').bootstrapToggle(options.support_hoisting ? 'on' : 'off');
     if (options.hasOwnProperty('debug_mode')) $('#debug_mode').bootstrapToggle(options.debug_mode ? 'on' : 'off');
+    if (options.hasOwnProperty('use_es_latest')) $('#use_es_latest').bootstrapToggle(options.use_es_latest ? 'on' : 'off');
+    if (options.hasOwnProperty('max_depth')) $('#max_depth').val(options.max_depth);
   };
 
   api.loadAll = function () {
@@ -1155,7 +1162,8 @@ $(function () {
     done(function (data) {
         $scope.empty();
         $.each(data.result, function (i, item) {
-          $scope.append($('<option value="' + item.scope + '">' + item.name + '</option>'));
+          var selected = item.scope === window.snd_xplore_initial_scope ? ' selected' : '';
+          $scope.append($('<option value="' + item.scope + '"' + selected + '>' + item.name + '</option>'));
         });
     }).
     fail(function () {
@@ -1216,6 +1224,7 @@ $(function () {
     // The width appears to be set by option values which means it's too narrow
     // so we need to override width to our "max width" here instead.
     $('#scope').select2({width: '350px'});
+
   });
 
   // handle the run button clicking
@@ -1269,23 +1278,17 @@ $(function () {
         }
       });
     });
+    $('#max_depth').select2({
+      dropdownParent: $('#modal_settings')
+    })
   });
 
-  $('#setting_quotes,#show_props,#show_strings').
-    bootstrapToggle({
-      on: 'Show',
-      off: 'Hide',
-      size: 'mini',
-      onstyle: 'success',
-      offstyle: 'danger',
-      width: 75
-    });
-  $('#setting_save_shortcut').
+  $('#setting_save_shortcut,#setting_quotes,#show_props,#show_strings,#fix_gslog,#use_es_latest,#load_user_scope').
     bootstrapToggle({
       on: 'On',
       off: 'Off',
       onstyle: 'success',
-      offstyle: 'danger',
+      offstyle: 'default',
       size: 'mini',
       width: 75
     });
@@ -1301,7 +1304,7 @@ $(function () {
   $('#wrap_output_pre').
     bootstrapToggle({
       on: 'Wrap',
-      off: 'No wrap',
+      off: 'Scroll',
       onstyle: 'success',
       offstyle: 'warning',
       size: 'mini',
@@ -1313,21 +1316,12 @@ $(function () {
         $('#script_output').removeClass('wrap-pre');
       }
     });
-  $('#fix_gslog').
-    bootstrapToggle({
-      on: 'Replace',
-      off: 'Ignore',
-      onstyle: 'success',
-      offstyle: 'warning',
-      size: 'mini',
-      width: 75
-    });
   $('#support_hoisting').
     bootstrapToggle({
       on: 'On',
       off: 'Off',
       onstyle: 'warning',
-      offstyle: 'success',
+      offstyle: 'default',
       size: 'mini',
       width: 75
     });
@@ -1335,11 +1329,12 @@ $(function () {
     bootstrapToggle({
       on: 'On',
       off: 'Off',
-      onstyle: 'success',
+      onstyle: 'danger',
       offstyle: 'default',
       size: 'mini',
       width: 75
     });
+
 
   $('#setting_editor_width').change(function () {
     var el = $('#setting_editor_width');
@@ -1405,9 +1400,8 @@ $(function () {
     snd_xplore_util.toggleEditor();
   });
 
-  // Execute the script again when the breadcrumb is reset
   $('#clearBreadcrumb').on('click', function () {
-    snd_xplore_util.executeNew();
+    snd_xplore_reporter.clearBreadcrumb();
   });
 
   // Dirty form detection
@@ -1476,16 +1470,12 @@ $(function () {
     },
 
     resizeUserData: function resizeUserData() {
-      var $user_data_pane = $('#user_data_pane');
-      var user_data_input = $('#user_data_input').get(0);
-      var remaining_space;
-
-      user_data_input.style.height = '';
-      remaining_space = $output_tabs_pane.height() - $user_data_pane.height();
-
-      if (remaining_space > 10) {
-        user_data_input.style.height = (remaining_space - 10) + 'px';
-      }
+      var min_height = 150;
+      var input = $('#user_data_input');
+      var available_height = $('#wrapper').height();
+      var input_top = input.offset().top;
+      var height = available_height - input_top;
+      input.height((height < min_height ? min_height : height) + 'px');
     },
 
     // Adjust the "top" attribute of the "wrapper" div accordingly to the header
@@ -1630,10 +1620,17 @@ $(function () {
     snd_xplore_util.simpleNotification('Results copied to clipboard');
   });
 
+  $('#copy_user_data').click(function () {
+    var val = $('#user_data_input').val();
+    snd_xplore_util.copyTextToClipboard(val);
+  });
+
   resizeUtil.resizeLogPane();
   resizeUtil.resizeOutputContent();
-  resizeUtil.resizeUserData();
+  // resizeUtil.resizeUserData();
   resizeUtil.resizeWrapper();
+
+  $('#user_data_tab').on('shown.bs.tab', resizeUtil.resizeUserData);
 
   // resize the view when the window resizes
   $(window).resize(function () {
@@ -1646,7 +1643,8 @@ $(function () {
     // Address Chrome duplicate tab bug which makes checkboxes selected even when they weren't
     $.each(snd_xplore_default_settings, function (name, value) {
       if (typeof value === 'boolean') {
-        $('#' + name).bootstrapToggle(value ? 'on' : 'off');
+        var el = $('#' + name);
+        el.bootstrapToggle(el.is(':checked') ? 'on' : 'off');
       }
     });
 
