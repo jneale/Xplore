@@ -25,15 +25,14 @@ snd_xplore_shortcuts.openQuery = function openQuery() {
     if (query) {
         // Ensure single quotes in the query are escaped in the generated script
         query = query.replace(/'/g, '\\\'');
-        encoded_query = '  gr.addEncodedQuery(\'' + query + '\');\n';
+        encoded_query = '\n  gr.addEncodedQuery(\'' + query + '\');';
     }
 
     var script = [
         'function run() {',
         '  var log = [];',
         '  ',
-        '  var gr = new GlideRecord(\'' + g_list.tableName + '\');',
-        '  ',
+        '  var gr = new GlideRecord(\'' + g_list.tableName + '\');' + encoded_query,
         '  //gr.orderBy(\'name\');',
         '  //gr.setLimit(100);',
         '  //gr.setWorkflow(false);',
